@@ -35,7 +35,7 @@ em: https://spack.readthedocs.io/en/latest/tutorial.html.
 
 Primeiramente, precisamos baixar o ~Spack~ a partir do repositório ~git~
 oficial conforme instruções abaixo:
-#+begin_src shell :results output :exports code :session S1
+#+begin_src shell :results output :exports code :session S1 :eval no-export
 git clone https://github.com/spack/spack.git
 #+end_src
 
@@ -51,7 +51,7 @@ listar os pacotes cujo nome inicia com =h=.
 #+RESULTS:
 #+begin_example
 
-[0m 50 packages.
+ 50 packages.
 h5hut
 h5part
 h5utils

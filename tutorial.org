@@ -44,7 +44,8 @@ compiladores. A lista de pacotes disponíveis pode ser obtida com o
 comando ~spack list~. Por motivos de espaço, ilustramos abaixo como
 listar os pacotes cujo nome inicia com =h=.
 
-#+begin_src shell :results output :exports both :session S1
+#+begin_src shell :results output :exports both :session S1 :eval no-export
+cd spack
  ./bin/spack list h*
 #+end_src
 

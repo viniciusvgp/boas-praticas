@@ -113,8 +113,8 @@ conectados, da memória RAM entre outros.
 Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~gl~ e ~cairo~
 e desabilitando a opção ~cuda~.
 
-#+begin_src shell :results output :exports code
-./bin/spack install hwloc@2.0.2+gl+cairo~cuda
+#+begin_src shell :results output :exports code :eval no-export
+./bin/spack install -v hwloc@2.0.2+gl+cairo~cuda
 #+end_src
 
 Após a conclusão da instalação, podemos verificar os pacotes

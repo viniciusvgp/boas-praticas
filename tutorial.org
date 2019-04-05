@@ -1,0 +1,155 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+#+TITLE:     Boas Práticas para Experimentos Computacionais em Clusters
+#+SUBTITLE:  Tutorial Prático
+#+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
+#+DATE:      11 de abril de 2019
+
+#+STARTUP: overview indent
+#+LANGUAGE: pt_BR 
+#+OPTIONS:   toc:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[brazilian]{babel}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+
+* Instalação de Ferramentas
+#+BEGIN_COMMENT Vinicius
+Dependências:
+- git
+- subversion (svn)
+- openmpi
+#+END_COMMENT
+
+# Spack
+Utilizaremos o gerenciador de pacotes ~Spack~ para obter, configurar,
+compilar e instalar programas e bibliotecas sem permissões
+especiais. Nesta seção, ilustraremos o funcionamento da ferramenta com
+um pacote, um tutorial mais detalhado (em ingles) pode ser encontrado
+em: https://spack.readthedocs.io/en/latest/tutorial.html.
+
+Primeiramente, precisamos baixar o ~Spack~ a partir do repositório ~git~
+oficial conforme instruções abaixo:
+#+begin_src shell :results output :exports code :session S1
+git clone https://github.com/spack/spack.git
+#+end_src
+
+Com o ~Spack~ podemos instalar diversas ferramentas incluindo
+compiladores. A lista de pacotes disponíveis pode ser obtida com o
+comando ~spack list~. Por motivos de espaço, ilustramos abaixo como
+listar os pacotes cujo nome inicia com =h=.
+
+#+begin_src shell :results output :exports both :session S1
+ ./bin/spack list h*
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+[0m 50 packages.
+h5hut
+h5part
+h5utils
+h5z-zfp
+hacckernels
+hadoop
+halc
+hapcut2
+hapdip
+haploview
+harfbuzz
+harminv
+hc
+hdf
+hdf5
+hdf5-blosc
+help2man
+henson
+hepmc
+heppdt
+hic-pro
+highfive
+highwayhash
+hiop
+hisat2
+hisea
+hmmer
+homer
+hoomd-blue
+hpccg
+hpctoolkit
+hpcviewer
+hpgmg
+hpl
+hpx
+hpx5
+hsakmt
+hstr
+htop
+htslib
+httpie
+hub
+hugo
+hunspell
+hwloc
+hybpiper
+hydra
+hydrogen
+hyphy
+hypre
+#+end_example
+
+Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter
+a topologia do ~hardware~ da plataforma e pode ser útil na identificação
+dos /cores/ físicos e lógicos, dos nós NUMA, dos dispositivos PCI
+conectados, da memória RAM entre outros. 
+
+Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~gl~ e ~cairo~
+e desabilitando a opção ~cuda~.
+
+#+begin_src shell :results output :exports code
+./bin/spack install hwloc@2.0.2+gl+cairo~cuda
+#+end_src
+
+Após a conclusão da instalação, podemos verificar os pacotes
+instalados:
+#+begin_src shell :results output :exports both
+./bin/spack find
+#+end_src
+
+* Realização de Experimentos Computacionais
+# Reserva de nós (SLURM)
+# Coleta de dados (bash)
+** Execução de uma aplicação paralelo exemplo
+
+
+#+begin_src shell :results output :exports both
+wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
+tar -xf NPB3.4-MZ.tar.gz
+cd NPB3.4-MZ-MPI
+cp config/NAS.samples/make.def.gcc_mpich config/make.def
+make bt-mz CLASS=A
+#+end_src
+
+#+RESULTS:
+
+* Análise de Dados
+# R + tidyverse
+* Criação de Gráficos
+# ggplot2
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (setq org-latex-listings t)
+# eval: (setq org-latex-packages-alist '(("" "listings")))
+# eval: (setq org-latex-packages-alist '(("" "listingsutf8")))
+# eval: (setq ispell-local-dictionary "brasileiro")
+# eval: (flyspell-mode t)
+# End:
+

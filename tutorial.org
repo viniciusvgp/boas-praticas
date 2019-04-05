@@ -52,7 +52,7 @@ cd spack
 #+RESULTS:
 #+begin_example
 
- 50 packages.
+==> 50 packages.
 h5hut
 h5part
 h5utils

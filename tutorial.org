@@ -123,10 +123,23 @@ instalados:
 ./bin/spack find
 #+end_src
 
+Podemos notar que vários outros pacotes além do ~hwloc~ foram
+instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
+pois são dependencias necessárias para a compilação e/ou funcionamento
+do ~hwloc~.
+
 * Realização de Experimentos Computacionais
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
 ** Execução de uma aplicação paralelo exemplo
+Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
+NPB[fn::https://www.nas.nasa.gov/publications/npb.html] (/NAS Parallel
+Benchmarks/). A aplicação ~BT~ (/Block Tri-diagonal/) 
+
+#+BEGIN_COMMENT Vinícius
+Completar aqui com detalhes do BT em comparação com outros benchmarks
+Explicar o MZ (multi-zone)
+#+END_COMMENT
 
 
 #+begin_src shell :results output :exports both
@@ -138,6 +151,25 @@ make bt-mz CLASS=A
 #+end_src
 
 #+RESULTS:
+
+#+begin_src R :results output :exports both :session *R*
+library(AlgDesign)
+
+gen.factorial(c(1,1,2,2), 3, center=TRUE,
+  varNames=c("bt-mz", "Class (Size)", "Threads", "Processes"))
+#+end_src
+
+#+RESULTS:
+:   bt-mz Class (Size) Threads Processes
+: 1     0            0      -1        -1
+: 2     0            0       1        -1
+: 3     0            0      -1         1
+: 4     0            0       1         1
+
+#+begin_src R :results output :exports both :session *R*
+library("DoE.base")
+
+#+end_src
 
 * Análise de Dados
 # R + tidyverse
@@ -154,3 +186,27 @@ make bt-mz CLASS=A
 # eval: (flyspell-mode t)
 # End:
 
+* Dockerfile                                                       :noexport:
+#+begin_src fundamental :tangle tmp/Dockerfile
+FROM r-base:3.5.1
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
+RUN apt-get install -y libboost-dev 
+
+# Spack
+RUN apt-get install -y git python curl
+
+# DoE.base
+RUN apt-get install -y 
+
+# RUN echo "install.packages(c('tidyverse', 'devtools'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+# RUN echo "install.packages(c('DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+# RUN echo "install.packages('devtools', repos = 'http://cran.us.r-project.org')" | R --vanilla
+
+RUN useradd -s /bin/bash --create-home user
+USER user
+
+ENTRYPOINT /bin/bash
+WORKDIR /home/user
+#+end_src

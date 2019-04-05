@@ -119,7 +119,7 @@ e desabilitando a opção ~cuda~.
 
 Após a conclusão da instalação, podemos verificar os pacotes
 instalados:
-#+begin_src shell :results output :exports both
+#+begin_src shell :results output :exports both :eval no-export
 ./bin/spack find
 #+end_src
 

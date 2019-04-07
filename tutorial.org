@@ -155,11 +155,11 @@ make bt-mz CLASS=A
 
 *** Projeto Experimental
 Após a instalação e configuração da aplicação, vamos utilizar o pacote
-~DoE.base~ da linguagem ~R~ para gerar um projeto experimental combinando
-os fatores a serem analisados. Neste exemplo, os fatores serão o
-número de /threads/, o número de processos (/processes/) e a classe
-(/class/). As classes nos /benchmarks/ NAS representam diferentes tamanhos
-de entrada do problema.
+~DoE.base~ [fn::https://cran.r-project.org/web/packages/DoE.base/] da
+linguagem ~R~ para gerar um projeto experimental combinando os fatores a
+serem analisados. Neste exemplo, os fatores serão o número de /threads/,
+o número de processos (/processes/) e a classe (/class/). As classes nos
+/benchmarks/ NAS representam diferentes tamanhos de entrada do problema.
 
 #+begin_src R :results output :exports both :session *R* :eval no-export
 library("DoE.base")

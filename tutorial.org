@@ -146,7 +146,7 @@ Explicar o MZ (multi-zone)
 #+begin_src shell :results output :exports both :eval no-export
 wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
 tar -xf NPB3.4-MZ.tar.gz
-cd NPB3.4-MZ-MPI
+cd NPB3.4-MZ/NPB3.4-MZ-MPI
 cp config/NAS.samples/make.def.gcc_mpich config/make.def
 make bt-mz CLASS=A
 #+end_src

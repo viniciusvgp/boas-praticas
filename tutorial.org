@@ -208,7 +208,7 @@ fator no desempenho da aplicação. Exportaremos o projeto gerado para
 um arquivo ~csv~ que deverá ser registrado juntamente com os /logs/
 contendo os resultados brutos do experimento. 
 
-#+begin_src R :results output :exports both :session *R* :val no-export
+#+begin_src R :results output :exports both :session *R* :eval no-export
 export.design(btmz_erad, 
               filename = "btmz-exec-order",
               type = "csv",

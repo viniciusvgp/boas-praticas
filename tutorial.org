@@ -375,10 +375,11 @@ experimentos.
 #+end_example
 
 Como demonstração, faremos algumas computações estatísticas básicas
-sobre os dados importados. As execuções serão agrupadas por Classe,
+sobre os dados importados utilizando o pacote ~dplyr~ fornecido pelo
+meta-pacote ~tidy-verse~.  As execuções serão agrupadas por Classe,
 número de processos e número de /threads/, possibilitando que sejam
 calculadas a média, a mediana, o valor mínimo e o valor máximo das
-observações do tempo de execução da aplicação. 
+observações do tempo de execução da aplicação.
 
 #+name: avg
 #+begin_src R :results output :exports both :session *R* :eval no-export

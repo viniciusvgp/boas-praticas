@@ -142,7 +142,7 @@ Explicar o MZ (multi-zone)
 #+END_COMMENT
 
 
-#+begin_src shell :results output :exports both
+#+begin_src shell :results output :exports both :eval no-export
 wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
 tar -xf NPB3.4-MZ.tar.gz
 cd NPB3.4-MZ-MPI
@@ -152,7 +152,7 @@ make bt-mz CLASS=A
 
 #+RESULTS:
 
-#+begin_src R :results output :exports both :session *R*
+#+begin_src R :results output :exports both :session *R* :eval no-export
 library(AlgDesign)
 
 gen.factorial(c(1,1,2,2), 3, center=TRUE,
@@ -166,7 +166,7 @@ gen.factorial(c(1,1,2,2), 3, center=TRUE,
 : 3     0            0      -1         1
 : 4     0            0       1         1
 
-#+begin_src R :results output :exports both :session *R*
+#+begin_src R :results output :exports both :session *R* :eval no-export
 library("DoE.base")
 
 #+end_src

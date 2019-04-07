@@ -204,7 +204,9 @@ NOTE: columns run.no and run.no.std.rp  are annotation,
 
 A função ~fac.design~ gerou uma sequência aleatorizada de combinações
 que serão executadas para que possamos avaliar a influência de cada
-fator no desempenho da aplicação. 
+fator no desempenho da aplicação. Exportaremos o projeto gerado para
+um arquivo ~csv~ que deverá ser registrado juntamente com os /logs/
+contendo os resultados brutos do experimento. 
 
 #+begin_src R :results output :exports both :session *R* :val no-export
 export.design(btmz_erad, 
@@ -222,10 +224,21 @@ experimental.
 
 #+begin_src shell :results output :exports code :eval no-export
 tail -n +2 btmz-exec-order.csv |
-while IFS=, read -r name runnoinstdorder runno runnostdrp threads processes class Blocks
+while IFS=, read -r name runnoinstdorder runno runnostdrp \
+	 threads processes class Blocks
 do
-    run = "OMP_NUM_THREADS=$threads mpirun -np $processes bin/bt-mz.$class.x > btmz-$runno-$threads-$processes-$class.log"
-    eval $run
+    # OpenMP threads
+    runline="OMP_NUM_THREADS=$threads "
+    # MPI processes
+    runline+="mpirun -np $processes "
+    # Binary
+    runline+="bin/bt-mz.$class.x "
+    # Log
+    runline+="> btmz-$runno-$threads-$processes-$class.log"
+ 
+    echo "Running >> $runline <<"
+    eval $runline
+    # eval $run
 done 
 #+end_src
 

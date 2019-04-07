@@ -246,8 +246,8 @@ done
 * Análise de Dados
 # R + tidyverse
 Uma vez concluídas as execuções, inciaremos a etapa de análise dos
-dados. A aplicação ~BT-MZ~ gera como saída arquivos texto no formato
-abaixo:
+dados. A aplicação ~BT-MZ~ gera como saída arquivos texto no formato do
+exemplo abaixo:
 
 #+begin_src shell :results output :exports results
 cat btmz-12-2-2-W.log
@@ -330,10 +330,10 @@ cat btmz-12-2-2-W.log
 #+end_example
 
 Esta saída é bastante completa e contém varias informações como os
-parâmetros utilizados na execução e as verificações de erro. Para
-efeitos de demonstração, neste tutorial estamos interessados apenas no
+parâmetros utilizados na execução e as verificações de erro. Neste
+tutorial, para efeitos de demonstração, estamos interessados apenas no
 tempo de execução. Dessa forma, faremos uma limpeza nos arquivos de
-~log~, de forma a mantermos apenas a informação referente ao tempo de
+~log~, de maneira a mantermos apenas a informação referente ao tempo de
 execução.
 
 #+begin_src shell :results output :exports code :eval no-export
@@ -415,8 +415,11 @@ experimentos.
 16:        btmz      9     A         1       1 40.07
 #+end_example
 
-Como demonstração, faremos algumas análises estatísticas básicas
-sobre os dados importados. 
+Como demonstração, faremos algumas computações estatísticas básicas
+sobre os dados importados. As execuções serão agrupadas por Classe,
+número de processos e número de /threads/, possibilitando que sejam
+calculadas a média, a mediana, o valor mínimo e o valor máximo das
+observações do tempo de execução da aplicação. 
 
 #+name: avg
 #+begin_src R :results output :exports both :session *R*

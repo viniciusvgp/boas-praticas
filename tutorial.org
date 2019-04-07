@@ -132,6 +132,7 @@ do ~hwloc~.
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
 ** Execução de uma aplicação paralelo exemplo
+*** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
 NPB[fn::https://www.nas.nasa.gov/publications/npb.html] (/NAS Parallel
 Benchmarks/). A aplicação ~BT~ (/Block Tri-diagonal/) 

@@ -504,6 +504,59 @@ expData %>%
 
 * Criação de Gráficos
 # ggplot2
+Além da computação de medidas estatísticas, a linguagem ~R~ também pode
+ser usada para criação de gráficos. O pacote ~ggplot2~ implementa uma
+gramática de gráficos, o que permite gerar gráficos claros e
+expressivos. A Figura [[lfig:tempo]] mostra um gráfico simples onde cada
+execução é representada por um ponto. Cores foram adicionadas para
+separar as duas classes. 
+
+
+#+name: fig:tempo
+#+begin_src R :results output graphics :file figtempo.png :exports both :width 600 :height 400 :session *R*  :eval no-export
+library(ggplot2)
+
+expData %>% 
+    mutate(X = paste0(Threads, "x", Processes)) %>%
+    ggplot(aes(y = Time, x = X, color = Class)) +
+    geom_point() +
+    theme_bw() +
+    xlab("Threads x Processes")  +
+    ggtitle("NPB BT-MZ Execution Time")
+
+#+end_src
+
+#+LABEL: lfig:tempo
+#+RESULTS: fig:tempo
+[[file:figtempo.png]]
+
+
+Gráficos como o da Figura [[lfig:tempo]] que apresentam valores com grande
+variação tendem a ocultar informações. No caso da aplicação ~BT-MZ~, o
+tempo de execução maior da classe A esconde detalhes das execuções da
+classe W devido a escala necessária para exibir os valores da
+primeira. O pacote ~ggplot~ permite contornar este tipo de problema por
+meio do uso de ~facets~ conforme ilustrado na Figura [[lfig:tempofacet]].
+
+#+name: fig:tempofacet
+#+begin_src R :results output graphics :file figtempo-facet.png :exports both :width 600 :height 400 :session *R*  :eval no-export
+library(ggplot2)
+
+expData %>% 
+    mutate(X = paste0(Threads, "x", Processes)) %>%
+    ggplot(aes(y = Time, x = X, color = Class)) +
+    geom_point() +
+    facet_grid(Class~., scales="free_y") + 
+    theme_bw() +
+    xlab("Threads x Processes") +
+    ggtitle("NPB BT-MZ Execution Time")
+   
+#+end_src
+
+#+LABEL: lfig:tempofacet
+#+RESULTS: fig:tempofacet
+[[file:figtempo-facet.png]]
+
 
 * Local Variables                                                  :noexport:
 # Local Variables:

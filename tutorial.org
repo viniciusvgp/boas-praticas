@@ -202,7 +202,7 @@ NOTE: columns run.no and run.no.std.rp  are annotation,
  not part of the data frame
 #+end_example
 
-A função ~fac.design~ gerou uma sequencia aleatorizada de combinações
+A função ~fac.design~ gerou uma sequência aleatorizada de combinações
 que serão executadas para que possamos avaliar a influência de cada
 fator no desempenho da aplicação. 
 

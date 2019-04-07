@@ -239,7 +239,7 @@ do
  
     echo "Running >> $runline <<"
     eval "$runline < /dev/null"
-    # eval $run
+    echo "Done!"
 done 
 #+end_src
 

@@ -262,15 +262,15 @@ done
 #+begin_src fundamental :tangle tmp/Dockerfile
 FROM r-base:3.5.1
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
-RUN apt-get install -y libboost-dev 
+RUN apt update && apt -y upgrade
+RUN apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
+RUN apt -y install libboost-dev 
 
 # Spack
-RUN apt-get install -y git python curl autoconf file
+RUN apt -y install git python curl autoconf file
 
 # DoE.base
-RUN apt-get install -y libgmp-dev
+RUN apt -y install libgmp-dev
 
 # RUN echo "install.packages(c('tidyverse', 'devtools'), repos = 'http://cran.us.r-project.org')" | R --vanilla
 # RUN echo "install.packages(c('DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla

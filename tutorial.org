@@ -110,11 +110,11 @@ a topologia do ~hardware~ da plataforma e pode ser útil na identificação
 dos /cores/ físicos e lógicos, dos nós NUMA, dos dispositivos PCI
 conectados, da memória RAM entre outros. 
 
-Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~gl~ e ~cairo~
-e desabilitando a opção ~cuda~.
+Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~pci~ e ~cairo~
+e desabilitando as opções ~gl~ e ~cuda~.
 
 #+begin_src shell :results output :exports code :eval no-export
-./bin/spack install -v hwloc@2.0.2+gl+cairo~cuda
+./bin/spack install -v hwloc@2.0.2~gl+cairo~cuda+pci
 #+end_src
 
 Após a conclusão da instalação, podemos verificar os pacotes

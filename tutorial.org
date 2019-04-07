@@ -53,56 +53,10 @@ cd spack
 #+begin_example
 
 ==> 50 packages.
-h5hut
-h5part
-h5utils
-h5z-zfp
-hacckernels
-hadoop
-halc
-hapcut2
-hapdip
-haploview
-harfbuzz
-harminv
-hc
-hdf
-hdf5
-hdf5-blosc
-help2man
-henson
-hepmc
-heppdt
-hic-pro
-highfive
-highwayhash
-hiop
-hisat2
-hisea
-hmmer
-homer
-hoomd-blue
-hpccg
-hpctoolkit
-hpcviewer
-hpgmg
-hpl
-hpx
-hpx5
-hsakmt
-hstr
-htop
-htslib
-httpie
-hub
-hugo
-hunspell
-hwloc
-hybpiper
-hydra
-hydrogen
-hyphy
-hypre
+h5hut    h5z-zfp      halc     haploview  hc    hdf5-blosc  hepmc    highfive     hisat2  homer       hpctoolkit  hpl   hsakmt  htslib  hugo      hybpiper  hyphy
+h5part   hacckernels  hapcut2  harfbuzz   hdf   help2man    heppdt   highwayhash  hisea   hoomd-blue  hpcviewer   hpx   hstr    httpie  hunspell  hydra     hypre
+h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop         hmmer   hpccg       hpgmg       hpx5  htop    hub     hwloc     hydrogen
+
 #+end_example
 
 Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter

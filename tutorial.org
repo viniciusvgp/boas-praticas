@@ -238,7 +238,7 @@ do
     runline+="> btmz-$runno-$threads-$processes-$class.log"
  
     echo "Running >> $runline <<"
-    eval $runline
+    eval "$runline < /dev/null"
     # eval $run
 done 
 #+end_src

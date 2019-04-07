@@ -275,9 +275,8 @@ RUN apt -y install libgmp-dev
 # MPI
 RUN apt -y install libopenmpi-dev
 
-# RUN echo "install.packages(c('tidyverse', 'devtools'), repos = 'http://cran.us.r-project.org')" | R --vanilla
-# RUN echo "install.packages(c('DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
-# RUN echo "install.packages('devtools', repos = 'http://cran.us.r-project.org')" | R --vanilla
+# R packages
+RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
 
 RUN useradd -s /bin/bash --create-home user
 USER user

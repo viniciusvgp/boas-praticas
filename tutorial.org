@@ -125,7 +125,7 @@ instalados:
 
 Podemos notar que vários outros pacotes além do ~hwloc~ foram
 instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
-pois são dependencias necessárias para a compilação e/ou funcionamento
+pois são dependências necessárias para a compilação e/ou funcionamento
 do ~hwloc~.
 
 * Realização de Experimentos Computacionais

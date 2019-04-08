@@ -141,7 +141,7 @@ reserva de 2 nós na plataforma =hype= pelo período máximo de 40
 minutos. As saídas padrão (/stdout/) e de erro (/stdin/) serão
 redirecionadas para arquivos nomeados com o identificador do /job/.
 
-#+begin_src shell :results output :exports both
+#+begin_src shell :results output :exports both :tangle script-exemplo.sh :eval no-exoort
 
 #!/bin/bash
 #SBATCH --nodes=2

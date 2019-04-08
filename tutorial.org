@@ -178,6 +178,7 @@ make bt-mz CLASS=W
 #+RESULTS:
 
 *** Projeto Experimental
+<<sec:projexperimental>>
 Após a instalação e configuração da aplicação, vamos utilizar o pacote
 ~DoE.base~ [fn::https://cran.r-project.org/web/packages/DoE.base/] da
 linguagem ~R~ para gerar um projeto experimental combinando os fatores a

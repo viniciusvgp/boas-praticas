@@ -97,6 +97,7 @@ do ~hwloc~.
 * Realização de Experimentos Computacionais
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
+** SLURM
 ** Execução de uma aplicação paralelo exemplo
 *** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
@@ -209,6 +210,7 @@ do
 done 
 #+end_src
 
+*** Execução Não-Iterativa de Experimentos com SLURM
 * Análise de Dados
 # R + tidyverse
 Uma vez concluídas as execuções, inciaremos a etapa de análise dos

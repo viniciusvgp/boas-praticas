@@ -136,10 +136,10 @@ usuário através do comando ~scancel~ ou por situações inesperadas como
 problemas na plataforma ou comandos do administrador. 
 
 O código abaixo ilustra um exemplo de /script/ a ser submetido com o
-comando ~sbatch~. Este /script/ exemplo solicita a reserva de 2 nós na
-plataforma =hype= pelo período máximo de 40 minutos. As saídas padrão
-(/stdout/) e de erro (/stdin/) serão redirecionadas para arquivos nomeados
-com o identificador do /job/.
+comando ~sbatch script-exemplo.sh~. Este /script/ exemplo solicita a
+reserva de 2 nós na plataforma =hype= pelo período máximo de 40
+minutos. As saídas padrão (/stdout/) e de erro (/stdin/) serão
+redirecionadas para arquivos nomeados com o identificador do /job/.
 
 #+begin_src shell :results output :exports both
 

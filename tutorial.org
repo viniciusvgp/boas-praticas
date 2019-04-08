@@ -269,6 +269,15 @@ done
 
 *** Execução Não-Interativa de Experimentos com /Slurm/ na plataforma =PCAD=
 
+Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
+experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
+/script/ para execução não-interativa da aplicação ~BT-MZ~ do pacote
+NPB. Para efeitos de simplificação, foi gerado previamente um projeto
+experimental (arquivo ~btmz-exec-order.csv~) considerando informações
+sobre os recursos de processamento da plataforma obtidas com o
+~hwloc~. Este projeto pode ser regerado com o código apresentado na
+seção [[sec:projexperimental]].
+
 #+begin_src shell :results output :exports both :tangle slurm-script.sh :eval no-export
 
 #!/bin/bash

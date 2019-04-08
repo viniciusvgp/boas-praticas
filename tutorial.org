@@ -266,7 +266,7 @@ do
 done 
 #+end_src
 
-*** Execução Não-Iterativa de Experimentos com SLURM
+*** Execução Não-Interativa de Experimentos com SLURM
 * Análise de Dados
 # R + tidyverse
 Uma vez concluídas as execuções, inciaremos a etapa de análise dos

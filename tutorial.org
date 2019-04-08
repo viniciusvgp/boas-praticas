@@ -97,7 +97,63 @@ do ~hwloc~.
 * Realização de Experimentos Computacionais
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
-** SLURM
+** Slurm
+Neste tutorial usaremos o gerenciador de filas =Slurm=
+[fn::https://slurm.schedmd.com]. O ~Slurm~ é uma ferramente /open-source/
+que permite a execução de /jobs/ interativos ou não-interativos. 
+
+O comando ~salloc~ abaixo exemplifica como poder ser realizada
+solicitação de um /job/ interativo nomeado =MeuJobErad= na plataforma de
+nome ~hype~, pelo período de 1 hora e 30 minutos.
+
+#+begin_src shell :results output :exports both
+salloc -p hype -J MeuJobErad -t 01:30:00
+#+end_src
+
+Quando a solicitação for atendida (o que pode ocorrer imediatamente
+caso a plataforma esteja ociosa), o usuário estará apto a acessar a
+máquina requisitada via ~ssh~ ou a executar diretamente sua aplicação
+por meio do comando ~srun~.
+
+Para /jobs/ não-interativos deve-se utilizar o comando ~sbatch~. Neste
+caso, o usuário fornecerá um /script/ contendo todos os passos para
+realizar o experimento na plataforma desejada. /Jobs/ não-interativos
+são bastante úteis quando a plataforma é compartilhada entre muitos
+usuários estando frequentemente ocupada e com uma significativa fila
+de espera. Neste cenário, o /job/ do usuário poderá executar a qualquer
+momento após a submissão, podendo ser iniciado em alguns segundos ou
+até mesmo após vários dias da submissão. A política de filas não
+necessariamente é /FIFO (First-In First-Out)/ pois alguns usuários
+podem ter preferência sobre outros, por exemplo, contas internas /vs/
+externas, preferência ao proprietário/financiador da plataforma,
+preferência a equipe de manutenção/suporte, etc. 
+
+Um ~job~ termina após uma das seguintes condições (a que occorer
+primeiro): a execução da útlima linha do /script/ fornecido ou após o
+término do tempo de processamento solicitado na reserva. Além destes
+dois casos bases, o /job/ também pode ser encerrado por pedido do
+usuário através do comando ~scancel~ ou por situações inesperadas como
+problemas na plataforma ou comandos do administrador. 
+
+O código abaixo ilustra um exemplo de /script/ a ser submetido com o
+comando ~sbatch~. Este /script/ exemplo solicita a reserva de 2 nós na
+plataforma =hype= pelo período máximo de 40 minutos. As saídas padrão
+(/stdout/) e de erro (/stdin/) serão redirecionadas para arquivos nomeados
+com o identificador do /job/.
+
+#+begin_src shell :results output :exports both
+
+#!/bin/bash
+#SBATCH --nodes=2
+#SBATCH --partition=hype
+#SBATCH --time=00:40:00
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+
+# Comandos para execução do experimento 
+
+#+end_src
+
 ** Execução de uma aplicação paralelo exemplo
 *** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/

@@ -77,19 +77,25 @@ serão redirecionadas para arquivos nomeados com o identificador do
 * Execução de uma aplicação paralelo exemplo
 ** Obtenção e Configuração da Aplicação
 
-Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
-do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais informações aqui]]), em específico
-a aplicação ~BT~ (/Block Tri-diagonal/) com as classes A e W.  As classes
-nos /benchmarks/ NAS representam diferentes tamanhos de entrada do
-problema.
+Utilizaremos como exemplo uma aplicação da versão /Multi-Zone do
+conjunto de /benchmarks/ do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais
+informações aqui]]), em específico a aplicação ~BT~ (/Block Tri-diagonal/)
+com as classes W (execução local), A e D (execução no =PCAD=).  As
+classes nos /benchmarks/ NAS representam diferentes tamanhos de entrada
+do problema. A aplicação ~BT~ resolve um sistema sintético de equações
+diferenciais parciais não lineares.  A versão /Multi-Zone/ é a variante
+do NPB com implementações híbridas combinando MPI e OpenMP. Neste
+contexto, escolhemos a aplicação ~BT-MZ~ para este tutorial pois é a que
+apresenta maiores desafios quanto ao balanceamento de carga em
+comparação com os outros /benchmarks/ da variante /Multi-Zone/.
 
 #+BEGIN_COMMENT Vinícius
-- [ ] Completar aqui com detalhes do BT em comparação com outros
+- [x] Completar aqui com detalhes do BT em comparação com outros
       benchmarks Explicar o MZ (multi-zone)
 #+END_COMMENT
 
 #+BEGIN_COMMENT Lucas
-- [ ] Demonstrar como fazer para usar um MPI instalado com o spack
+- [x] Demonstrar como fazer para usar um MPI instalado com o spack
 #+END_COMMENT
 
 #+begin_src shell :results output :exports both :eval no-export
@@ -101,7 +107,15 @@ make bt-mz CLASS=A
 make bt-mz CLASS=W
 #+end_src
 
-#+RESULTS:
+A etapa de compilação dos /benchmarks/ do NAS utiliza arquivos de
+configuração, como o ~config/make.def~ dos comandos acima, para indicar
+quais compiladores e bibliotecas devem ser empregados na construção
+dos binários. Para utilizar compiladores e bibliotecas que não estão
+no ~PATH~ padrão, basta editar este arquivo. Tal estratégia pode ser
+usada para construção de binários utilizando uma implementação ~MPI~
+instalada com o ~Spack~ conforme ilustrado na etapa anterior deste
+tutorial. 
+
 
 ** Projeto Experimental
 

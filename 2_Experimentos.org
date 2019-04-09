@@ -175,7 +175,7 @@ export.design(btmz_erad,
 
 Vejamos o conteúdo do arquivo CSV criado:
 
-#+begin_src shell :results output
+#+begin_src shell :results output :export both :eval no-export
 cat btmz-exec-order.csv
 #+end_src
 

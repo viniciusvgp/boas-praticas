@@ -1,0 +1,267 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+#+STARTUP: overview indent
+#+LANGUAGE: pt_BR
+#+OPTIONS:   toc:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+TITLE:     Realização de Experimentos Computacionais
+#+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
+
+# Reserva de nós (SLURM)
+# Coleta de dados (bash)
+* Slurm
+Neste tutorial usaremos o gerenciador de filas =Slurm=
+[fn::https://slurm.schedmd.com]. O ~Slurm~ é uma ferramente /open-source/
+que permite a execução de /jobs/ interativos ou não-interativos. 
+
+O comando ~salloc~ abaixo exemplifica como poder ser realizada
+solicitação de um /job/ interativo nomeado =MeuJobErad= na plataforma de
+nome ~hype~, pelo período de 1 hora e 30 minutos.
+
+#+begin_src shell :results output :exports both
+salloc -p hype -J MeuJobErad -t 01:30:00
+#+end_src
+
+Quando a solicitação for atendida (o que pode ocorrer imediatamente
+caso a plataforma esteja ociosa), o usuário estará apto a acessar a
+máquina requisitada via ~ssh~ ou a executar diretamente sua aplicação
+por meio do comando ~srun~.
+
+Para /jobs/ não-interativos deve-se utilizar o comando ~sbatch~. Neste
+caso, o usuário fornecerá um /script/ contendo todos os passos para
+realizar o experimento na plataforma desejada. /Jobs/ não-interativos
+são bastante úteis quando a plataforma é compartilhada entre muitos
+usuários estando frequentemente ocupada e com uma significativa fila
+de espera. Neste cenário, o /job/ do usuário poderá executar a qualquer
+momento após a submissão, podendo ser iniciado em alguns segundos ou
+até mesmo após vários dias da submissão. A política de filas não
+necessariamente é /FIFO (First-In First-Out)/ pois alguns usuários
+podem ter preferência sobre outros, por exemplo, contas internas /vs/
+externas, preferência ao proprietário/financiador da plataforma,
+preferência a equipe de manutenção/suporte, etc. 
+
+Um ~job~ termina após uma das seguintes condições (a que occorer
+primeiro): a execução da útlima linha do /script/ fornecido ou após o
+término do tempo de processamento solicitado na reserva. Além destes
+dois casos bases, o /job/ também pode ser encerrado por pedido do
+usuário através do comando ~scancel~ ou por situações inesperadas como
+problemas na plataforma ou comandos do administrador. 
+
+O código abaixo ilustra um exemplo de /script/ a ser submetido com o
+comando ~sbatch script-exemplo.sh~. Este /script/ exemplo solicita a
+reserva de 2 nós na plataforma =hype= pelo período máximo de 40
+minutos. As saídas padrão (/stdout/) e de erro (/stdin/) serão
+redirecionadas para arquivos nomeados com o identificador do /job/.
+
+#+begin_src shell :results output :exports both :tangle script-exemplo.sh :eval no-exoort
+
+#!/bin/bash
+#SBATCH --nodes=2
+#SBATCH --partition=hype
+#SBATCH --time=00:40:00
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+
+# Comandos para execução do experimento 
+
+#+end_src
+
+* Execução de uma aplicação paralelo exemplo
+** Obtenção e Configuração da Aplicação
+Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
+NPB[fn::https://www.nas.nasa.gov/publications/npb.html] (/NAS Parallel
+Benchmarks/). A aplicação ~BT~ (/Block Tri-diagonal/) 
+
+#+BEGIN_COMMENT Vinícius
+Completar aqui com detalhes do BT em comparação com outros benchmarks
+Explicar o MZ (multi-zone)
+#+END_COMMENT
+
+
+#+begin_src shell :results output :exports both :eval no-export
+wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
+tar -xf NPB3.4-MZ.tar.gz
+cd NPB3.4-MZ/NPB3.4-MZ-MPI
+cp config/NAS.samples/make.def.gcc_mpich config/make.def
+make bt-mz CLASS=A
+make bt-mz CLASS=W
+#+end_src
+
+#+RESULTS:
+
+** Projeto Experimental
+<<sec:projexperimental>>
+Após a instalação e configuração da aplicação, vamos utilizar o pacote
+~DoE.base~ [fn::https://cran.r-project.org/web/packages/DoE.base/] da
+linguagem ~R~ para gerar um projeto experimental combinando os fatores a
+serem analisados. Neste exemplo, os fatores serão o número de /threads/,
+o número de processos (/processes/) e a classe (/class/). As classes nos
+/benchmarks/ NAS representam diferentes tamanhos de entrada do problema.
+
+#+begin_src R :results output :exports both :session *R* :eval no-export
+library("DoE.base")
+library("dplyr")
+
+btmz_erad <-
+    fac.design(factor.names=
+                   list(threads=c(1, 2), 
+                        processes=c(1,2), 
+                        class=c("W", "A")),
+               replications=2, 
+               randomize=TRUE
+               )
+
+print(btmz_erad)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+creating full factorial with 8 runs ...
+   run.no run.no.std.rp threads processes class Blocks
+1       1           8.1       2         2     A     .1
+2       2           2.1       2         1     W     .1
+3       3           6.1       2         1     A     .1
+4       4           4.1       2         2     W     .1
+5       5           3.1       1         2     W     .1
+6       6           1.1       1         1     W     .1
+7       7           7.1       1         2     A     .1
+8       8           5.1       1         1     A     .1
+9       9           5.2       1         1     A     .2
+10     10           3.2       1         2     W     .2
+11     11           6.2       2         1     A     .2
+12     12           4.2       2         2     W     .2
+13     13           1.2       1         1     W     .2
+14     14           7.2       1         2     A     .2
+15     15           8.2       2         2     A     .2
+16     16           2.2       2         1     W     .2
+class=design, type= full factorial 
+NOTE: columns run.no and run.no.std.rp  are annotation, 
+ not part of the data frame
+#+end_example
+
+A função ~fac.design~ gerou uma sequência aleatorizada de combinações
+que serão executadas para que possamos avaliar a influência de cada
+fator no desempenho da aplicação. Exportaremos o projeto gerado para
+um arquivo ~csv~ que deverá ser registrado juntamente com os /logs/
+contendo os resultados brutos do experimento. 
+
+#+begin_src R :results output :exports both :session *R* :eval no-export
+export.design(btmz_erad, 
+              filename = "btmz-exec-order",
+              type = "csv",
+              replace = TRUE
+              )
+#+end_src
+
+#+RESULTS:
+
+** Execução dos Experimentos
+Faremos a execução dos experimentos na ordem definida no projeto
+experimental. 
+
+#+begin_src shell :results output :exports code :eval no-export
+tail -n +2 btmz-exec-order.csv |
+while IFS=, read -r name runnoinstdorder runno runnostdrp \
+	 threads processes class Blocks
+do
+    # OpenMP threads
+    runline="OMP_NUM_THREADS=$threads "
+    # MPI processes
+    runline+="mpirun -np $processes "
+    # Binary
+    runline+="bin/bt-mz.$class.x "
+    # Log
+    runline+="> btmz-$runno-$threads-$processes-$class.log"
+ 
+    echo "Running >> $runline <<"
+    eval "$runline < /dev/null"
+    echo "Done!"
+done 
+#+end_src
+
+** Execução Não-Interativa de Experimentos com /Slurm/ na plataforma =PCAD=
+
+Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
+experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
+/script/ para execução não-interativa da aplicação ~BT-MZ~ do pacote
+NPB. Para efeitos de simplificação, foi gerado previamente um projeto
+experimental (arquivo ~btmz-exec-order.csv~) considerando informações
+sobre os recursos de processamento da plataforma obtidas com o
+~hwloc~. Este projeto pode ser regerado com o código apresentado na
+seção [[sec:projexperimental]].
+
+#+begin_src shell :results output :exports both :tangle slurm-script.sh :eval no-export
+
+#!/bin/bash
+
+#SBATCH --nodes=2
+#SBATCH --time=02:00:00
+#SBATCH --partition=hype
+#SBATCH --job-name=erad-2019-tutorial
+
+# Working on scratch
+cd $SCRATCH
+mkdir erad-tuto
+cd erad-tuto
+
+# Spack and hwloc
+git clone https://github.com/spack/spack.git
+cd spack
+./bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
+cd ..
+
+# Application
+wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
+tar -xf NPB3.4-MZ.tar.gz
+cd NPB3.4-MZ/NPB3.4-MZ-MPI
+cp config/NAS.samples/make.def.gcc_mpich config/make.def
+make bt-mz CLASS=A
+make bt-mz CLASS=W
+cd ../..
+
+# Experiments design (copy) 
+cp ~/btmz-exec-order.csv ./
+
+# MPI Machine file
+MACHINEFILE="nodes.$SLURM_JOB_ID"
+srun -l hostname | sort -n | awk '{print $2}' > $MACHINEFILE
+
+tail -n +2 btmz-exec-order.csv |
+while IFS=, read -r name runnoinstdorder runno runnostdrp \
+	 threads processes class Blocks
+do
+    # OpenMP threads
+    runline="OMP_NUM_THREADS=$threads "
+    # MPI processes
+    runline+="mpirun -np $processes "
+    # MPI machine file
+    runline+=" -machinefile $MACHINEFILE "
+    # Binary
+    runline+="bin/bt-mz.$class.x "
+    # Log
+    runline+="> btmz-$runno-$threads-$processes-$class.log"
+ 
+    echo "Running >> $runline <<"
+    eval "$runline < /dev/null"
+    echo "Done!"
+done 
+# Get info
+
+
+
+#+end_src
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (setq org-latex-listings t)
+# eval: (setq org-latex-packages-alist '(("" "listings")))
+# eval: (setq org-latex-packages-alist '(("" "listingsutf8")))
+# eval: (setq ispell-local-dictionary "brasileiro")
+# eval: (flyspell-mode t)
+# End:

@@ -25,6 +25,9 @@ sugeridas nesta ordem:
 3. Análise de Dados
 4. Criação de Gráficos
 
+Antes de começar, confira abaixo uma descrição do ambiente de
+realização para ter todas as ferramentas necessárias já instaladas.
+
 * Ambiente
 
 Existem duas formas de realizar o tutorial auto-guiado: utilizando um

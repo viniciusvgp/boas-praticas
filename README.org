@@ -9,6 +9,8 @@
 #+EXPORT_EXCLUDE_TAGS: noexport
 
 #+TITLE: Tutorial para a Escola Regional de Alto Desempenho
+#+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
 Este material acompanha os minicurso/tutorial
 
@@ -20,10 +22,10 @@ exercitar, em cenários estimulados, algumas partes das boas práticas
 apresentadas no minicurso e tutorial. Ele é dividido em quatro partes,
 sugeridas nesta ordem:
 
-1. Instalação de Ferramentas com Spack
-2. Realização de Experimentos Computacionais
-3. Análise de Dados
-4. Criação de Gráficos
+1. [[./1_Ferramentas.org][Instalação de Ferramentas com Spack]]
+2. [[2_Experimentos.org][Realização de Experimentos Computacionais]]
+3. [[./3_Analise.org][Análise de Dados]]
+4. [[./4_Graficos.org][Criação de Gráficos]]
 
 Confira abaixo uma descrição do ambiente de realização para ter todas
 as ferramentas necessárias já instaladas.

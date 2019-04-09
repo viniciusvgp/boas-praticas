@@ -85,6 +85,10 @@ Completar aqui com detalhes do BT em comparação com outros benchmarks
 Explicar o MZ (multi-zone)
 #+END_COMMENT
 
+#+BEGIN_COMMENT Lucas
+- [ ] Demonstrar como fazer para usar um MPI instalado com o spack
+#+END_COMMENT
+
 #+begin_src shell :results output :exports both :eval no-export
 wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
 tar -xf NPB3.4-MZ.tar.gz

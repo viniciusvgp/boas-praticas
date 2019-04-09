@@ -106,7 +106,7 @@ Uma segunda versão com as seguintes opções (=optimize= desativado):
 ./bin/spack install zlib@1.2.8+pic~shared~optimize
 #+end_src
 
-Perceba como as duas co-existem com o comando:
+Perceba como as duas coexistem com o comando:
 
 #+begin_src shell :results output :exports both :eval no-export
 ./bin/spack find -v 

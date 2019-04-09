@@ -643,7 +643,6 @@ expData %>%
 : 3 btmz        14     A     2         1       22.38   1.803
 : 4 btmz        7      A     2         1       22.04   1.831
 
-
 * Criação de Gráficos
 # ggplot2
 Além da computação de medidas estatísticas, a linguagem ~R~ também pode
@@ -698,7 +697,6 @@ expData %>%
 #+LABEL: lfig:tempofacet
 #+RESULTS: fig:tempofacet
 [[file:figtempo-facet.png]]
-
 
 * Local Variables                                                  :noexport:
 # Local Variables:

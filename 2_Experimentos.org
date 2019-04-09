@@ -77,14 +77,13 @@ serão redirecionadas para arquivos nomeados com o identificador do
 * Execução de uma aplicação paralelo exemplo
 ** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
-NPB[fn::https://www.nas.nasa.gov/publications/npb.html] (/NAS Parallel
-Benchmarks/). A aplicação ~BT~ (/Block Tri-diagonal/) 
+do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais informações aqui]]), em específico
+a aplicação ~BT~ (/Block Tri-diagonal/).
 
 #+BEGIN_COMMENT Vinícius
 Completar aqui com detalhes do BT em comparação com outros benchmarks
 Explicar o MZ (multi-zone)
 #+END_COMMENT
-
 
 #+begin_src shell :results output :exports both :eval no-export
 wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz

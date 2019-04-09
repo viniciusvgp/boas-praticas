@@ -78,7 +78,8 @@ serão redirecionadas para arquivos nomeados com o identificador do
 ** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
 do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais informações aqui]]), em específico
-a aplicação ~BT~ (/Block Tri-diagonal/).
+a aplicação ~BT~ (/Block Tri-diagonal/) com duas entradas possíveis (as
+classes A e W).
 
 #+BEGIN_COMMENT Vinícius
 Completar aqui com detalhes do BT em comparação com outros benchmarks

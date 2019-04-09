@@ -135,6 +135,28 @@ do compilador =gcc= na sua versão 8.2.
 
 * Instalação do =MPI=
 
+A interface para troca de mensagens ~MPI~ possuí implementação em
+diversas bibliotecas. Com os comandos abaixo podemos verificar quais
+pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
+instalar. E importante lembrar que várias instalações/configurações
+podem coexistir.
+
+#+begin_src shell :results output :exports both :eval no-export
+./bin/spack providers mpi
+#+end_src
+
+#+RESULTS:
+#+begin_example
+mpi:
+intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
+charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
+#+end_example
+
+#+begin_src shell :results output :exports both
+./bin/spack install -v mpich
+./bin/spack install -v openmpi
+#+end_src
+
 - [ ] Todo (Vinicius)
 
 * Local Variables                                                  :noexport:

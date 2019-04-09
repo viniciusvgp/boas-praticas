@@ -1,8 +1,19 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
 #+STARTUP: overview indent
-#+TITLE: Tutorial Escola Regional de Alto Desempenho
+#+LANGUAGE: pt_BR
+#+OPTIONS:   toc:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+TITLE: Tutorial para a Escola Regional de Alto Desempenho
 
 Este material acompanha o minicurso *Boas Práticas para Experimentos
-Computacionais em Clusters*, preparado na forma de um tutorial
+Computacionais em Clusters* da ERAD/RS 2019 (Três de Maio - RS) e para
+o Tutorial *Projeto Experimental para Prática com Alto Desempenho* da
+ERAD/SP 2019 (Campinas - SP), preparado na forma de um tutorial
 auto-guiado para exercitar em cenários estimulados algumas partes das
 boas práticas apresentadas no minicurso. Ele é dividido em quatro
 partes, sugeridas nesta ordem:

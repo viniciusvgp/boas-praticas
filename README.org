@@ -40,16 +40,16 @@ apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
 apt -y install libboost-dev 
 
 # Pré-requisitos para Spack
-RUN apt -y install git python curl autoconf file
+apt -y install git python curl autoconf file
 
 # Pré-requisitos para DoE.base
-RUN apt -y install libgmp-dev
+apt -y install libgmp-dev
 
 # Pré-requisitos para aplicações MPI
-RUN apt -y install libopenmpi-dev
+apt -y install libopenmpi-dev
 
 # Pacotes R que serão utilizados
-RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
 #+end_src
 
 ** Construção do container docker (opcional)

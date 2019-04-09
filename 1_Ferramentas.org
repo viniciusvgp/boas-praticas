@@ -130,7 +130,7 @@ fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
 do compilador =gcc= na sua versão 8.2.
 
 #+begin_src shell :results output :exports both :eval no-export
-./spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+./bin/spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
 #+end_src
 
 * Local Variables                                                  :noexport:

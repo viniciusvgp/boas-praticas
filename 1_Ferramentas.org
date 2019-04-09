@@ -133,6 +133,10 @@ do compilador =gcc= na sua versão 8.2.
 ./bin/spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
 #+end_src
 
+* Instalação do =MPI=
+
+- [ ] Todo (Vinicius)
+
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (ox-extras-activate '(ignore-headlines))

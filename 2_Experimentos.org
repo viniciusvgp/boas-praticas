@@ -259,36 +259,57 @@ apresentado na seção acima.
 #SBATCH --job-name=erad-2019-tutorial
 
 # Working on scratch
-cd $SCRATCH
-mkdir erad-tuto
-cd erad-tuto
+srun -l cd $SCRATCH
+srun -l rm -rf erad-tuto
+srun -l mkdir erad-tuto
+srun -l cd erad-tuto
+srun -l cp ~/disable_hyperthreading.sh ./
+srun -l cp ~/threading.sh ./
+srun -l cp ~/disable_turboboost.sh ./
+srun -l cp ~/detect_acpidriver.sh ./
+srun -l cp ~/get_info.sh ./
+srun -l cp ~/slurm-script.sh ./ 
+srun -l chmod +x *sh
 
 # Spack and hwloc
-git clone https://github.com/spack/spack.git
-cd spack
-./bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
-cd ..
+srun -l git clone https://github.com/spack/spack.git
+srun -l cd spack
+srun -l ./bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
+srun -l cd ..
 
 # Application
-wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
-tar -xf NPB3.4-MZ.tar.gz
-cd NPB3.4-MZ/NPB3.4-MZ-MPI
-cp config/NAS.samples/make.def.gcc_mpich config/make.def
-make bt-mz CLASS=A
-make bt-mz CLASS=W
-cd ../..
+srun -l wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
+srun -l tar -xf NPB3.4-MZ.tar.gz
+srun -l cd NPB3.4-MZ/NPB3.4-MZ-MPI
+srun -l cp config/NAS.samples/make.def.gcc_mpich config/make.def
+srun -l make bt-mz CLASS=A
+srun -l make bt-mz CLASS=D
+srun -l cd ../..
 
 # Experiments design (copy) 
-cp ~/btmz-exec-order.csv ./
+srun -l cp ~/btmz-exec-order.csv ./
 
-# MPI Machine file
+# 1. Controle inicial dos nós computacionais (HW e SW)
+
+#  MPI Machine file
 MACHINEFILE="nodes.$SLURM_JOB_ID"
 srun -l hostname | sort -n | awk '{print $2}' > $MACHINEFILE
 
+#  Disable Turboboost/Hyperthreading
+srun -l ./disable_turboboost.sh
+srun -l ./disable_hyperthreading.sh
+
+# 2. Registro das condições iniciais
+srun -l ./get_info.sh GetInfoInicio.org
+
+# 3. Ler o projeto experimental, e para cada experimento
 tail -n +2 btmz-exec-order.csv |
 while IFS=, read -r name runnoinstdorder runno runnostdrp \
 	 threads processes class Blocks
 do
+    
+    # 3.1 Aplicar os parâmetros (fatores e valores) específicos
+ 
     # OpenMP threads
     runline="OMP_NUM_THREADS=$threads "
     # MPI processes
@@ -299,12 +320,33 @@ do
     runline+="NPB3.4-MZ/NPB3.4-MZ-MPI/bin/bt-mz.$class.x "
     # Log
     runline+="> btmz-$runno-$threads-$processes-$class.log"
- 
+
+    # 3.2 Registro das condições iniciais do experimento
+    ./get_info.sh GetInfo-btmz-$runno-$threads-$processes-$class.org
+
+    # 3.3 Executar o experimento
     echo "Running >> $runline <<"
     eval "$runline < /dev/null"
     echo "Done!"
+
+    # 3.4 Coletar os dados do experimento em um diretório
+    mkdir -p exp-log-btmz-$runno-$threads-$processes-$class/
+    mv GetInfo-*.org exp-log-btmz-$runno-$threads-$processes-$class/
+    mv btmz-$runno-$threads-$processes-$class.log exp-log-btmz-$runno-$threads-$processes-$class/
+
 done 
-# Get info
+
+# 4. Centralizar os dados em um único diretório
+mkdir -p exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`
+mv exp-log-btmz* exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+
+# 5. Arquivar este script e logs junto com os dados
+cp btmz-exec-order.csv exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+cp *sh  exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+
+# Copy scratch 
+cp -r $SCRATCH ~/$SCRATCH-$HOSTNAME
+
 #+end_src
 
 * Controle e Registro
@@ -374,6 +416,25 @@ for PU in `hwloc-ls --only PU | cat -n | grep -e "[[:space:]]*[0-9]*[02468][[:sp
 done
 echo "The number of PUs now is $(hwloc-ls  --only PU | wc -l)."
 
+#+end_src
+
+#+begin_src shell :results output :exports code :eval no-export :tangle hyperthreading.sh
+#!/bin/bash
+CPUFILE=/proc/cpuinfo
+test -f $CPUFILE || exit 1
+NUMPHYCPU=`grep "physical id" $CPUFILE | sort -u | wc -l`
+NUMLOGCORE=`grep "processor" $CPUFILE | wc -l`
+NUMPHYCORE=`grep "core id" $CPUFILE | sort -u | wc -l`
+TOTALNUMPHYCORE=$(echo "$NUMPHYCPU * $NUMPHYCORE" | bc)
+MODEL=`grep "model name" $CPUFILE | sort -u | cut -d : -f 2- | sed "s/^[[:space:]]*//"`
+echo "This system has $NUMPHYCPU CPUs, of model \"$MODEL\"."
+echo "Each physical CPU is equipped with $NUMPHYCORE physical cores (total is $TOTALNUMPHYCORE)."
+if [ $TOTALNUMPHYCORE -ne $NUMLOGCORE ]; then
+   echo "Hyperthreading is ON. So, there are $NUMLOGCORE logical cores."
+else
+   echo "Hyperthreading is OFF."
+fi
+exit
 #+end_src
 
 

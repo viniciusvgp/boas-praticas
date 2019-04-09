@@ -40,8 +40,8 @@ expData %>%
 [[file:figtempo.png]]
 
 
-Gráficos como o da Figura [[lfig:tempo]] que apresentam valores com grande
-variação tendem a ocultar informações. No caso da aplicação ~BT-MZ~, o
+Gráficos como o da Figura [[lfig:tempo]], que apresentam valores com grande
+variação, tendem a ocultar informações. No caso da aplicação ~BT-MZ~, o
 tempo de execução maior da classe A esconde detalhes das execuções da
 classe W devido a escala necessária para exibir os valores da
 primeira. O pacote ~ggplot~ permite contornar este tipo de problema por

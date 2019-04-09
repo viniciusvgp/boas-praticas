@@ -16,9 +16,9 @@ Este material acompanha os minicurso/tutorial
 - *Projeto Experimental para Prática com Alto Desempenho* da ERAD/SP 2019 (Campinas - SP)
 
 O material foi preparado na forma de um tutorial auto-guiado para
-exercitar em cenários estimulados algumas partes das boas práticas
-apresentadas no minicurso. Ele é dividido em quatro partes, sugeridas
-nesta ordem:
+exercitar, em cenários estimulados, algumas partes das boas práticas
+apresentadas no minicurso e tutorial. Ele é dividido em quatro partes,
+sugeridas nesta ordem:
 
 1. Instalação de Ferramentas com Spack
 2. Realização de Experimentos Computacionais

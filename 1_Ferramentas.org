@@ -25,8 +25,7 @@ Utilizaremos o gerenciador de pacotes ~Spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
 de superusuário. Nesta seção, ilustraremos o funcionamento da
 ferramenta com apenas um pacote, um tutorial mais detalhado (em
-inglês) pode ser encontrado em:
-https://spack.readthedocs.io/en/latest/tutorial.html.
+inglês) pode ser encontrado [[https://spack.readthedocs.io/en/latest/tutorial.html][neste link]].
 
 Primeiramente, precisamos baixar o ~Spack~ a partir do repositório ~git~
 oficial conforme instruções abaixo:

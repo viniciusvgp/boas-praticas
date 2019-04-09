@@ -152,7 +152,7 @@ intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.
 charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
 #+end_example
 
-#+begin_src shell :results output :exports both
+#+begin_src shell :results output :exports both :eval no-export 
 ./bin/spack install -v mpich
 ./bin/spack install -v openmpi
 #+end_src

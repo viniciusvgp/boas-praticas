@@ -48,7 +48,7 @@ externas, preferência ao proprietário/financiador da plataforma,
 preferência a equipe de manutenção/suporte, etc. 
 
 Um ~job~ termina após uma das seguintes condições (a que occorer
-primeiro): a execução da útlima linha do /script/ fornecido ou após o
+primeiro): a execução da última linha do /script/ fornecido ou após o
 término do tempo de processamento solicitado na reserva. Além destes
 dois casos bases, o /job/ também pode ser encerrado por pedido do
 usuário através do comando ~scancel~ ou por situações inesperadas como

@@ -76,6 +76,7 @@ serão redirecionadas para arquivos nomeados com o identificador do
 
 * Execução de uma aplicação paralelo exemplo
 ** Obtenção e Configuração da Aplicação
+
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
 do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais informações aqui]]), em específico
 a aplicação ~BT~ (/Block Tri-diagonal/) com as classes A e W.  As classes
@@ -200,7 +201,8 @@ cat btmz-exec-order.csv
 "16","5",16,"5.2","1","1","A",".2"
 #+end_example
 
-** Execução dos Experimentos
+** Execução dos Experimentos (manualmente)
+
 Faremos a execução dos experimentos na ordem definida no projeto
 experimental. 
 
@@ -232,13 +234,11 @@ experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
 NPB. Para efeitos de simplificação, foi gerado previamente um projeto
 experimental (arquivo ~btmz-exec-order.csv~) considerando informações
 sobre os recursos de processamento da plataforma obtidas com o
-~hwloc~. Este projeto pode ser regerado com o código apresentado na
-seção [[sec:projexperimental]].
+~hwloc~. Este projeto (arquivo CSV) pode ser regerado com o código
+apresentado na seção acima.
 
 #+begin_src shell :results output :exports both :tangle slurm-script.sh :eval no-export
-
 #!/bin/bash
-
 #SBATCH --nodes=2
 #SBATCH --time=02:00:00
 #SBATCH --partition=hype
@@ -291,9 +291,6 @@ do
     echo "Done!"
 done 
 # Get info
-
-
-
 #+end_src
 
 * Local Variables                                                  :noexport:

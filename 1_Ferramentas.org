@@ -34,7 +34,7 @@ oficial conforme instruções abaixo:
 git clone https://github.com/spack/spack.git
 #+end_src
 
-Com o ~Spack~ podemos instalar diversas ferramentas incluindo
+Com o ~Spack~ podemos instalar diversas ferramentas, incluindo
 compiladores. A lista de pacotes disponíveis pode ser obtida com o
 comando ~spack list~. Por motivos de espaço, ilustramos abaixo como
 listar os pacotes cujo nome inicia com =h=.

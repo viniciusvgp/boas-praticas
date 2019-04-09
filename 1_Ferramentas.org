@@ -41,7 +41,7 @@ listar os pacotes cujo nome inicia com =h=.
 
 #+begin_src shell :results output :exports both :session S1 :eval no-export
 cd spack
- ./bin/spack list h*
+./bin/spack list h*
 #+end_src
 
 #+RESULTS:

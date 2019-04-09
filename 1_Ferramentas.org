@@ -157,7 +157,17 @@ charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.
 ./bin/spack install -v openmpi
 #+end_src
 
-- [ ] Todo (Vinicius)
+Qualquer distribuição instalada pode ser associada a pacotes que
+dependem do ~MPI~. Vejamos abaixo como instalar o pacote ~libboost~
+utilizando as distribuições ~mpich~ e ~openmpi~.
+
+#+begin_src shell :results output :exports both :eval no-export 
+./bin/spack install -v boost+mpi^mpich
+./bin/spack install -v boost+mpi^openmpi
+#+end_src
+
+
+- [x] Todo (Vinicius)
 
 * Local Variables                                                  :noexport:
 # Local Variables:

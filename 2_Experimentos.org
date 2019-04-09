@@ -296,7 +296,7 @@ do
     # MPI machine file
     runline+=" -machinefile $MACHINEFILE "
     # Binary
-    runline+="bin/bt-mz.$class.x "
+    runline+="NPB3.4-MZ/NPB3.4-MZ-MPI/bin/bt-mz.$class.x "
     # Log
     runline+="> btmz-$runno-$threads-$processes-$class.log"
  

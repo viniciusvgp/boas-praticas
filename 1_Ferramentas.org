@@ -136,7 +136,7 @@ do compilador =gcc= na sua versão 8.2.
 * Instalação do =MPI=
 
 A interface para troca de mensagens ~MPI~ possuí implementação em
-diversas bibliotecas. Com os comandos abaixo podemos verificar quais
+diversas distribuições. Com os comandos abaixo podemos verificar quais
 pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
 instalar. E importante lembrar que várias instalações/configurações
 podem coexistir.

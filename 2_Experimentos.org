@@ -14,13 +14,15 @@
 
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
-* Slurm
-Neste tutorial usaremos o gerenciador de filas =Slurm=
-[fn::https://slurm.schedmd.com]. O ~Slurm~ é uma ferramente /open-source/
-que permite a execução de /jobs/ interativos ou não-interativos. 
 
-O comando ~salloc~ abaixo exemplifica como poder ser realizada
-solicitação de um /job/ interativo nomeado =MeuJobErad= na plataforma de
+* Slurm
+
+Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O
+~Slurm~ é uma ferramente /open-source/ que permite a execução de /jobs/
+interativos ou não-interativos.
+
+O comando ~salloc~ abaixo exemplifica como pode ser realizada
+solicitação de um /job/ interativo nomeado =MeuJobErad= na partição de
 nome ~hype~, pelo período de 1 hora e 30 minutos.
 
 #+begin_src shell :results output :exports both

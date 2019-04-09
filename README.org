@@ -36,6 +36,8 @@ docker run -it schnorr/erad19
 Instale as ferramentas abaixo:
 
 #+begin_src shell :results output
+apt -y install r-base r-base-core
+
 apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
 apt -y install libboost-dev 
 

@@ -78,8 +78,9 @@ serão redirecionadas para arquivos nomeados com o identificador do
 ** Obtenção e Configuração da Aplicação
 Utilizaremos como exemplo a aplicação ~BT-MZ~ do conjunto de /benchmarks/
 do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais informações aqui]]), em específico
-a aplicação ~BT~ (/Block Tri-diagonal/) com duas entradas possíveis (as
-classes A e W).
+a aplicação ~BT~ (/Block Tri-diagonal/) com as classes A e W.  As classes
+nos /benchmarks/ NAS representam diferentes tamanhos de entrada do
+problema.
 
 #+BEGIN_COMMENT Vinícius
 Completar aqui com detalhes do BT em comparação com outros benchmarks
@@ -102,13 +103,12 @@ make bt-mz CLASS=W
 #+RESULTS:
 
 ** Projeto Experimental
-<<sec:projexperimental>>
+
 Após a instalação e configuração da aplicação, vamos utilizar o pacote
-~DoE.base~ [fn::https://cran.r-project.org/web/packages/DoE.base/] da
-linguagem ~R~ para gerar um projeto experimental combinando os fatores a
-serem analisados. Neste exemplo, os fatores serão o número de /threads/,
-o número de processos (/processes/) e a classe (/class/). As classes nos
-/benchmarks/ NAS representam diferentes tamanhos de entrada do problema.
+~DoE.base~ ([[https://cran.r-project.org/web/packages/DoE.base/][descrição mais detalhada]]) da linguagem ~R~ para gerar um
+projeto experimental completo combinando os fatores a serem
+analisados. Neste exemplo, os fatores serão o número de /threads/, o
+número de processos (/processes/) e a classe do problema (/class/).
 
 #+begin_src R :results output :exports both :session *R* :eval no-export
 library("DoE.base")

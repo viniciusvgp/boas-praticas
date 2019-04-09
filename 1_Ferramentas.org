@@ -93,6 +93,33 @@ instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
 pois são dependências necessárias para a compilação e/ou funcionamento
 do ~hwloc~.
 
+* Instalação de duas variantes de =zlib=
+
+Uma primeira versão com as seguintes opções:
+
+#+begin_src shell :results output :exports both :eval no-export
+./bin/spack install zlib@1.2.8+pic~shared+optimize
+#+end_src
+
+Uma segunda versão com as seguintes opções (=optimize= desativado):
+
+#+begin_src shell :results output :exports both :eval no-export
+./bin/spack install zlib@1.2.8+pic~shared~optimize
+#+end_src
+
+Perceba como as duas co-existem com o comando:
+
+#+begin_src shell :results output :exports both :eval no-export
+./bin/spack find -v 
+#+end_src
+
+Como usar uma ou outra:
+
+#+begin_src shell :results output :exports both :eval no-export
+./bin/spack location -i zlib+optimize
+./bin/spack location -i zlib~optimize
+#+end_src
+
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (ox-extras-activate '(ignore-headlines))

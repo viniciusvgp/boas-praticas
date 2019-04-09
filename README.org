@@ -1,4 +1,13 @@
 #+STARTUP: overview indent
 #+TITLE: Tutorial Escola Regional de Alto Desempenho
 
-* Apresentação
+Este material acompanha o minicurso *Boas Práticas para Experimentos
+Computacionais em Clusters*, preparado na forma de um tutorial
+auto-guiado para exercitar na prática algumas partes das boas práticas
+apresentadas no minicurso. Ele é dividido em quatro partes, que
+preferencialmente devem seguir na seguinte ordem:
+
+1. Instalação de Ferramentas
+2. Realização de Experimentos Computacionais
+3. Análise de Dados
+4. Criação de Gráficos

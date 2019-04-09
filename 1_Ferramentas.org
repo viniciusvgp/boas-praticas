@@ -19,7 +19,8 @@ Dependências:
 - openmpi
 #+END_COMMENT
 
-# Spack
+* Introdução & Instalação
+
 Utilizaremos o gerenciador de pacotes ~Spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
 de superusuário. Nesta seção, ilustraremos o funcionamento da
@@ -54,6 +55,8 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
+* Instalação de =hwloc=
+
 Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter
 a topologia do ~hardware~ da plataforma e pode ser útil na identificação
 dos /cores/ físicos e lógicos, dos nós NUMA, dos dispositivos PCI
@@ -68,6 +71,7 @@ e desabilitando as opções ~gl~ e ~cuda~.
 
 Após a conclusão da instalação, podemos verificar os pacotes
 instalados:
+
 #+begin_src shell :results output :exports both :eval no-export
 ./bin/spack find
 #+end_src

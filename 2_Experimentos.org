@@ -34,18 +34,19 @@ caso a plataforma esteja ociosa), o usuário estará apto a acessar a
 máquina requisitada via ~ssh~ ou a executar diretamente sua aplicação
 por meio do comando ~srun~.
 
-Para /jobs/ não-interativos deve-se utilizar o comando ~sbatch~. Neste
-caso, o usuário fornecerá um /script/ contendo todos os passos para
-realizar o experimento na plataforma desejada. /Jobs/ não-interativos
-são bastante úteis quando a plataforma é compartilhada entre muitos
-usuários estando frequentemente ocupada e com uma significativa fila
-de espera. Neste cenário, o /job/ do usuário poderá executar a qualquer
-momento após a submissão, podendo ser iniciado em alguns segundos ou
-até mesmo após vários dias da submissão. A política de filas não
-necessariamente é /FIFO (First-In First-Out)/ pois alguns usuários
-podem ter preferência sobre outros, por exemplo, contas internas /vs/
-externas, preferência ao proprietário/financiador da plataforma,
-preferência a equipe de manutenção/suporte, etc. 
+Para /jobs/ não-interativos (recomendados, pela automatização possível)
+deve-se utilizar o comando ~sbatch~. Neste caso, o usuário fornecerá um
+/script/ contendo todos os passos para realizar o experimento na
+plataforma desejada. /Jobs/ não-interativos são bastante úteis quando a
+plataforma é compartilhada entre muitos usuários estando
+frequentemente ocupada e com uma significativa fila de espera. Neste
+cenário, o /job/ do usuário poderá executar a qualquer momento após a
+submissão, podendo ser iniciado em alguns segundos ou até mesmo após
+vários dias da submissão. A política de filas não necessariamente é
+/FIFO (First-In First-Out)/ pois alguns usuários podem ter preferência
+sobre outros, por exemplo, contas internas /vs/ externas, preferência ao
+proprietário/financiador da plataforma, preferência a equipe de
+manutenção/suporte, etc.
 
 Um ~job~ termina após uma das seguintes condições (a que occorer
 primeiro): a execução da última linha do /script/ fornecido ou após o

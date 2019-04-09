@@ -190,7 +190,7 @@ experimentos.
 
 Como demonstração, faremos algumas computações estatísticas básicas
 sobre os dados importados utilizando o pacote ~dplyr~ fornecido pelo
-meta-pacote ~tidy-verse~.  As execuções serão agrupadas por Classe,
+meta-pacote ~tidyverse~.  As execuções serão agrupadas por Classe,
 número de processos e número de /threads/, possibilitando que sejam
 calculadas a média, a mediana, o valor mínimo e o valor máximo das
 observações do tempo de execução da aplicação.

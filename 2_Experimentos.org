@@ -15,7 +15,7 @@
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
 
-* Slurm
+* Introdução ao Slurm
 
 Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O
 ~Slurm~ é uma ferramente /open-source/ que permite a execução de /jobs/

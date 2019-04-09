@@ -119,6 +119,20 @@ Como usar uma ou outra:
 ./bin/spack location -i zlib~optimize
 #+end_src
 
+* Instalação de =libboost=
+
+Pode-se especificar uma instalação com detalhamento de dependências.
+
+O comando =spack spec= permite ver qual será a materialização da
+instalação antes dela ser efetivamente instalada. Abaixo pretende-se
+instalar =libboost= com a variante =mpi=, especificando que MPI deve ser
+fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
+do compilador =gcc= na sua versão 8.2.
+
+#+begin_src shell :results output :exports both :eval no-export
+./spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+#+end_src
+
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (ox-extras-activate '(ignore-headlines))

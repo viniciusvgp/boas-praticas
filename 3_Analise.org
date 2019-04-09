@@ -107,7 +107,6 @@ execução.
 #+begin_src shell :results output :exports code :eval no-export
 for file in `find *.log`
 do
-    # sed -n '/seconds/p' $file | sed 's/.*=//' | sed -e 's/\s\+//g' > $file-time
     sed -n '/seconds/p' $file | sed 's/.*=//' > $file-time
 done
 #+end_src

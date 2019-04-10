@@ -300,7 +300,7 @@ srun -l ./disable_turboboost.sh
 srun -l ./disable_hyperthreading.sh
 
 # 2. Registro das condições iniciais
-srun -l ./get_info.sh GetInfoInicio.org
+srun -l ./get_info.sh GetInfoInicio-$HOSTNAME.org
 
 # 3. Ler o projeto experimental, e para cada experimento
 tail -n +2 btmz-exec-order.csv |

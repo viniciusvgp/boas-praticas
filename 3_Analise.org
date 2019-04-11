@@ -105,9 +105,9 @@ tempo de execução. Dessa forma, faremos uma limpeza nos arquivos de
 execução.
 
 #+begin_src shell :results output :exports code :eval no-export
-for file in `find *.log`
+for file in `find . -name btmz*log`
 do
-    sed -n '/seconds/p' $file | sed 's/.*=//' > $file-time
+    sed -n '/seconds/p' $file | sed 's/.*=//' > `basename $file`-time
 done
 #+end_src
 

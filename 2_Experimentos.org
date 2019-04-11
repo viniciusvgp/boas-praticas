@@ -258,7 +258,7 @@ apresentado na seção acima.
 #SBATCH --partition=hype
 #SBATCH --job-name=erad-2019-tutorial
 
-export SCRATCH="/scratch/vgpinto"
+export SCRATCH="/scratch/$USER"
 # Working on scratch
 #srun -l cd $SCRATCH
 srun -l rm -rf $SCRATCH/erad-tuto

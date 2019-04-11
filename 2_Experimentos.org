@@ -293,7 +293,7 @@ srun -l cp ~/btmz-exec-order.csv ./
 
 #  MPI Machine file
 MACHINEFILE="nodes.$SLURM_JOB_ID"
-srun -l hostname | sort -n | awk '{print $2}' > $MACHINEFILE
+srun $SRUN_PACK /bin/hostname | sort -n | awk "{print $2}" | sed -e 's/$/ slots=1 max_slots=1/' > $MACHINEFILE
 
 #  Disable Turboboost/Hyperthreading
 srun -l ./disable_turboboost.sh

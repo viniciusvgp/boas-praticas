@@ -27,7 +27,7 @@ sugeridas nesta ordem:
 3. [[./3_Analise.org][Análise de Dados]]
 4. [[./4_Graficos.org][Criação de Gráficos]]
 
-Dados realizar os passos 3 e 4 [[https://filesender.rnp.br/?vid=78b8eb2d-40ae-76e8-2a33-0000795800ce][já podem ser coletados]].
+Dados realizar os passos 3 e 4 [[https://filesender.rnp.br/?vid=78b8eb2d-40ae-76e8-2a33-0000795800ce][já foram coletados]].
 
 Confira abaixo uma descrição do ambiente de realização para ter todas
 as ferramentas necessárias já instaladas.

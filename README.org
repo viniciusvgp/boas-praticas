@@ -23,7 +23,7 @@ apresentadas no minicurso e tutorial. Ele é dividido em quatro partes,
 sugeridas nesta ordem:
 
 1. [[./1_Ferramentas.org][Instalação de Ferramentas com Spack]]
-2. [[2_Experimentos.org][Realização de Experimentos Computacionais]]
+2. [[./2_Experimentos.org][Realização de Experimentos Computacionais]]
 3. [[./3_Analise.org][Análise de Dados]]
 4. [[./4_Graficos.org][Criação de Gráficos]]
 

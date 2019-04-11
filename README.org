@@ -27,7 +27,7 @@ sugeridas nesta ordem:
 3. [[./3_Analise.org][Análise de Dados]]
 4. [[./4_Graficos.org][Criação de Gráficos]]
 
-Dados realizar os passos 3 e 4 [[www.inf.ufrgs.br/~vgpinto/erad-tuto.tar][já foram coletados]].
+Dados realizar os passos 3 e 4 [[http://www.inf.ufrgs.br/~vgpinto/erad-tuto.tar][já foram coletados]].
 
 Confira abaixo uma descrição do ambiente de realização para ter todas
 as ferramentas necessárias já instaladas.

@@ -258,13 +258,15 @@ apresentado na seção acima.
 #SBATCH --partition=hype
 #SBATCH --job-name=erad-2019-tutorial
 
+export SCRATCH="/scratch/vgpinto"
 # Working on scratch
-srun -l cd $SCRATCH
-srun -l rm -rf erad-tuto
-srun -l mkdir erad-tuto
-srun -l cd erad-tuto
+#srun -l cd $SCRATCH
+srun -l rm -rf $SCRATCH/erad-tuto
+srun -l mkdir -p $SCRATCH/erad-tuto
+#srun -l cd erad-tuto
+cd $SCRATCH/erad-tuto
 srun -l cp ~/disable_hyperthreading.sh ./
-srun -l cp ~/threading.sh ./
+srun -l cp ~/hyperthreading.sh ./
 srun -l cp ~/disable_turboboost.sh ./
 srun -l cp ~/detect_acpidriver.sh ./
 srun -l cp ~/get_info.sh ./
@@ -273,18 +275,16 @@ srun -l chmod +x *sh
 
 # Spack and hwloc
 srun -l git clone https://github.com/spack/spack.git
-srun -l cd spack
-srun -l ./bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
-srun -l cd ..
+srun -l ./spack/bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
 
 # Application
 srun -l wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
 srun -l tar -xf NPB3.4-MZ.tar.gz
-srun -l cd NPB3.4-MZ/NPB3.4-MZ-MPI
+cd NPB3.4-MZ/NPB3.4-MZ-MPI
 srun -l cp config/NAS.samples/make.def.gcc_mpich config/make.def
 srun -l make bt-mz CLASS=A
 srun -l make bt-mz CLASS=B
-srun -l cd ../..
+cd ../..
 
 # Experiments design (copy) 
 srun -l cp ~/btmz-exec-order.csv ./

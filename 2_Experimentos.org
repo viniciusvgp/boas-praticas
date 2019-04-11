@@ -283,7 +283,7 @@ srun -l tar -xf NPB3.4-MZ.tar.gz
 srun -l cd NPB3.4-MZ/NPB3.4-MZ-MPI
 srun -l cp config/NAS.samples/make.def.gcc_mpich config/make.def
 srun -l make bt-mz CLASS=A
-srun -l make bt-mz CLASS=D
+srun -l make bt-mz CLASS=B
 srun -l cd ../..
 
 # Experiments design (copy) 

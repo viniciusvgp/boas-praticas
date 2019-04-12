@@ -19,9 +19,17 @@ Dependências:
 - openmpi
 #+END_COMMENT
 
+* Instalação do =spack=                                              :noexport:
+
+#+begin_src shell :results output
+git clone https://github.com/spack/spack.git
+source spack/share/spack/setup-env.sh 
+spack --help
+#+end_src
+
 * Introdução & Instalação
 
-Utilizaremos o gerenciador de pacotes ~Spack~ para obter, configurar,
+Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
 de superusuário. Nesta seção, ilustraremos o funcionamento da
 ferramenta com apenas um pacote, um tutorial mais detalhado (em

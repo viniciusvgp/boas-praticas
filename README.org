@@ -39,3 +39,34 @@ Veja mais informações sobre [[./ambiente.org][como o ambiente =docker= foi pre
 
 - [[http://www.inf.ufrgs.br/~schnorr][Prof. Lucas (http://www.inf.ufrgs.br/~schnorr)]]
 - [[http://www.inf.ufrgs.br/~vgpinto][Prof. Vinícius (http://www.inf.ufrgs.br/~vgpinto)]]
+* Melhorias                                                        :noexport:
+
+Constatações observadas
+
+- [ ] A compilação do hwloc do spack (e mesmo dentro do slurm no PCAD)
+  levou muito muito muito tempo. Mesmo após 2hs, a compilação não
+  terminou.
+- [ ] O container docker só complicou as coisas (e ocupou 1h para
+  baixar). Os alunos não sabiam se deveriam fazer no container ou na
+  plataforma.
+- [ ] As alocações no cluster foram problemáticas, alunos ficarão
+  esperando por um tempão até os nós serem liberados. 
+- [ ] Alguns alunos com pouca experiência em Linux não sabiam
+  requisitos mínimos.
+
+Modificações sugeridas
+
+- [ ] Trocar o NAS por uma aplicação bem simples (multiplicação de
+  matriz) cuja execução nos nós seja bastante rápido, utilizando
+  somente processos (sem threads).
+- [ ] Simplificar o spack usando algo mais simples de compilar (zlib,
+  com duas parametrizações).
+- [ ] Adicionar a instalação "prévia" de duas versões de OpenMPI
+  (versão 3. e 2, por exemplo) e incluir isso no projeto experimental
+  para estudar como fator apenas 1 versão da aplicação com 1 entrada e
+  uma certa quantidade de processos (de 1 até n cores) e as duas
+  versões do MPI, fazendo somente 5 replicações.
+- [ ] No Slurm, oferecer diretamente o script sem passar pela parte
+  "manual".
+- [ ] O docker seria utilizado, opcionalmente, somente na parte da
+  análise dos dados (tutoriais 3 e 4).

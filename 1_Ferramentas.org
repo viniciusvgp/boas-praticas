@@ -35,11 +35,13 @@ de superusuário. Nesta seção, ilustraremos o funcionamento da
 ferramenta com apenas um pacote, um tutorial mais detalhado (em
 inglês) pode ser encontrado [[https://spack.readthedocs.io/en/latest/tutorial.html][neste link]].
 
-Primeiramente, precisamos baixar o ~Spack~ a partir do repositório ~git~
-oficial conforme instruções abaixo:
+Primeiramente, precisamos baixar o ~spack~ a partir do repositório ~git~
+oficial conforme instruções abaixo. Note que o comando =source= permite
+colocar o caminho para =spack= no PATH do terminal.
 
 #+begin_src shell :results output :exports code :session S1 :eval no-export
 git clone https://github.com/spack/spack.git
+source spack/share/spack/setup-env.sh
 #+end_src
 
 Com o ~Spack~ podemos instalar diversas ferramentas, incluindo
@@ -62,7 +64,7 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* Instalação de =hwloc=
+* Instalação de =hwloc=                                              :noexport:
 
 Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter
 a topologia do ~hardware~ da plataforma e pode ser útil na identificação
@@ -127,7 +129,7 @@ Como usar uma ou outra:
 ./bin/spack location -i zlib~optimize
 #+end_src
 
-* Instalação de =libboost=
+* Instalação de =libboost=                                           :noexport:
 
 Pode-se especificar uma instalação com detalhamento de dependências.
 
@@ -164,6 +166,8 @@ charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.
 ./bin/spack install -v mpich
 ./bin/spack install -v openmpi
 #+end_src
+
+* Dependências explícitas
 
 Qualquer distribuição instalada pode ser associada a pacotes que
 dependem do ~MPI~. Vejamos abaixo como instalar o pacote ~libboost~

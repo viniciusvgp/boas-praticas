@@ -26,7 +26,7 @@ solicitação de um /job/ interativo nomeado =MeuJobErad= na partição de
 nome ~hype~, pelo período de 1 hora e 30 minutos.
 
 #+begin_src shell :results output :exports both
-salloc -p hype -J MeuJobErad -t 01:30:00
+salloc -p hype -J MeuJobErad -t 00:10:00
 #+end_src
 
 Quando a solicitação for atendida (o que pode ocorrer imediatamente
@@ -66,7 +66,7 @@ serão redirecionadas para arquivos nomeados com o identificador do
 #!/bin/bash
 #SBATCH --nodes=2
 #SBATCH --partition=hype
-#SBATCH --time=00:40:00
+#SBATCH --time=00:20:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 

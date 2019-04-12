@@ -1,0 +1,91 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+#+STARTUP: overview indent
+#+LANGUAGE: pt_BR
+#+OPTIONS:   toc:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+TITLE:     Ambiente Docker para o Tutorial
+#+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
+
+Existem duas formas de realizar o tutorial auto-guiado: utilizando um
+container docker com todo o ferramental pré-instalado (veja na
+primeira subseção abaixo), ou instalar manualmente todos os
+pré-requisitos (a seguir).
+
+** Comece aqui com seu container docker (recomendado)
+
+É sugerido um container docker para a realização do tutorial
+auto-guiado, baseado em Debian Linux, com as ferramentas necessárias
+previamente instaladas.  Para usá-lo, assumindo que tenhas =docker=
+instalado na máquina =host=, basta:
+
+#+begin_src shell :results output
+docker pull schnorr/erad19
+docker run -it schnorr/erad19
+#+end_src
+
+** Comece aqui com seu ambiente Debian Linux (usuários avançados)
+
+Instale as ferramentas abaixo:
+
+#+begin_src shell :results output
+apt -y install r-base r-base-core
+
+apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
+apt -y install libboost-dev 
+
+# Pré-requisitos para Spack
+apt -y install git python curl autoconf file
+
+# Pré-requisitos para DoE.base
+apt -y install libgmp-dev
+
+# Pré-requisitos para aplicações MPI
+apt -y install libopenmpi-dev
+
+# Pacotes R que serão utilizados
+echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+#+end_src
+
+** Construção do container docker (opcional)
+
+Para construí-lo (/docker build/), basta utilizar um Dockerfile com o
+conteúdo abaixo, também disponível no arquivo [[./Dockerfile]]. A imagem
+foi previamente construída com o seguinte comando (atribuindo a tag
+=erad19= para a imagem):
+
+#+begin_src shell :results output
+docker build -t erad19 .
+docker run -it erad19
+#+end_src
+
+#+begin_src fundamental :tangle Dockerfile
+FROM r-base:3.5.1
+
+RUN apt update && apt -y upgrade
+RUN apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
+RUN apt -y install libboost-dev 
+
+# Spack
+RUN apt -y install git python curl autoconf file
+
+# DoE.base
+RUN apt -y install libgmp-dev
+
+# MPI
+RUN apt -y install libopenmpi-dev
+
+# R packages
+RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+
+RUN useradd -s /bin/bash --create-home user
+USER user
+
+ENTRYPOINT /bin/bash
+WORKDIR /home/user
+ #+end_src

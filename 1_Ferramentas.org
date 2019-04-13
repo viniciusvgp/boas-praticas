@@ -119,7 +119,7 @@ Uma segunda versão com as seguintes opções (=optimize= desativado):
 Perceba como as duas coexistem com o comando:
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack find -v 
+./bin/spack find -v zlib
 #+end_src
 
 Como usar uma ou outra:

@@ -13,7 +13,7 @@
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
 A versão original está disponível [[https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_mm.c][no site do LLNL]], mas foi modificada
-aqui para um tamanho de problema maior. A versão modificada [[./mpi_mm.c][pode ser
+aqui para um tamanho de problema maior. A versão modificada [[https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c][pode ser
 acessada aqui]], ou copiada do código abaixo. O tamanho da entrada é
 fixo utilizando as constantes =NRA=, =NCA= e =NCB=, como pode ser observado
 no código abaixo.

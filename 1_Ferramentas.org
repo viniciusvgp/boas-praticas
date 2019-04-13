@@ -102,23 +102,6 @@ utilizado para configurar outro pacote para usar uma ou outra versão.
 
 Esta tarefa é pré-requisito para [[./2_Experimentos.org]].
 
-A interface para troca de mensagens ~MPI~ possui implementação em
-diversas distribuições. Com os comandos abaixo podemos verificar quais
-pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
-instalar. E importante lembrar que várias instalações/configurações
-podem coexistir (como vimos acima).
-
-#+begin_src shell :results output :exports both :eval no-export
-spack providers mpi
-#+end_src
-
-#+RESULTS:
-#+begin_example
-mpi:
-intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
-charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
-#+end_example
-
 Vamos fazer uso do =slurm= para instalar algumas versões de OpenMPI no
 parque. Para isso, no seu _diretório pessoal_, instale o =spack=:
 
@@ -218,6 +201,25 @@ Podemos notar que vários outros pacotes além do ~hwloc~ foram
 instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
 pois são dependências necessárias para a compilação e/ou funcionamento
 do ~hwloc~.
+
+** MPI Providers
+
+A interface para troca de mensagens ~MPI~ possui implementação em
+diversas distribuições. Com os comandos abaixo podemos verificar quais
+pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
+instalar. E importante lembrar que várias instalações/configurações
+podem coexistir (como vimos acima).
+
+#+begin_src shell :results output :exports both :eval no-export
+spack providers mpi
+#+end_src
+
+#+RESULTS:
+#+begin_example
+mpi:
+intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
+charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
+#+end_example
 
 ** Dependências explícitas                                        :noexport:
 

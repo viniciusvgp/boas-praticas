@@ -12,7 +12,8 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
-Passos iniciais:
+* #1.0 Passos iniciais
+
 1. Para logar no parque computacional da seguinte maneira
    #+begin_src shell :results output
    ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br

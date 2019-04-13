@@ -136,7 +136,7 @@ cd ~/SEUNOME
 wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
 #+end_src
 
-* #2.2 Remote: Script de execução do projeto
+* #2.2 Remota: Script de execução do projeto
 
 Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
 experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
@@ -252,6 +252,24 @@ ser baixado no parque computacional da seguinte forma:
 cd ~/SEUNOME
 wget https://gitlab.com/schnorr/erad19/raw/master/executa-projeto.slurm
 #+end_src
+
+* #2.3 Remota/Local: Compactar o diretório experimental
+
+No parque, compacte o diretório experimental:
+
+#+begin_src shell :results output
+cd ~/SEUNOME
+tar cfz exp0.tgz exp0/
+#+end_src
+
+Baixe para sua máquina local (ou container):
+
+#+begin_src shell :results output
+scp -i chave.rsa erad@gppd-hpc.inf.ufrgs.br:./SEUNOME/exp0.tgz .
+tar xfz exp0.tgz
+#+end_src
+
+Siga para o [[3_Analise.org][#3 Análise]].
 
 * Introdução ao Slurm                                              :noexport:
 

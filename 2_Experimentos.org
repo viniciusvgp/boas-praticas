@@ -285,7 +285,7 @@ cp -r $SCRATCH ~/$SCRATCH-$HOSTNAME
 
 #+RESULTS:
 
-* Introdução ao Slurm                                              :noexport:
+* Introdução ao Slurm
 
 Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O
 ~Slurm~ é uma ferramente /open-source/ que permite a execução de /jobs/
@@ -344,7 +344,7 @@ serão redirecionadas para arquivos nomeados com o identificador do
 
 #+end_src
 
-* Execução de uma aplicação paralela exemplo                       :noexport:
+* Execução de uma aplicação paralela exemplo
 ** Obtenção e Configuração da Aplicação
 
 Utilizaremos como exemplo uma aplicação da versão /Multi-Zone do

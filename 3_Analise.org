@@ -21,6 +21,49 @@ Execute os tutoriais precedentes nesta série:
 
 Ou, utilize [[./exp0.tgz][este arquivo que foi previamente coletado]].
 
+* #3.1 Parsing para extração de informações
+
+No container, vamos criar um CSV com informações das medidas.
+
+A primeira coluna será a chave, a segunda o tempo.
+
+Nome sugerido para o CSV: =resultados.csv=.
+
+#+begin_src shell :results output
+tar xfz exp0.tgz
+for file in exp0/*.log; do
+  KEY=$(basename $file .log)
+  TIME=$(cat $file | grep Execution | sed "s/.*://")
+  echo $KEY, $TIME
+done > resultados.csv
+cat resultados.csv
+#+end_src
+
+#+RESULTS:
+#+begin_example
+10-2-400, 3.931268
+11-2-300, 1.954268
+1-20-400,
+12-10-400, 1.252950
+13-2-400, 4.108260
+14-10-400, 1.111597
+15-20-400, 1.140633
+16-10-300, 0.571220
+17-2-300, 1.949823
+18-20-300, 0.791935
+2-2-400, 3.919913
+3-20-300, 0.793258
+4-10-400, 1.254441
+5-10-300, 0.496930
+6-2-300, 1.953920
+7-20-400, 1.158824
+8-20-300, 0.811984
+9-10-300, 0.646577
+#+end_example
+
+cat exp0/*.log
+
+
 * Old                                                              :noexport:
 
 # R + tidyverse

@@ -147,7 +147,7 @@ ser baixado no parque computacional da seguinte forma:
 
 #+begin_src shell :results output
 cd ~/SEUNOME
-wget 
+wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
 #+end_src
 
 

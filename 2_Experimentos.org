@@ -269,7 +269,7 @@ scp -i chave.rsa erad@gppd-hpc.inf.ufrgs.br:./SEUNOME/exp0.tgz .
 tar xfz exp0.tgz
 #+end_src
 
-Siga para o [[3_Analise.org][#3 Análise]].
+Siga para o passo [[3_Analise.org][#3 Análise]].
 
 * Introdução ao Slurm                                              :noexport:
 

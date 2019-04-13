@@ -33,8 +33,7 @@ tamanhos de problema.
 - #0 [[./0_Programa_Teste.org][Programa Teste]]
 - #1 [[./1_Ferramentas.org][Instalação de Ferramentas com Spack]]
 - #2 [[./2_Experimentos.org][Realização de Experimentos Computacionais]]
-- #3 [[./3_Analise.org][Análise de Dados]]
-- #4 [[./4_Graficos.org][Criação de Gráficos]]
+- #3 [[./3_Analise.org][Análise de Dados e Criação de gráficos]] (com supervisão)
 
 * Ambiente
 

@@ -12,6 +12,17 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
+* #3.0 Passos iniciais
+
+Execute os tutoriais precedentes nesta série:
+- [[./0_Programa_Teste.org][#0 (Programa Teste)]]
+- [[./1_Ferramentas.org][#1 (Ferramentas)]]
+- [[./1_Experimentos.org][#2 (Experimentos)]]
+
+Ou, utilize [[./exp0.tgz][este arquivo que foi previamente coletado]].
+
+* Old                                                              :noexport:
+
 # R + tidyverse
 Uma vez concluídas as execuções, inciaremos a etapa de análise dos
 dados. A aplicação ~BT-MZ~ gera como saída arquivos texto no formato do

@@ -14,6 +14,7 @@
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 #define NRA 10000                 /* number of rows in matrix A */
 #define NCA 10000                 /* number of columns in matrix A */
@@ -25,6 +26,13 @@
 double	a[NRA][NCA],           /* matrix A to be multiplied */
 	b[NCA][NCB],           /* matrix B to be multiplied */
 	c[NRA][NCB];           /* result matrix C */
+
+double gettime (void)
+{
+  struct timeval tr;
+  gettimeofday(&tr, NULL);
+  return (double)tr.tv_sec+(double)tr.tv_usec/1000000;
+}
 
 int main (int argc, char *argv[])
 {
@@ -53,6 +61,7 @@ numworkers = numtasks-1;
 /**************************** master task ************************************/
    if (taskid == MASTER)
    {
+      double t0, t1;
       printf("mpi_mm has started with %d tasks.\n",numtasks);
       printf("Initializing arrays...\n");
       for (i=0; i<NRA; i++)
@@ -62,6 +71,7 @@ numworkers = numtasks-1;
          for (j=0; j<NCB; j++)
             b[i][j]= i*j;
 
+      t0 = gettime();
       /* Send matrix data to the worker tasks */
       averow = NRA/numworkers;
       extra = NRA%numworkers;
@@ -90,20 +100,9 @@ numworkers = numtasks-1;
                   MPI_COMM_WORLD, &status);
          printf("Received results from task %d\n",source);
       }
-
-      /* Print results */
-      printf("******************************************************\n");
-      printf("Result Matrix:\n");
-      for (i=0; i<NRA; i++)
-      {
-         printf("\n"); 
-         for (j=0; j<NCB; j++) 
-            printf("%6.2f   ", c[i][j]);
-      }
-      printf("\n******************************************************\n");
-      printf ("Done.\n");
+      t1 = gettime();
+      printf("Execution time: %f\n", t1-t0);
    }
-
 
 /**************************** worker task ************************************/
    if (taskid > MASTER)

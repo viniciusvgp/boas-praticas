@@ -94,6 +94,10 @@ spack location -i zlib+optimize
 spack location -i zlib~optimize
 #+end_src
 
+Perceba que o comando =spack location= fornece o caminho para a
+instalação daquela versão específica de =zlib=. Tal comando pode ser
+utilizado para configurar outro pacote para usar uma ou outra versão.
+
 * #1.3 Remota: Instalação do =MPI=
 
 Esta tarefa é pré-requisito para [[./2_Experimentos.org]].

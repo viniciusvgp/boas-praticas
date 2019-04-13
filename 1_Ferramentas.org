@@ -13,17 +13,23 @@
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
 Passos iniciais:
-1. Logar no parque computacional da seguinte maneira
+1. Para logar no parque computacional da seguinte maneira
    #+begin_src shell :results output
    ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
    #+end_src
-2. Criar um diretório com um identificador único
+2. No parque computacional, criar um diretório para si
    #+begin_src shell :results output
    mkdir -p SEUNOME
    #+end_src
-3. Lembre-se que todas os comandos devem ser executados neste diretório.
 
-* Introdução & Instalação
+Lembre-se
+1. Todos os comandos devem ser executados no seu diretório
+4. Existem dois tipos de tarefas
+   - *Local*: pode ser feito na máquina do laboratório
+   - *Remota*: deve ser feita no parque computacional
+
+
+* Introdução
 
 Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
@@ -40,7 +46,7 @@ git clone https://github.com/spack/spack.git
 source spack/share/spack/setup-env.sh
 #+end_src
 
-Com o ~Spack~ podemos instalar diversas ferramentas, incluindo
+Com o ~spack~ podemos instalar diversas ferramentas, incluindo
 compiladores. A lista de pacotes disponíveis pode ser obtida com o
 comando ~spack list~. Por motivos de espaço, ilustramos abaixo como
 listar os pacotes cujo nome inicia com =h=.
@@ -60,7 +66,7 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* Instalação de duas variantes de =zlib=
+* Tarefa Local: Instalação de duas variantes de =zlib=
 
 Uma primeira versão com as seguintes opções:
 

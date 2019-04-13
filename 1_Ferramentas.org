@@ -51,7 +51,7 @@ listar os pacotes cujo nome inicia com =h=.
 
 #+begin_src shell :results output :exports both :session S1 :eval no-export
 cd spack
-./bin/spack list h*
+spack list h*
 #+end_src
 
 #+RESULTS:
@@ -75,14 +75,14 @@ Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~pci~ e ~cair
 e desabilitando as opções ~gl~ e ~cuda~.
 
 #+begin_src shell :results output :exports code :eval no-export
-./bin/spack install -v hwloc@2.0.2~gl+cairo~cuda+pci
+spack install -v hwloc@2.0.2~gl+cairo~cuda+pci
 #+end_src
 
 Após a conclusão da instalação, podemos verificar os pacotes
 instalados:
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack find
+spack find
 #+end_src
 
 #+RESULTS:

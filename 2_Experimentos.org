@@ -35,7 +35,7 @@ combinando os fatores a serem analisados.  Como o objetivo nesta série
 de tutorial é analisar o tempo de execução e speedup em função da
 quantidade de processos e dois tamanhos de problema, definimos dois
 fatores: /processes/ e /size/. Testaremos três quantidades de processos:
-1, 10 e 20, e dois tamanhos 3000 e 6000, para um total de 6
+2, 10 e 20, e dois tamanhos 3000 e 6000, para um total de 6
 combinações possíveis, com três replicações cada.
 
 O comando =set.seed(0)= (veja abaixo) é utilizado para fixar uma ordem
@@ -48,7 +48,7 @@ library(DoE.base)
 set.seed(0)
 btmz_erad <- fac.design(factor.names = list(
                                 size = c(3000, 10000),
-                                processes = c(1, 10, 20)),
+                                processes = c(2, 10, 20)),
                replications=3, 
                randomize=TRUE)
 print(btmz_erad)
@@ -61,22 +61,22 @@ creating full factorial with 6 runs ...
 
    run.no run.no.std.rp  size processes Blocks
 1       1           6.1 10000        20     .1
-2       2           2.1 10000         1     .1
+2       2           2.1 10000         2     .1
 3       3           5.1  3000        20     .1
 4       4           4.1 10000        10     .1
 5       5           3.1  3000        10     .1
-6       6           1.1  3000         1     .1
+6       6           1.1  3000         2     .1
 7       7           6.2 10000        20     .2
 8       8           5.2  3000        20     .2
 9       9           3.2  3000        10     .2
-10     10           2.2 10000         1     .2
-11     11           1.2  3000         1     .2
+10     10           2.2 10000         2     .2
+11     11           1.2  3000         2     .2
 12     12           4.2 10000        10     .2
-13     13           2.3 10000         1     .3
+13     13           2.3 10000         2     .3
 14     14           4.3 10000        10     .3
 15     15           6.3 10000        20     .3
 16     16           3.3  3000        10     .3
-17     17           1.3  3000         1     .3
+17     17           1.3  3000         2     .3
 18     18           5.3  3000        20     .3
 class=design, type= full factorial 
 NOTE: columns run.no and run.no.std.rp  are annotation, 
@@ -109,22 +109,22 @@ cat projeto-experimental.csv
 #+begin_example
 "name","run.no.in.std.order","run.no","run.no.std.rp","size","processes","Blocks"
 "1","6",1,"6.1","10000","20",".1"
-"2","2",2,"2.1","10000","1",".1"
+"2","2",2,"2.1","10000","2",".1"
 "3","5",3,"5.1","3000","20",".1"
 "4","4",4,"4.1","10000","10",".1"
 "5","3",5,"3.1","3000","10",".1"
-"6","1",6,"1.1","3000","1",".1"
+"6","1",6,"1.1","3000","2",".1"
 "7","6",7,"6.2","10000","20",".2"
 "8","5",8,"5.2","3000","20",".2"
 "9","3",9,"3.2","3000","10",".2"
-"10","2",10,"2.2","10000","1",".2"
-"11","1",11,"1.2","3000","1",".2"
+"10","2",10,"2.2","10000","2",".2"
+"11","1",11,"1.2","3000","2",".2"
 "12","4",12,"4.2","10000","10",".2"
-"13","2",13,"2.3","10000","1",".3"
+"13","2",13,"2.3","10000","2",".3"
 "14","4",14,"4.3","10000","10",".3"
 "15","6",15,"6.3","10000","20",".3"
 "16","3",16,"3.3","3000","10",".3"
-"17","1",17,"1.3","3000","1",".3"
+"17","1",17,"1.3","3000","2",".3"
 "18","5",18,"5.3","3000","20",".3"
 #+end_example
 
@@ -140,12 +140,11 @@ wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
 
 Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
 experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
-/script/ para execução não-interativa da aplicação ~BT-MZ~ do pacote
-NPB. Para efeitos de simplificação, foi gerado previamente um projeto
-experimental (arquivo ~btmz-exec-order.csv~) considerando informações
-sobre os recursos de processamento da plataforma obtidas com o
-~hwloc~. Este projeto (arquivo CSV) pode ser regerado com o código
-apresentado na seção acima.
+/script/ para execução não-interativa da aplicação. Para efeitos de
+simplificação, foi gerado previamente um projeto experimental (arquivo
+~projeto-experimental.csv~). Veja passo #2.1 para gerá-lo.
+
+Vamos revisar o /script/ que automatiza a execução do experimento.
 
 #+begin_src shell :tangle executa-projeto.slurm
 #!/bin/bash
@@ -155,9 +154,6 @@ apresentado na seção acima.
 #SBATCH --tasks-per-node=10
 #SBATCH --ntasks=20
 #SBATCH --partition=tupi
-
-# carrega o spack
-source ~/SEUNOME/spack/share/spack/setup-env.sh
 
 # Diretório de base (atualize para seu caso
 export BASE=~/SEUNOME/
@@ -201,19 +197,23 @@ fi
 # Ler o projeto experimental, e para cada experimento
 tail -n +2 $PROJETO |
 while IFS=, read -r name runnoinstdorder runno runnostdrp \
-	 processes mpi Blocks
+	 size processes Blocks
 do
     # Limpar valores
     export name=$(echo $name | sed "s/\"//g")
     export processes=$(echo $processes | sed "s/\"//g")
-    export mpi=$(echo $mpi | sed "s/\"//g")
+    export size=$(echo $size | sed "s/\"//g")
 
     # Definir uma chave única
-    KEY="$name-$processes-$mpi"
+    KEY="$name-$processes-$size"
 
     # Usar a versão apropriada de MPI
-    MPICC=$(spack location -i openmpi@$mpi)/bin/mpicc
-    MPIRUN=$(spack location -i openmpi@$mpi)/bin/mpirun
+    MPICC=mpicc   #$(spack location -i openmpi@$mpi)/bin/mpicc
+    MPIRUN=mpirun #$(spack location -i openmpi@$mpi)/bin/mpirun
+
+    # Altera o código fonte com o tamanho do problema
+    sed -i -e "s/#define NRA \(.*\)$/#define NRA $size/" \
+           -e "s/#define NCA \(.*\)$/#define NCA $size/" $PROGRAMA
 
     # Compilar o programa com a versão apropriada
     $MPICC $PROGRAMA -o mpi_mm
@@ -223,8 +223,9 @@ do
     # Prepara comando de execução
     runline=""
     runline+="mpirun -np $processes "
+
     runline+=" -machinefile $MACHINEFILE "
-    runline+="--mca oob_tcp_if_include 192.168.30.0/24 --mca btl_tcp_if_include 192.168.30.0/24 "
+#    runline+="--mca oob_tcp_if_include 192.168.30.0/24 --mca btl_tcp_if_include 192.168.30.0/24 "
     runline+="./mpi_mm "
     runline+="> ${KEY}.log"
 

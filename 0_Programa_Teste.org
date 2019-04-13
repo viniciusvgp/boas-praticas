@@ -33,7 +33,16 @@ Lembre-se
 * #0.1 Remota: Programa
 
 Copie o programa abaixo para o parque computacional, no diretório
-SEUNOME. A versão original está disponível [[https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_mm.c][no site do LLNL]], mas foi
+SEUNOME. De dentro do parque computacional, isso pode ser feito da
+seguinte maneira:
+
+#+begin_src shell :results output
+cd SEUNOME
+wget https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c
+#+end_src
+
+
+A versão original está disponível [[https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_mm.c][no site do LLNL]], mas foi
 modificada aqui para um tamanho de problema maior. A versão modificada
 [[https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c][pode ser acessada aqui]], ou copiada do código abaixo. O tamanho da
 entrada é fixo utilizando as constantes =NRA=, =NCA= e =NCB=, como pode ser

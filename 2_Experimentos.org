@@ -15,6 +15,21 @@
 # Reserva de nós (SLURM)
 # Coleta de dados (bash)
 
+* #2.0 Passos iniciais
+
+Execute os tutoriais precedentes nesta série:
+- [[./0_Programa_Teste.org][#0 (Programa Teste)]]
+- [[./1_Ferramentas.org][#1 (Ferramentas)]]
+
+Lembre-se
+1. Todos os comandos devem ser executados no diretório SEUNOME
+2. Existem dois tipos de tarefas
+   - *Local*: pode ser feito na máquina do laboratório
+   - *Remota*: deve ser feita no parque computacional
+
+* 
+
+
 * Introdução ao Slurm
 
 Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O

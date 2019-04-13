@@ -113,36 +113,33 @@ cd ~/SEUNOME/
 git clone https://github.com/spack/spack.git
 #+end_src
 
-Agora crie um script para instala cada uma das versões de OpenMPI no parque:
-- Conteúdo do arquivo =instala-openmpi-4.slurm=
-  #+begin_src shell :tangle instala-openmpi-4.slurm
+Agora crie um script para instalar as versões de OpenMPI no parque.
+
+Nome do arquivo sugerido =instala-openmpi.slurm=
+  #+begin_src shell :tangle instala-openmpi.slurm
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --time=01:00:00
 
 source ~/SEUNOME/spack/share/spack/setup-env.sh
 spack install -v openmpi@4.0.1
-  #+end_src
-- Conteúdo do arquivo  =instala-openmpi-3.slurm=
-  #+begin_src shell :tangle instala-openmpi-3.slurm
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=01:00:00
-
-source ~/SEUNOME/spack/share/spack/setup-env.sh
 spack install -v openmpi@3.1.3
-  #+end_src
-- Conteúdo do arquivo  =instala-openmpi-2.slurm=
-  #+begin_src shell :tangle instala-openmpi-2.slurm
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=01:00:00
-
-source ~/SEUNOME/spack/share/spack/setup-env.sh
 spack install -v openmpi@2.0.4
   #+end_src
 
-*Atenção*: cada instalação leva aproximadamente 8 minutos com 8 cores.
+Em seguida, no parque computacional, submeta o job:
+
+#+begin_src shell :results output
+sbatch instala-openmpi.slurm
+#+end_src
+
+Perceba o número de JOBID fornecido pelo slurm, e acompanhe a compilação com:
+
+#+begin_src shell :results output
+tail -f slurm-JOBID.out
+#+end_src
+
+*Atenção*: a instalação leva aproximadamente 20 minutos com 8 cores.
 
 * Old                                                              :noexport:
 ** Instalação do =spack=                                            :noexport:

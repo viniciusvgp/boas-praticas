@@ -162,9 +162,14 @@ intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.
 charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
 #+end_example
 
+Vamos instalar algumas versões de OpenMPI:
+
+*Atenção*: cada instalação leva aproximadamente 8 minutos com 8 cores.
+
 #+begin_src shell :results output :exports both :eval no-export 
-spack install -v mpich
-spack install -v openmpi
+spack install -v openmpi@4.0.1
+spack install -v openmpi@3.1.3
+spack install -v openmpi@2.0.4
 #+end_src
 
 * Dependências explícitas                                          :noexport:

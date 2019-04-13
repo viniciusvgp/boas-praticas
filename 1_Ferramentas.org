@@ -12,12 +12,16 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
-#+BEGIN_COMMENT Vinicius
-Dependências:
-- git
-- subversion (svn)
-- openmpi
-#+END_COMMENT
+Passos iniciais:
+1. Logar no parque computacional da seguinte maneira
+   #+begin_src shell :results output
+   ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
+   #+end_src
+2. Criar um diretório com um identificador único
+   #+begin_src shell :results output
+   mkdir -p SEUNOME
+   #+end_src
+3. Lembre-se que todas os comandos devem ser executados neste diretório.
 
 * Introdução & Instalação
 

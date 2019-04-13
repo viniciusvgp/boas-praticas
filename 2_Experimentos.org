@@ -33,9 +33,9 @@ Vamos utilizar o pacote ~DoE.base~ ([[https://cran.r-project.org/web/packages/Do
 linguagem ~R~ para gerar um projeto experimental fatorial completo
 combinando os fatores a serem analisados.  Como o objetivo nesta série
 de tutorial é analisar o tempo de execução e speedup em função da
-quantidade de processos e versões da biblioteca OpenMPI, definimos
-dois fatores: /processes/ e /mpi/. Testaremos três quantidades de
-processos: 1, 10 e 20, e três versões MPI, para um total de 9
+quantidade de processos e dois tamanhos de problema, definimos dois
+fatores: /processes/ e /size/. Testaremos três quantidades de processos:
+1, 10 e 20, e dois tamanhos 3000 e 6000, para um total de 6
 combinações possíveis, com três replicações cada.
 
 O comando =set.seed(0)= (veja abaixo) é utilizado para fixar uma ordem
@@ -47,8 +47,8 @@ com o pacote =DoE.base= instalado.
 library(DoE.base)
 set.seed(0)
 btmz_erad <- fac.design(factor.names = list(
-                                processes = c(1, 10, 20), 
-                                mpi = c("4.0.1", "3.1.3", "2.0.4")),
+                                size = c(3000, 10000),
+                                processes = c(1, 10, 20)),
                replications=3, 
                randomize=TRUE)
 print(btmz_erad)
@@ -57,36 +57,27 @@ print(btmz_erad)
 #+RESULTS:
 #+begin_example
 
-creating full factorial with 9 runs ...
+creating full factorial with 6 runs ...
 
-   run.no run.no.std.rp processes   mpi Blocks
-1       1           9.1        20 2.0.4     .1
-2       2           3.1        20 4.0.1     .1
-3       3           8.1        10 2.0.4     .1
-4       4           4.1         1 3.1.3     .1
-5       5           5.1        10 3.1.3     .1
-6       6           1.1         1 4.0.1     .1
-7       7           7.1         1 2.0.4     .1
-8       8           2.1        10 4.0.1     .1
-9       9           6.1        20 3.1.3     .1
-10     10           6.2        20 3.1.3     .2
-11     11           1.2         1 4.0.1     .2
-12     12           2.2        10 4.0.1     .2
-13     13           7.2         1 2.0.4     .2
-14     14           4.2         1 3.1.3     .2
-15     15           9.2        20 2.0.4     .2
-16     16           3.2        20 4.0.1     .2
-17     17           8.2        10 2.0.4     .2
-18     18           5.2        10 3.1.3     .2
-19     19           9.3        20 2.0.4     .3
-20     20           4.3         1 3.1.3     .3
-21     21           6.3        20 3.1.3     .3
-22     22           7.3         1 2.0.4     .3
-23     23           2.3        10 4.0.1     .3
-24     24           3.3        20 4.0.1     .3
-25     25           1.3         1 4.0.1     .3
-26     26           8.3        10 2.0.4     .3
-27     27           5.3        10 3.1.3     .3
+   run.no run.no.std.rp  size processes Blocks
+1       1           6.1 10000        20     .1
+2       2           2.1 10000         1     .1
+3       3           5.1  3000        20     .1
+4       4           4.1 10000        10     .1
+5       5           3.1  3000        10     .1
+6       6           1.1  3000         1     .1
+7       7           6.2 10000        20     .2
+8       8           5.2  3000        20     .2
+9       9           3.2  3000        10     .2
+10     10           2.2 10000         1     .2
+11     11           1.2  3000         1     .2
+12     12           4.2 10000        10     .2
+13     13           2.3 10000         1     .3
+14     14           4.3 10000        10     .3
+15     15           6.3 10000        20     .3
+16     16           3.3  3000        10     .3
+17     17           1.3  3000         1     .3
+18     18           5.3  3000        20     .3
 class=design, type= full factorial 
 NOTE: columns run.no and run.no.std.rp  are annotation, 
  not part of the data frame
@@ -116,34 +107,25 @@ cat projeto-experimental.csv
 
 #+RESULTS:
 #+begin_example
-"name","run.no.in.std.order","run.no","run.no.std.rp","processes","mpi","Blocks"
-"1","9",1,"9.1","20","2.0.4",".1"
-"2","3",2,"3.1","20","4.0.1",".1"
-"3","8",3,"8.1","10","2.0.4",".1"
-"4","4",4,"4.1","1","3.1.3",".1"
-"5","5",5,"5.1","10","3.1.3",".1"
-"6","1",6,"1.1","1","4.0.1",".1"
-"7","7",7,"7.1","1","2.0.4",".1"
-"8","2",8,"2.1","10","4.0.1",".1"
-"9","6",9,"6.1","20","3.1.3",".1"
-"10","6",10,"6.2","20","3.1.3",".2"
-"11","1",11,"1.2","1","4.0.1",".2"
-"12","2",12,"2.2","10","4.0.1",".2"
-"13","7",13,"7.2","1","2.0.4",".2"
-"14","4",14,"4.2","1","3.1.3",".2"
-"15","9",15,"9.2","20","2.0.4",".2"
-"16","3",16,"3.2","20","4.0.1",".2"
-"17","8",17,"8.2","10","2.0.4",".2"
-"18","5",18,"5.2","10","3.1.3",".2"
-"19","9",19,"9.3","20","2.0.4",".3"
-"20","4",20,"4.3","1","3.1.3",".3"
-"21","6",21,"6.3","20","3.1.3",".3"
-"22","7",22,"7.3","1","2.0.4",".3"
-"23","2",23,"2.3","10","4.0.1",".3"
-"24","3",24,"3.3","20","4.0.1",".3"
-"25","1",25,"1.3","1","4.0.1",".3"
-"26","8",26,"8.3","10","2.0.4",".3"
-"27","5",27,"5.3","10","3.1.3",".3"
+"name","run.no.in.std.order","run.no","run.no.std.rp","size","processes","Blocks"
+"1","6",1,"6.1","10000","20",".1"
+"2","2",2,"2.1","10000","1",".1"
+"3","5",3,"5.1","3000","20",".1"
+"4","4",4,"4.1","10000","10",".1"
+"5","3",5,"3.1","3000","10",".1"
+"6","1",6,"1.1","3000","1",".1"
+"7","6",7,"6.2","10000","20",".2"
+"8","5",8,"5.2","3000","20",".2"
+"9","3",9,"3.2","3000","10",".2"
+"10","2",10,"2.2","10000","1",".2"
+"11","1",11,"1.2","3000","1",".2"
+"12","4",12,"4.2","10000","10",".2"
+"13","2",13,"2.3","10000","1",".3"
+"14","4",14,"4.3","10000","10",".3"
+"15","6",15,"6.3","10000","20",".3"
+"16","3",16,"3.3","3000","10",".3"
+"17","1",17,"1.3","3000","1",".3"
+"18","5",18,"5.3","3000","20",".3"
 #+end_example
 
 Para facilitar o processo, este arquivo [[./projeto-experimental.csv][está registrado aqui]], e pode
@@ -154,10 +136,150 @@ cd ~/SEUNOME
 wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
 #+end_src
 
-* 
+* #2.2 Remote: Script de execução do projeto
 
-Como 
+Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
+experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
+/script/ para execução não-interativa da aplicação ~BT-MZ~ do pacote
+NPB. Para efeitos de simplificação, foi gerado previamente um projeto
+experimental (arquivo ~btmz-exec-order.csv~) considerando informações
+sobre os recursos de processamento da plataforma obtidas com o
+~hwloc~. Este projeto (arquivo CSV) pode ser regerado com o código
+apresentado na seção acima.
 
+#+begin_src shell :tangle executa-projeto.slurm
+#!/bin/bash
+#SBATCH --job-name=exp0
+#SBATCH --time=01:00:00
+#SBATCH --nodes=2
+#SBATCH --tasks-per-node=10
+#SBATCH --ntasks=20
+#SBATCH --partition=tupi
+
+# carrega o spack
+source ~/SEUNOME/spack/share/spack/setup-env.sh
+
+# Diretório de base (atualize para seu caso
+export BASE=~/SEUNOME/
+
+# Ingressar no diretório de base
+pushd $BASE
+
+# Criar um diretório para conter todos os resultados
+rm -rf $SLURM_JOB_NAME
+mkdir -p $SLURM_JOB_NAME
+pushd $SLURM_JOB_NAME
+
+# Define o Machine File necessário para MPI
+MACHINEFILE="nodes.$SLURM_JOB_ID"
+srun $SRUN_PACK /bin/hostname | sort -n | awk "{print $2}" > $MACHINEFILE
+
+# Verificar se projeto experimental é fornecido
+PROJETO=$BASE/projeto-experimental.csv
+if [[ -f $PROJETO ]]; then
+  echo "O projeto experimental é o seguinte"
+  cat $PROJETO | sed -e "s/^/PROJETO|/"
+  # Salva o projeto no diretório corrente (da saída)
+  cp $PROJETO .
+else
+  echo "Arquivo $PROJETO está faltando."
+  exit
+fi
+
+# Verificar se programa é fornecido
+PROGRAMA=$BASE/mpi_mm.c
+if [[ -f $PROGRAMA ]]; then
+  echo "O programa é o seguinte"
+  cat $PROGRAMA | sed -e "s/^/PROGRAMA|/"
+  # Salva o programa no diretório corrente (da saída)
+  cp $PROGRAMA .
+else
+  echo "Arquivo $PROGRAMA está faltando."
+  exit
+fi
+
+# Ler o projeto experimental, e para cada experimento
+tail -n +2 $PROJETO |
+while IFS=, read -r name runnoinstdorder runno runnostdrp \
+	 processes mpi Blocks
+do
+    # Limpar valores
+    export name=$(echo $name | sed "s/\"//g")
+    export processes=$(echo $processes | sed "s/\"//g")
+    export mpi=$(echo $mpi | sed "s/\"//g")
+
+    # Definir uma chave única
+    KEY="$name-$processes-$mpi"
+
+    # Usar a versão apropriada de MPI
+    MPICC=$(spack location -i openmpi@$mpi)/bin/mpicc
+    MPIRUN=$(spack location -i openmpi@$mpi)/bin/mpirun
+
+    # Compilar o programa com a versão apropriada
+    $MPICC $PROGRAMA -o mpi_mm
+
+    echo $KEY
+
+    # Prepara comando de execução
+    runline=""
+    runline+="mpirun -np $processes "
+    runline+=" -machinefile $MACHINEFILE "
+    runline+="--mca oob_tcp_if_include 192.168.30.0/24 --mca btl_tcp_if_include 192.168.30.0/24 "
+    runline+="./mpi_mm "
+    runline+="> ${KEY}.log"
+
+    # 3.3 Executar o experimento
+    echo "Running >> $runline <<"
+    eval "$runline < /dev/null"
+    echo "Done!"
+done
+
+cp $BASE/slurm-$SLURM_JOB_ID.out .
+
+exit
+
+
+# 
+
+#srun -l cd $SCRATCH
+#srun -l rm -rf $SCRATCH/erad-tuto
+#srun -l mkdir -p $SCRATCH/erad-tuto
+#srun -l cd erad-tuto
+#cd $SCRATCH/erad-tuto
+#srun -l cp ~/disable_hyperthreading.sh ./
+#srun -l cp ~/hyperthreading.sh ./
+#srun -l cp ~/disable_turboboost.sh ./
+#srun -l cp ~/detect_acpidriver.sh ./
+#srun -l cp ~/get_info.sh ./
+#srun -l cp ~/slurm-script.sh ./ 
+#srun -l chmod +x *sh
+
+# 1. Controle inicial dos nós computacionais (HW e SW)
+
+
+#  Disable Turboboost/Hyperthreading
+#srun -l ./disable_turboboost.sh
+#srun -l ./disable_hyperthreading.sh
+
+# 2. Registro das condições iniciais
+#srun -l ./get_info.sh GetInfoInicio-$HOSTNAME.org
+
+
+
+# 4. Centralizar os dados em um único diretório
+mkdir -p exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`
+mv exp-log-btmz* exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+
+# 5. Arquivar este script e logs junto com os dados
+cp btmz-exec-order.csv exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+cp *sh  exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
+
+# Copy scratch 
+cp -r $SCRATCH ~/$SCRATCH-$HOSTNAME
+
+#+end_src
+
+#+RESULTS:
 
 * Introdução ao Slurm                                              :noexport:
 
@@ -286,114 +408,6 @@ done
 #+end_src
 
 ** Execução Não-Interativa de Experimentos com /Slurm/ na plataforma =PCAD=
-
-Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
-experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
-/script/ para execução não-interativa da aplicação ~BT-MZ~ do pacote
-NPB. Para efeitos de simplificação, foi gerado previamente um projeto
-experimental (arquivo ~btmz-exec-order.csv~) considerando informações
-sobre os recursos de processamento da plataforma obtidas com o
-~hwloc~. Este projeto (arquivo CSV) pode ser regerado com o código
-apresentado na seção acima.
-
-#+begin_src shell :results output :exports both :tangle slurm-script.sh :eval no-export
-#!/bin/bash
-#SBATCH --nodes=2
-#SBATCH --time=02:00:00
-#SBATCH --partition=hype
-#SBATCH --job-name=erad-2019-tutorial
-
-export SCRATCH="/scratch/$USER"
-# Working on scratch
-#srun -l cd $SCRATCH
-srun -l rm -rf $SCRATCH/erad-tuto
-srun -l mkdir -p $SCRATCH/erad-tuto
-#srun -l cd erad-tuto
-cd $SCRATCH/erad-tuto
-srun -l cp ~/disable_hyperthreading.sh ./
-srun -l cp ~/hyperthreading.sh ./
-srun -l cp ~/disable_turboboost.sh ./
-srun -l cp ~/detect_acpidriver.sh ./
-srun -l cp ~/get_info.sh ./
-srun -l cp ~/slurm-script.sh ./ 
-srun -l chmod +x *sh
-
-# Spack and hwloc
-srun -l git clone https://github.com/spack/spack.git
-srun -l ./spack/bin/spack install hwloc@2.0.2~gl+cairo~cuda+pci
-
-# Application
-srun -l wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
-srun -l tar -xf NPB3.4-MZ.tar.gz
-cd NPB3.4-MZ/NPB3.4-MZ-MPI
-srun -l cp config/NAS.samples/make.def.gcc_mpich config/make.def
-srun -l make bt-mz CLASS=A
-srun -l make bt-mz CLASS=B
-cd ../..
-
-# Experiments design (copy) 
-srun -l cp ~/btmz-exec-order.csv ./
-
-# 1. Controle inicial dos nós computacionais (HW e SW)
-
-#  MPI Machine file
-MACHINEFILE="nodes.$SLURM_JOB_ID"
-srun $SRUN_PACK /bin/hostname | sort -n | awk "{print $2}" | sed -e 's/$/ slots=1 max_slots=1/' > $MACHINEFILE
-
-#  Disable Turboboost/Hyperthreading
-srun -l ./disable_turboboost.sh
-srun -l ./disable_hyperthreading.sh
-
-# 2. Registro das condições iniciais
-srun -l ./get_info.sh GetInfoInicio-$HOSTNAME.org
-
-# 3. Ler o projeto experimental, e para cada experimento
-tail -n +2 btmz-exec-order.csv |
-while IFS=, read -r name runnoinstdorder runno runnostdrp \
-	 threads processes class Blocks
-do
-    
-    # 3.1 Aplicar os parâmetros (fatores e valores) específicos
- 
-    # OpenMP threads
-    runline="OMP_NUM_THREADS=$threads "
-    # MPI processes
-    runline+="mpirun -np $processes "
-    # MPI machine file
-    runline+=" -machinefile $MACHINEFILE "
-    # Binary
-    runline+="NPB3.4-MZ/NPB3.4-MZ-MPI/bin/bt-mz.$class.x "
-    # Log
-    runline+="> btmz-$runno-$threads-$processes-$class.log"
-
-    # 3.2 Registro das condições iniciais do experimento
-    ./get_info.sh GetInfo-btmz-$runno-$threads-$processes-$class.org
-
-    # 3.3 Executar o experimento
-    echo "Running >> $runline <<"
-    eval "$runline < /dev/null"
-    echo "Done!"
-
-    # 3.4 Coletar os dados do experimento em um diretório
-    mkdir -p exp-log-btmz-$runno-$threads-$processes-$class/
-    mv GetInfo*.org exp-log-btmz-$runno-$threads-$processes-$class/
-    mv btmz*.log exp-log-btmz-$runno-$threads-$processes-$class/
-
-done 
-
-# 4. Centralizar os dados em um único diretório
-mkdir -p exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`
-mv exp-log-btmz* exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
-
-# 5. Arquivar este script e logs junto com os dados
-cp btmz-exec-order.csv exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
-cp *sh  exp-$HOSTNAME-`date "+%d%b%G-%H%M%S"`/
-
-# Copy scratch 
-cp -r $SCRATCH ~/$SCRATCH-$HOSTNAME
-
-#+end_src
-
 * Controle e Registro
 Os /scripts/ a seguir contêm os comandos necessários para controle e
 registro de informações da plataforma. É conveniente manter os dados
@@ -482,7 +496,6 @@ fi
 exit
 #+end_src
 
-
 ** Detectar Driver ACPI
 #+begin_src shell :results output :exports code :eval no-export :tangle detect_acpidriver.sh
 #!/bin/bash
@@ -503,7 +516,6 @@ fi
 exit 0
 
 #+end_src
-
 
 ** Registro de Informações do Plataforma
 #+begin_src shell :results output :exports code :tangle get_info.sh :eval no-export

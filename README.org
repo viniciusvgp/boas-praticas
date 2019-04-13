@@ -27,8 +27,8 @@ sugeridas nesta ordem:
 *Objetivo deste Tutorial*: O objetivo é fazer um projeto experimental
 para analisar o desempenho (tempo de execução e speedup) de um
 programa de multiplicação de matrizes escrito em MPI. O desempenho
-será analisado em função de diferentes versões da implementação
-OpenMPI e quantidade de processos.
+será analisado em função de diferentes quantidade de processos e dois
+tamanhos de problema.
 
 - #0 [[./0_Programa_Teste.org][Programa Teste]]
 - #1 [[./1_Ferramentas.org][Instalação de Ferramentas com Spack]]

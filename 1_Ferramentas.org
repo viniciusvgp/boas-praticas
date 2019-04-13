@@ -64,7 +64,78 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* Instalação de =hwloc=                                              :noexport:
+* Instalação de duas variantes de =zlib=
+
+Uma primeira versão com as seguintes opções:
+
+#+begin_src shell :results output :exports both :eval no-export
+spack install zlib@1.2.8+pic~shared+optimize
+#+end_src
+
+Uma segunda versão com as seguintes opções (=optimize= desativado):
+
+#+begin_src shell :results output :exports both :eval no-export
+spack install zlib@1.2.8+pic~shared~optimize
+#+end_src
+
+Perceba como as duas coexistem com o comando:
+
+#+begin_src shell :results output :exports both :eval no-export
+spack find -v zlib
+#+end_src
+
+Como usar uma ou outra:
+
+#+begin_src shell :results output :exports both :eval no-export
+spack location -i zlib+optimize
+spack location -i zlib~optimize
+#+end_src
+
+* Instalação do =MPI=
+
+A interface para troca de mensagens ~MPI~ possui implementação em
+diversas distribuições. Com os comandos abaixo podemos verificar quais
+pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
+instalar. E importante lembrar que várias instalações/configurações
+podem coexistir (como vimos acima).
+
+#+begin_src shell :results output :exports both :eval no-export
+spack providers mpi
+#+end_src
+
+#+RESULTS:
+#+begin_example
+mpi:
+intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
+charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
+#+end_example
+
+Vamos instalar algumas versões de OpenMPI:
+
+*Atenção*: cada instalação leva aproximadamente 8 minutos com 8 cores.
+
+#+begin_src shell :results output :exports both :eval no-export 
+spack install -v openmpi@4.0.1
+spack install -v openmpi@3.1.3
+spack install -v openmpi@2.0.4
+#+end_src
+
+* Old                                                              :noexport:
+** Instalação de =libboost=                                         :noexport:
+
+Pode-se especificar uma instalação com detalhamento de dependências.
+
+O comando =spack spec= permite ver qual será a materialização da
+instalação antes dela ser efetivamente instalada. Abaixo pretende-se
+instalar =libboost= com a variante =mpi=, especificando que MPI deve ser
+fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
+do compilador =gcc= na sua versão 8.2.
+
+#+begin_src shell :results output :exports both :eval no-export
+spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+#+end_src
+
+** Instalação de =hwloc=                                            :noexport:
 
 Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter
 a topologia do ~hardware~ da plataforma e pode ser útil na identificação
@@ -102,77 +173,7 @@ instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
 pois são dependências necessárias para a compilação e/ou funcionamento
 do ~hwloc~.
 
-* Instalação de duas variantes de =zlib=
-
-Uma primeira versão com as seguintes opções:
-
-#+begin_src shell :results output :exports both :eval no-export
-spack install zlib@1.2.8+pic~shared+optimize
-#+end_src
-
-Uma segunda versão com as seguintes opções (=optimize= desativado):
-
-#+begin_src shell :results output :exports both :eval no-export
-spack install zlib@1.2.8+pic~shared~optimize
-#+end_src
-
-Perceba como as duas coexistem com o comando:
-
-#+begin_src shell :results output :exports both :eval no-export
-spack find -v zlib
-#+end_src
-
-Como usar uma ou outra:
-
-#+begin_src shell :results output :exports both :eval no-export
-spack location -i zlib+optimize
-spack location -i zlib~optimize
-#+end_src
-
-* Instalação de =libboost=                                           :noexport:
-
-Pode-se especificar uma instalação com detalhamento de dependências.
-
-O comando =spack spec= permite ver qual será a materialização da
-instalação antes dela ser efetivamente instalada. Abaixo pretende-se
-instalar =libboost= com a variante =mpi=, especificando que MPI deve ser
-fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
-do compilador =gcc= na sua versão 8.2.
-
-#+begin_src shell :results output :exports both :eval no-export
-spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
-#+end_src
-
-* Instalação do =MPI=
-
-A interface para troca de mensagens ~MPI~ possui implementação em
-diversas distribuições. Com os comandos abaixo podemos verificar quais
-pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
-instalar. E importante lembrar que várias instalações/configurações
-podem coexistir (como vimos acima).
-
-#+begin_src shell :results output :exports both :eval no-export
-spack providers mpi
-#+end_src
-
-#+RESULTS:
-#+begin_example
-mpi:
-intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
-charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
-#+end_example
-
-Vamos instalar algumas versões de OpenMPI:
-
-*Atenção*: cada instalação leva aproximadamente 8 minutos com 8 cores.
-
-#+begin_src shell :results output :exports both :eval no-export 
-spack install -v openmpi@4.0.1
-spack install -v openmpi@3.1.3
-spack install -v openmpi@2.0.4
-#+end_src
-
-* Dependências explícitas                                          :noexport:
+** Dependências explícitas                                        :noexport:
 
 Qualquer distribuição instalada pode ser associada a pacotes que
 dependem do ~MPI~. Vejamos abaixo como instalar o pacote ~libboost~

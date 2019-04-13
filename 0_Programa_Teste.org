@@ -30,7 +30,7 @@ no código abaixo.
    arrays are column-major order.
  AUTHOR: Blaise Barney. Adapted from Ros Leibensperger, Cornell Theory
    Center. Converted to MPI: George L. Gusciora, MHPCC (1/95)
- LAST REVISED: 04/13/05
+ LAST REVISED: 04/13/05 */
 
 #include "mpi.h"
 #include <stdio.h>
@@ -57,7 +57,7 @@ int	numtasks,              /* number of tasks in partition */
 	mtype,                 /* message type */
 	rows,                  /* rows of matrix A sent to each worker */
 	averow, extra, offset, /* used to determine rows sent to each worker */
-	i, j, k, rc;           /* misc */
+	i, j, k, rc = 0;           /* misc */
 MPI_Status status;
 
 MPI_Init(&argc,&argv);

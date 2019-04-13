@@ -245,6 +245,14 @@ exit
 
 #+RESULTS:
 
+Para facilitar o processo, este arquivo [[./executa-projeto.slurm][está registrado aqui]], e pode
+ser baixado no parque computacional da seguinte forma:
+
+#+begin_src shell :results output
+cd ~/SEUNOME
+wget https://gitlab.com/schnorr/erad19/raw/master/executa-projeto.slurm
+#+end_src
+
 * Introdução ao Slurm                                              :noexport:
 
 Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O

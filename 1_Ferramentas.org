@@ -17,7 +17,8 @@ Passos iniciais:
    #+begin_src shell :results output
    ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
    #+end_src
-2. No parque computacional, criar um diretório para si
+2. No parque computacional, criar um diretório para si.
+   - Substitua SEUNOME por algo que te identifique unicamente
    #+begin_src shell :results output
    mkdir -p SEUNOME
    #+end_src
@@ -28,8 +29,7 @@ Lembre-se
    - *Local*: pode ser feito na máquina do laboratório
    - *Remota*: deve ser feita no parque computacional
 
-
-* Introdução
+* #1.1 Local/Remota: Introdução
 
 Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
@@ -66,7 +66,7 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* Tarefa Local: Instalação de duas variantes de =zlib=
+* #1.2 Local: Instalação de duas variantes de =zlib=
 
 Uma primeira versão com as seguintes opções:
 
@@ -93,7 +93,9 @@ spack location -i zlib+optimize
 spack location -i zlib~optimize
 #+end_src
 
-* Instalação do =MPI=
+* #1.3 Remota: Instalação do =MPI=
+
+Esta tarefa é pré-requisito para [[./2_Experimentos.org]].
 
 A interface para troca de mensagens ~MPI~ possui implementação em
 diversas distribuições. Com os comandos abaixo podemos verificar quais
@@ -112,15 +114,44 @@ intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.
 charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
 #+end_example
 
-Vamos instalar algumas versões de OpenMPI:
+Vamos fazer uso do =slurm= para instalar algumas versões de OpenMPI no
+parque. Para isso, no seu _diretório pessoal_, instale o =spack=:
+
+#+begin_src shell :results output
+cd ~/SEUNOME/
+git clone https://github.com/spack/spack.git
+#+end_src
+
+Agora crie um script para instala cada uma das versões de OpenMPI no parque:
+- Conteúdo do arquivo =instala-openmpi-4.slurm=
+  #+begin_src shell :tangle instala-openmpi-4.slurm
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=01:00:00
+
+source ~/SEUNOME/spack/share/spack/setup-env.sh
+spack install -v openmpi@4.0.1
+  #+end_src
+- Conteúdo do arquivo  =instala-openmpi-3.slurm=
+  #+begin_src shell :tangle instala-openmpi-3.slurm
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=01:00:00
+
+source ~/SEUNOME/spack/share/spack/setup-env.sh
+spack install -v openmpi@3.1.3
+  #+end_src
+- Conteúdo do arquivo  =instala-openmpi-2.slurm=
+  #+begin_src shell :tangle instala-openmpi-2.slurm
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=01:00:00
+
+source ~/SEUNOME/spack/share/spack/setup-env.sh
+spack install -v openmpi@2.0.4
+  #+end_src
 
 *Atenção*: cada instalação leva aproximadamente 8 minutos com 8 cores.
-
-#+begin_src shell :results output :exports both :eval no-export 
-spack install -v openmpi@4.0.1
-spack install -v openmpi@3.1.3
-spack install -v openmpi@2.0.4
-#+end_src
 
 * Old                                                              :noexport:
 ** Instalação do =spack=                                            :noexport:

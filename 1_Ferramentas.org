@@ -25,7 +25,7 @@
    #+end_src
 
 Lembre-se
-1. Todos os comandos devem ser executados no seu diretório
+1. Todos os comandos devem ser executados no diretório SEUNOME
 4. Existem dois tipos de tarefas
    - *Local*: pode ser feito na máquina do laboratório
    - *Remota*: deve ser feita no parque computacional

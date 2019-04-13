@@ -14,8 +14,10 @@
 
 Este material acompanha os minicurso/tutorial
 
-- *Boas Práticas para Experimentos Computacionais em Clusters* da ERAD/RS 2019 (Três de Maio - RS)
-- *Projeto Experimental para Prática com Alto Desempenho* da ERAD/SP 2019 (Campinas - SP)
+- *Boas Práticas para Experimentos Computacionais em Clusters* \\
+  ERAD/RS 2019 (Três de Maio - RS)
+- *Projeto Experimental para Prática com Alto Desempenho* \\
+  ERAD/SP 2019 (Campinas - SP)
 
 O material foi preparado na forma de um tutorial auto-guiado para
 exercitar, em cenários estimulados, algumas partes das boas práticas

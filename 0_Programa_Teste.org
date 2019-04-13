@@ -12,11 +12,34 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
-A versão original está disponível [[https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_mm.c][no site do LLNL]], mas foi modificada
-aqui para um tamanho de problema maior. A versão modificada [[https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c][pode ser
-acessada aqui]], ou copiada do código abaixo. O tamanho da entrada é
-fixo utilizando as constantes =NRA=, =NCA= e =NCB=, como pode ser observado
-no código abaixo.
+* #0.0 Passos iniciais
+
+1. Para entrar no parque computacional, faça o seguinte
+   #+begin_src shell :results output
+   ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
+   #+end_src
+2. No parque computacional, criar um diretório para si.
+   - Substitua SEUNOME por algo que te identifique unicamente
+   #+begin_src shell :results output
+   mkdir -p SEUNOME
+   #+end_src
+
+Lembre-se
+1. Todos os comandos devem ser executados no diretório SEUNOME
+4. Existem dois tipos de tarefas
+   - *Local*: pode ser feito na máquina do laboratório
+   - *Remota*: deve ser feita no parque computacional
+
+* #0.1 Remota: Programa
+
+Copie o programa abaixo para o parque computacional, no diretório
+SEUNOME. A versão original está disponível [[https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_mm.c][no site do LLNL]], mas foi
+modificada aqui para um tamanho de problema maior. A versão modificada
+[[https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c][pode ser acessada aqui]], ou copiada do código abaixo. O tamanho da
+entrada é fixo utilizando as constantes =NRA=, =NCA= e =NCB=, como pode ser
+observado no código abaixo.
+
+Nome do arquivo sugerido =mpi_mm.c=.
 
 #+begin_src C :results output :tangle mpi_mm.c
 /******************************************************************************

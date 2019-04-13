@@ -107,26 +107,26 @@ do ~hwloc~.
 Uma primeira versão com as seguintes opções:
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack install zlib@1.2.8+pic~shared+optimize
+spack install zlib@1.2.8+pic~shared+optimize
 #+end_src
 
 Uma segunda versão com as seguintes opções (=optimize= desativado):
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack install zlib@1.2.8+pic~shared~optimize
+spack install zlib@1.2.8+pic~shared~optimize
 #+end_src
 
 Perceba como as duas coexistem com o comando:
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack find -v zlib
+spack find -v zlib
 #+end_src
 
 Como usar uma ou outra:
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack location -i zlib+optimize
-./bin/spack location -i zlib~optimize
+spack location -i zlib+optimize
+spack location -i zlib~optimize
 #+end_src
 
 * Instalação de =libboost=                                           :noexport:
@@ -140,7 +140,7 @@ fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
 do compilador =gcc= na sua versão 8.2.
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
 #+end_src
 
 * Instalação do =MPI=
@@ -152,7 +152,7 @@ instalar. E importante lembrar que várias instalações/configurações
 podem coexistir (como vimos acima).
 
 #+begin_src shell :results output :exports both :eval no-export
-./bin/spack providers mpi
+spack providers mpi
 #+end_src
 
 #+RESULTS:
@@ -163,8 +163,8 @@ charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.
 #+end_example
 
 #+begin_src shell :results output :exports both :eval no-export 
-./bin/spack install -v mpich
-./bin/spack install -v openmpi
+spack install -v mpich
+spack install -v openmpi
 #+end_src
 
 * Dependências explícitas                                          :noexport:
@@ -174,8 +174,8 @@ dependem do ~MPI~. Vejamos abaixo como instalar o pacote ~libboost~
 utilizando as distribuições ~mpich~ e ~openmpi~.
 
 #+begin_src shell :results output :exports both :eval no-export 
-./bin/spack install -v boost+mpi^mpich
-./bin/spack install -v boost+mpi^openmpi
+spack install -v boost+mpi^mpich
+spack install -v boost+mpi^openmpi
 #+end_src
 
 * Local Variables                                                  :noexport:

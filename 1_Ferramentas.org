@@ -103,7 +103,10 @@ utilizado para configurar outro pacote para usar uma ou outra versão.
 Esta tarefa é pré-requisito para [[./2_Experimentos.org]].
 
 Vamos fazer uso do =slurm= para instalar algumas versões de OpenMPI no
-parque. Para isso, no seu _diretório pessoal_, instale o =spack=:
+parque.
+
+Para isso, tenha certaza que no seu _diretório pessoal SEUNOME_ o =spack=
+já esteja instalado (isso possivelmente já foi feito na tarefa #1.1).
 
 #+begin_src shell :results output
 cd ~/SEUNOME/

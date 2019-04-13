@@ -400,7 +400,7 @@ done
 ** Execução Não-Interativa de Experimentos com /Slurm/ na plataforma =PCAD=
 * Controle e Registro
 
-Veja [[./Controle.org][mais informações aqui]] (opcional).
+Veja [[Controle.org][mais informações aqui]] (opcional).
 
 * Local Variables                                                  :noexport:
 # Local Variables:

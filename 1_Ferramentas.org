@@ -19,10 +19,6 @@ Dependências:
 - openmpi
 #+END_COMMENT
 
-1. Tarefa
-
-   Teste
-
 * Instalação do =spack=                                              :noexport:
 
 #+begin_src shell :results output

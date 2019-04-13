@@ -37,7 +37,7 @@ SEUNOME. De dentro do parque computacional, isso pode ser feito da
 seguinte maneira:
 
 #+begin_src shell :results output
-cd SEUNOME
+cd ~/SEUNOME
 wget https://gitlab.com/schnorr/erad19/raw/master/mpi_mm.c
 #+end_src
 

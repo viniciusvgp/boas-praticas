@@ -34,10 +34,14 @@ linguagem ~R~ para gerar um projeto experimental fatorial completo
 combinando os fatores a serem analisados.  Como o objetivo nesta série
 de tutorial é analisar o tempo de execução e speedup em função da
 quantidade de processos e versões da biblioteca OpenMPI, definimos
-dois fatores: /processes/ e /mpi/.  O comando =set.seed(0)= é utilizado para
-fixar uma ordem aleatória, permitindo a geração do mesmo ordenamento
-da bateria experimental. O código abaixo pode ser executado no
-interpretador =R= com o pacote =DoE.base= instalado.
+dois fatores: /processes/ e /mpi/. Testaremos três quantidades de
+processos: 1, 10 e 20, e três versões MPI, para um total de 9
+combinações possíveis, com três replicações cada.
+
+O comando =set.seed(0)= (veja abaixo) é utilizado para fixar uma ordem
+aleatória, permitindo a geração do mesmo ordenamento da bateria
+experimental. O código abaixo pode ser executado no interpretador =R=
+com o pacote =DoE.base= instalado.
 
 #+begin_src R :results output :exports both :session *R* :eval no-export
 library(DoE.base)
@@ -150,8 +154,12 @@ cd ~/SEUNOME
 wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
 #+end_src
 
+* 
 
-* Introdução ao Slurm
+Como 
+
+
+* Introdução ao Slurm                                              :noexport:
 
 Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O
 ~Slurm~ é uma ferramente /open-source/ que permite a execução de /jobs/
@@ -210,7 +218,7 @@ serão redirecionadas para arquivos nomeados com o identificador do
 
 #+end_src
 
-* Execução de uma aplicação paralela exemplo
+* Execução de uma aplicação paralela exemplo                       :noexport:
 ** Obtenção e Configuração da Aplicação
 
 Utilizaremos como exemplo uma aplicação da versão /Multi-Zone do
@@ -251,7 +259,6 @@ no ~PATH~ padrão, basta editar este arquivo. Tal estratégia pode ser
 usada para construção de binários utilizando uma implementação ~MPI~
 instalada com o ~Spack~ conforme ilustrado na etapa anterior deste
 tutorial. 
-
 
 ** Execução dos Experimentos (manualmente)
 

@@ -14,7 +14,7 @@
 
 * #1.0 Passos iniciais
 
-1. Para logar no parque computacional da seguinte maneira
+1. Para entrar no parque computacional, faça o seguinte
    #+begin_src shell :results output
    ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
    #+end_src

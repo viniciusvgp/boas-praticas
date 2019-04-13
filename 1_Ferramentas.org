@@ -19,14 +19,6 @@ Dependências:
 - openmpi
 #+END_COMMENT
 
-* Instalação do =spack=                                              :noexport:
-
-#+begin_src shell :results output
-git clone https://github.com/spack/spack.git
-source spack/share/spack/setup-env.sh 
-spack --help
-#+end_src
-
 * Introdução & Instalação
 
 Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,
@@ -121,6 +113,14 @@ spack install -v openmpi@2.0.4
 #+end_src
 
 * Old                                                              :noexport:
+** Instalação do =spack=                                            :noexport:
+
+#+begin_src shell :results output
+git clone https://github.com/spack/spack.git
+source spack/share/spack/setup-env.sh 
+spack --help
+#+end_src
+
 ** Instalação de =libboost=                                         :noexport:
 
 Pode-se especificar uma instalação com detalhamento de dependências.
@@ -183,7 +183,6 @@ utilizando as distribuições ~mpich~ e ~openmpi~.
 spack install -v boost+mpi^mpich
 spack install -v boost+mpi^openmpi
 #+end_src
-
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (ox-extras-activate '(ignore-headlines))

@@ -1,0 +1,1231 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+#+startup: beamer overview indent
+
+#+TITLE: Boas Práticas para Experimentos Computacionais em Clusters @@latex:\\ {\small@@ Projeto Experimental para Prática com Alto Desempenho@@latex:}@@
+#+AUTHOR: Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL: schnorr@inf.ufrgs.br, vgpinto@inf.ufrgs.br
+#+DATE: 
+
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [10pt, xcolor=dvipsnames]
+#+BEAMER_THEME: metropolis [numbering=fraction]
+#+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+LANGUAGE: pt-br
+#+TAGS: noexport(n) ignore(i)
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+EXPORT_SELECT_TAGS: export
+#+LATEX_HEADER: \institute{19ª Escola Regional de Alto Desempenho da Região Sul (ERAD/RS) \newline Três de Maio -- RS -- Brasil \newline 11 de abril de 2019 \newline\newline 10ª Escola Regional de Alto Desempenho (ERAD/SP) \newline Campinas - SP - Brasil \newline 13 de abril de 2019  \newline\newline \includegraphics[width=.6\linewidth]{./img/controle-coleta.pdf} \newline {\tiny Fonte da imagem: Fabricação própria com Inkscape}}
+#+LATEX_HEADER: \usepackage{multicol}
+#+LATEX_HEADER: \usepackage{subcaption}
+#+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
+#+LATEX_HEADER: \bibliography{refs.bib}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: %\usepackage{enumitem}
+#+LATEX_HEADER: %\setlist[itemize]{leftmargin=1.2em}
+#+LATEX_HEADER: \input{org-babel.tex}
+
+# You need at least Org 9 and Emacs 24 to make this work.
+
+* Apresentação
+** Para começar...
+
+1. Baixar e lançar o container (dados são efêmeros)
+
+   #+BEGIN_SRC bash
+docker pull schnorr/erad19
+docker run -it schnorr/erad19
+   #+END_SRC
+
+2. Configurar a chave privada para acesso ao cluster
+
+   #+BEGIN_SRC bash
+wget http://www.inf.ufrgs.br/~schnorr/chave.rsa
+chmod 600 chave.rsa
+   #+END_SRC
+
+3. Confirmar que se consegue acessar o *parque* do grupo
+
+   #+BEGIN_SRC bash
+ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
+   #+END_SRC
+
+4. Veja se tem alguém com alguma reserva (com slurm)
+
+   #+BEGIN_SRC bash
+squeue
+   #+END_SRC
+
+5. Copiar de/para o container (para conhecimento somente)
+
+   #+begin_src shell :results output
+docker ps
+docker cp foo.txt 72ca2488b353:/home/user
+docker cp 72ca2488b353:/home/user/foo.txt .
+   #+end_src
+
+
+** Contextualização do Minicurso
+
+Grande maioria dos trabalhos envolve experimentos computacionais
+- Utilizam pelo menos uma máquina
+- Podem envolver vários computadores
+
+#+latex: \pause
+
+Necessidade de analisar os dados, as medições, é onipresente
+- Por vezes, a quantidade de dados é pequena
+- Podem envolver muitos gigabytes de dados
+
+#+latex: \pause
+
+Análise de desempenho por vezes é feita de maneira superficial
+- As conclusões não são necessariamente portáveis no tempo
+
+** Objetivos
+
+Sensibilizar participantes aos fatores que afetam a coleta de medidas
+- *Tornar os experimentos mais confiáveis*
+- Permitir *conclusões mais perenes*, *mais ricas* em informação
+
+#+latex: \vfill\pause
+
+Detalhamento
+
+1. Motivar cuidados essenciais em medidas computacionais
+   - Controle da variabilidade experimental
+2. Apresentar formas de controlar parâmetros em sistemas Linux
+3. Como analisar dados de maneira reprodutível
+4. Prática (em formato de tutorial auto-guiado com auxílio)
+
+** Estrutura do Minicuro
+
+*** ERAD/RS 2019, MC #5 (Lab. #6)
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Sessão _#1_: 11/04, 9:30h -- 10:30h \\
+(Introdução, Controle e Coleta, Análise de Dados)
+
+Sessão _#2_: 11/04, 14h -- 16h \\
+(Demonstração, Prática, Fechamento)
+
+- Instal. ferramentas (SPACK)
+- Exp. computacionais
+  - Reserva de nós (SLURM)
+  - Coleta de dados (bash)
+  - Execução de aplicação paralela
+- Análise de dados (R+tidyverse)
+- Criação de gráficos (ggplot2)
+
+*** ERAD/SP 2019, Tutorial II (Sala 303)
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Sessão _#1_: 13/04, 15h -- 16:30h \\
+(Introdução, Controle e Coleta, Análise de Dados)
+
+Sessão _#2_: 13/04, 17h -- 18h30 \\
+(Demonstração, Prática, Fechamento)
+
+- Instal. ferramentas (SPACK)
+- Exp. computacionais
+  - Reserva de nós (SLURM)
+  - Coleta de dados (bash)
+  - Execução de aplicação paralela
+- Análise de dados (R+tidyverse)
+- Criação de gráficos (ggplot2)
+
+** Referência
+
+Literate Programming. Donald E. Knuth. (#1)
+
+Applied Statistics and Probability for Engineers. Montgomery & Runger. (#2)
+
+R for Data Science. Grolemund & Wickham. (#3)
+
+#+latex: \vfill
+
+*** #1
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+attr_latex: :width .8\linewidth
+[[./img/220px-Literate_Programming_book_cover.jpg]]
+
+*** #2
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+attr_latex: :width .9\linewidth
+[[./img/applied-book.jpg]]
+
+*** #3
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+attr_latex: :width .8\linewidth
+[[./img/r4ds.png]]
+
+*** 
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+
+#+latex: \pause
+
+#+BEGIN_CENTER
+Exemplos oriundos dos trabalhos do grupo de pesquisa
+#+END_CENTER
+
+* Propaganda
+** Coisas adicionais por adicionar                                :noexport:
+- [X] Slides sobre o HPC@UFRGS
+- [X] Perímetros de investigação
+- [X] Plataforma Computacional
+- [ ] Formas de Controle
+** Instituto de Informática em Porto Alegre -- RS
+
+Vista geral de *Porto Alegre* em outubro, do Morro da Glória, 287 metros
+#+latex: \vspace{-.2cm}
+#+attr_latex: :width \linewidth
+[[./img/poa.jpg]]
+
+#+latex: \pause
+
+Vista do centro histórico de *Porto Alegre*, do nível do Guaíba
+#+latex: \vspace{-.2cm}
+#+attr_latex: :width \linewidth
+[[./img/guaiba.jpg]]
+
+#+latex: \pause
+
+
+#+latex: \vspace{-4cm}
+#+attr_latex: :width .9\linewidth
+[[./img/inf.jpg]]
+
+#+BEGIN_CENTER
+Vista dos jardins do *Instituto de Informática*, manhã fria de agosto
+#+END_CENTER
+
+** Programa de Pós-Graduação em Computação (PPGC)
+
+Site do programa: http://www.inf.ufrgs.br/ppgc/
+
+#+attr_latex: :width .2\linewidth
+[[./img/logo-ppgc-187x118.png]]
+
+Oferece
+- _Mestrado_, entradas anuais em março
+  - Edital é lançado no segundo semestre
+  - Requisito fundamental é o Poscomp
+- _Doutorado_, entrada com fluxo continuo
+
+#+latex: \vfill\pause
+
+Fatos marcantes
+- Conceito máximo (7) pela CAPES (melhor da região sul)
+- Internacionalização da formação e da investigação
+
+#+latex: \vfill\pause
+
+#+BEGIN_CENTER
+*O evento ERAD/RS é uma boa oportunidade para sondar orientadores*.
+#+END_CENTER
+
+** GPPD - Grupo de Processamento Paralelo e Distribuído
+
+Site do grupo de pesquisa:
+
+http://www.inf.ufrgs.br/gppd/site/
+
+Logo do grupo de pesquisa
+
+#+attr_latex: :width .4\linewidth
+[[./img/gppd-logo.png]]
+
+Eixos principais de investigação
+- *High Performance Computing* (Computação de Alto Desempenho)
+- Computer Architecture
+- Big Data
+- Cloud Computing
+- FoG & Edge Computing
+
+** Parque Computacional de Alto Desempenho (PCAD)
+
+Site: http://gppd-hpc.inf.ufrgs.br/
+
+Possui aproximadamente 30 nós: 708 núcleos de CPU e 73.280 de GPU
+- Computação de alto desempenho heterogênea
+
+#+attr_latex: :width .7\linewidth
+[[./img/fotos-schema.pdf]]
+
+Temos um GT (Grupo de Trabalho)
+- Formamos alunos no gerenciamento destas plataformas
+- SLURM, NFS, LDAP, ...
+
+** Quem somos nós?
+*** Lucas Mello Schnorr
+:PROPERTIES:
+:BEAMER_col: 0.45
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Prof. INF/UFRGS & PPGC
+
+[[http://www.inf.ufrgs.br/~schnorr][http://www.inf.ufrgs.br/~schnorr]]
+
+schnorr@inf.ufrgs.br
+
+#+attr_latex: :width .5\linewidth
+[[./img/lucas-schnorr.png]]
+
+*** Vinícius Garcia Pinto
+:PROPERTIES:
+:BEAMER_col: 0.45
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Prof. substituto do INF/UFRGS
+
+[[http://www.inf.ufrgs.br/~vgpinto][http://www.inf.ufrgs.br/~vgpinto]]
+
+vgpinto@inf.ufrgs.br 
+
+#+attr_latex: :width .5\linewidth
+[[./img/vinicius-garcia-pinto.png]]
+* Introdução
+** Método Científico em Sistemas de Computação
+
+#+BEGIN_CENTER
+_Experimentos_
+
+validar ou refutar hipóteses
+#+END_CENTER
+
+Confiabilidade \to experimentos reprodutíveis
+1. Exercer um controle sobre as variáveis controláveis
+2. Registrar o alor das variáveis não controladas (contexto)
+
+#+latex: \vfill\pause
+
+Experimentos em Sistemas Computacionais não são diferentes
+- Único computador: software e hardware
+- Cluster: todos os nós e a rede de interconexão
+
+** Vantagens e desvantagens
+
+#+BEGIN_CENTER
+@@latex:{\large@@ Controle experimental @@latex:}@@
+#+END_CENTER
+
+
+*** Desvantagens
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Experimentos se tornam mais burocráticos
+- Cuidado maior no antes, durante e depois dos experimentos
+- Disciplina reforçada @@latex: \pause@@
+- *Processo investigativo pode ser tornar mais lento*
+
+#+latex: \pause
+
+*** Vantagens
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Conclusões delineadas sejam mais perenes, significativas
+- Relato facilitado (pois há substrato para derivar conclusões)
+- Facilita a reprodutibilidade
+
+** Boas práticas para experimentos em clusters HPC
+
+Automatização de tarefas
+- Coleta dos dados por /scripts/
+- Transformação/derivação de dados
+- Preparação de estatísticas, gráficos e tabelas
+
+#+latex: \pause\vfill
+
+Características
+- Impõem um cuidado na preparação da automatização
+- Permite auditar o processo investigativo
+- Trata-se de uma atividade multidisciplinar
+  - Sistemas operacionais
+  - Redes
+  - Programação
+  - Análise de dados
+  - Processamento Paralelo @@latex:\pause@@
+- *Deve-se começar mesmo com uma estratégia simples*
+
+** Visão geral
+
+1. Teórica: Controle e Coleta
+   - Lista não exaustiva de controle de sistemas computacionais
+   - Projeto experimental @@latex: \vfill@@
+2. Teórica: Análise de Dados
+   - Como analisar os dados com ferramentas modernas de /data science/?
+   - Programação literária @@latex: \vfill\pause@@
+
+Prática, com quatro tutoriais curtos
+1. Instalação de ferramentas que permitem a rastreabilidade (=spack=)
+2. Realização de experimentos computacionais (=slurm=, =bash=)
+3. Análise de dados (=R+tidyverse=)
+4. Criação de gráficos (=ggplot2=)
+
+** Metodologia experimental em duas fases
+*** Fase 1 (Controle e Coleta)
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+Mecanismos automáticos guiados por um projeto experimental
+
+#+attr_latex: :width .9\linewidth
+[[./img/controle-coleta.pdf]]
+
+*** Fase 2 (Análise)
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+Mecanismos automáticos de tratamento dos dados
+- Interpretação dos dados é feita /à posteriori/
+
+*** 
+
+Isolamento: força o experimentador a coletar bastante dados
+
+* Controle e Coleta
+** Características impactantes \to aumento da variabilidade
+
+Fatores
+- *Indeterminismo* da execução paralela (pela concorrência)
+- Aparição de *anomalias* durante a execução
+- *Complexidade* do sistema computacional
+
+#+latex: \vfill\pause
+
+_Aumento da Variabilidade_ dos experimentos
+- Medidas são incertas, tem uma dispersão natural
+- Quanto maior a dispersão, _mais incertas são as conclusões_  @@latex:\pause@@
+  - _Exemplo_: Medir o tempo de execução de uma aplicação paralela
+    - Fazer várias execuções, calcular a *média*, calcular a *dispersão*
+
+#+latex: \vfill\pause
+
+#+BEGIN_CENTER
+Nada se pode fazer em relação ao indeterminismo e às anomalias
+
+Resta tentar _reduzir a complexidade do sistema computacional_
+#+END_CENTER
+
+** Controle e Coleta: Visão Geral
+
+#+attr_latex: :width 1\linewidth
+[[./img/controle-coleta.pdf]]
+
+1. Metodologia experimental
+2. Controle da complexidade
+3. Registro de informações
+4. Instalação de dependências
+5. Controle em nível de sistema operacional
+6. Integração com gerenciadores de /Jobs/
+
+** 1. Metodologia experimental
+
+Projeto experimental
+- Fatores (variáveis de controle) e níveis (seus valores)
+- Variáveis de resposta (observações medidas)
+
+#+latex: \pause
+
+_Exemplo_ (aplicação paralela)
+- 3\times Variáveis de resposta: /makespan/, uso de energia, balanceamento
+- 4\times Fatores: qtdade processos, qtdade nós, freq. processador, rede
+
+#+latex: \pause
+
+*** Leitura praticamente obrigatória
+:PROPERTIES:
+:BEAMER_col: 0.6
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+The Art of Computer Systems Performance Analysis: Techniques for
+Experimental Design, Measurement, Simulation, and Modeling by _Raj
+Jain_. Wiley, 1991.
+
+*** 
+:PROPERTIES:
+:BEAMER_col: 0.2
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+attr_latex: :width .8\linewidth
+[[./img/jain.jpg]]
+
+** Tipos de projetos experimentais
+
+Projetos simples, variam um único fator a cada vez
+- Não permite o estudo da interação entre fatores
+
+#+attr_latex: :options fontsize=\small
+#+BEGIN_SRC C
+// para cada processo em 1 2 4 8 16 32 64 128 256
+//   para cada quantidade de nós 1 2 4 8
+//      para cada frequência do processador 1.2 1.8 2.1
+//         para cada rede 1GB 10GB 40GB
+//            repita 10 vezes esta configuração
+#+END_SRC
+
+#+latex: \pause
+
+*Projeto fatorial completo*, todas as combinações possíveis de fatores
+- Permite estudo das interações
+- Mais caro de ser executado (natureza combinatória)
+
+#+latex: \pause
+
+*Fatorial fracionário*
+- Uma alternativa mais simples (sempre com um /trade-off/)
+
+** Definir um projeto experimental
+
+#+attr_latex: :width .5\linewidth
+[[./img/experimental.pdf]]
+
+Usando a linguagem R
+#+begin_src R :results code :session :exports both
+library(DoE.base);
+exp0 <- fac.design (
+    nfactors=4,
+    replications=10,
+    randomize=TRUE,
+    factor.names=list(
+        process = c(1,2,4,8,16,32,64,128,256),
+        node = c(1,2,4,8),
+        freq = c(1.2,1.8,2.1),
+        net = c("1GB","10GB","40GB")))
+#+end_src
+
+** Projeto experimental definido
+
+O projeto é registrado em um arquivo CSV
+- Cada linha representa uma determinada configuração
+- Valores das células representam os níveis dos fatores
+- Ordem _aleatória_ absorve o impacto das anomalias
+
+#+begin_src R :results output :session :exports both
+head(exp0, n=9)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  process no freq  net Blocks
+1      64  4  1.2 10GB     .1
+2       4  4  2.1 10GB     .1
+3     128  4  1.2  1GB     .1
+4       2  1  1.2  1GB     .1
+5     256  1  1.2  1GB     .1
+6     128  4  1.2 40GB     .1
+7      16  8  2.1 10GB     .1
+8       1  1  2.1  1GB     .1
+9       4  4  1.2  1GB     .1
+#+end_example
+
+** Execução do projeto experimental
+
+#+attr_latex: :width .7\linewidth
+[[./img/execucao.pdf]]
+
+Programa de computador (/script/ em /bash/ por exemplo)
+1. Ler o projeto experimental (no arquivo CSV)
+2. Para cada linha do projeto, *executa a aplicação*
+   1. Parâmetros tem origem nos fatores
+   2. Coleta e registra as variáveis de resposta
+3. Organiza os resultados em um diretório específico
+
+** 2. Controle da complexidade
+
+# Permite _diminuir a variabilidade_ dos fenômenos sendo estudados
+
+#+latex: %\pause\vfill
+
+Diminuir a variabilidade \to quais configurações fixar? Depende.
+- Por que fazer =drop caches= quando a aplicação não faz IO?
+- Por que desativar /hyperthreading/ se há um processo por nó?
+
+#+latex: \pause\vfill
+
+Listagem não exaustiva
+
+- [ ] Vinculação fixa de fluxos de execução (/binding/)
+  - Evita migração automática por algoritmos do SO
+  - Difícil rastrear o comportamento da migração
+  - Detectar e considerar a configuração NUMA @@latex:\pause@@
+- [ ] Controle da frequência dos núcleos de processamento
+  - Fixar na frequência máxima (/governor userspace/)
+  - Desativar /turboboost/ (em processadores Intel)
+    - Não há como saber quando é ativado ou desativado @@latex:\pause@@
+- [ ] Desativar /hyperthreading/ (em processadores Intel)
+  - Evitar uso de /cores/ com recursos mais limitados
+  - Especialmente importante em aplicações limitadas pela CPU @@latex:\pause@@
+- [ ] Configurar uma política TCP/Ethernet adequada para a rede
+  - Parâmetros /default/ no Linux são para redes 100MBit
+
+** 3. Registro automático de informações
+
+Deve-se _automatizar_ o registro de informações do sistema
+- Coletadas toda vez que um experimento for realizado
+- Armazenadas juntamente com os resultados do experimento
+
+#+latex: \vfill\pause
+
+*HW: Sistema operacional, topologia de hardware e freq. do processador*
+- [ ] =lstopo=, da ferramenta =hwloc= (topologia do sistema)
+- [ ] =cpufreq-info= (frequência atual, mínima, máxima, governor)
+- [ ] =ip= (ou ifconfig, obter configurações da interface de rede)
+- [ ] =lspci= (todos os dispositivos PCI)
+
+#+latex: \pause
+
+*SW: Informações associadas à aplicação paralela*
+- [ ] =ompi-info= (OpenMPI, fornece todas as configurações do MPI)
+- [ ] =ldd= (mostra sa bibliotecas compartilhadas da aplicação)
+- [ ] =env= (todas as variáveis de ambiente)
+- [ ] =nm= (todos os símbolos de um binário)
+
+#+latex: \pause\vfill
+
+#+BEGIN_CENTER
+Outras informações que dependem do tipo do experimento.
+#+END_CENTER
+
+** 4. Controle de Software (dependências da aplicação)
+
+Aplicações paralelas *dependem de inúmeras bibliotecas*
+- Solvers de álgebra linear (BLAS)
+- Bibliotecas de comunicação (MPI, OpenMP)
+
+Além disso, pode-se querer testar *múltiplas versões* das dependências
+
+#+latex: \pause\vfill
+
+#+BEGIN_CENTER
+*Spack* -- https://github.com/spack/spack
+#+END_CENTER
+
+- Gerenciador de pacotes _em nível de usuário_
+- Muitas configurações do mesmo pacote _podem coexistir_
+- _Sintaxe específica_ para especificar versões e opções de configurações
+
+#+latex: \pause
+
+#+attr_latex: :options fontsize=\normalsize
+#+begin_src shell :results output
+git clone https://github.com/spack/spack.git
+cd spack/bin
+./spack install zlib@1.2.8+pic~shared+optimize
+#+end_src
+
+#+latex: \pause
+
+Alternativa mais antiga: http://modules.sourceforge.net/
+
+** Um exemplo com libboost, MPI e gcc
+
+=spack= =spec= mostra o que será instalado com a especificação fornecida
+
+#+begin_src sh :exports code :eval no
+./spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+#+end_src
+
+#+begin_src shell :results output
+Input spec
+--------------------------------
+boost@1.69.0+mpi
+    ^openmpi@2.0%gcc@8.2
+
+Concretized
+--------------------------------
+boost@1.69.0%gcc@8.2+atomic+chrono~clanglibcpp~context~coroutine cxxstd=98 +date_time~debug+exception~fiber+filesystem+graph~icu+iostreams+locale+log+math+mpi+multithreaded~numpy patches=2ab6c72d03dec6a4ae20220a9dfd5c8c572c5294252155b85c6874d97c323199,3a83d907043708218325c35ffc318fd6d6cfd78ba89a78f2c70013c72603e5b8,607b0772dec1287c9084ae3b36ee32bff945a2fe5e608823ed47a1ea765c84cd ~pic+program_options~python+random+regex+serialization+shared+signals~singlethreaded+system~taggedlayout+test+thread+timer~versionedlayout+wave arch=linux-debiantesting-x86_64 
+    ^bzip2@1.0.6%gcc@8.2+shared arch=linux-debiantesting-x86_64 
+        ^diffutils@3.7%gcc@8.2 arch=linux-debiantesting-x86_64 
+    ^openmpi@2.0%gcc@8.2~cuda+cxx_exceptions fabrics=auto ~java~legacylaunchers~memchecker patches=d26978ea058131ced4e51668a524f556d3d90d178d54634e6f2077f4c8ba7762 ~pmi schedulers=auto ~sqlite3~thread_multiple+vt arch=linux-debiantesting-x86_64 
+        ^hwloc@1.11.11%gcc@8.2~cairo~cuda~gl+libxml2~nvml+pci+shared arch=linux-debiantesting-x86_64 
+            ^libpciaccess@0.13.5%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^libtool@2.4.6%gcc@8.2 arch=linux-debiantesting-x86_64 
+                    ^m4@1.4.18%gcc@8.2 patches=3877ab548f88597ab2327a2230ee048d2d07ace1062efe81fc92e91b7f39cd00,c0a408fbffb7255fcc75e26bd8edab116fc81d216bfd18b473668b7739a4158e,fc9b61654a3ba1a8d6cd78ce087e7c96366c290bc8d2c299f09828d793b853c8 +sigsegv arch=linux-debiantesting-x86_64 
+                        ^libsigsegv@2.11%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^pkgconf@1.6.0%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^util-macros@1.19.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+            ^libxml2@2.9.8%gcc@8.2~python arch=linux-debiantesting-x86_64 
+                ^libiconv@1.15%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^xz@5.2.4%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^zlib@1.2.11%gcc@8.2+optimize+pic+shared arch=linux-debiantesting-x86_64 
+            ^numactl@2.0.12%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^autoconf@2.69%gcc@8.2 arch=linux-debiantesting-x86_64 
+                    ^perl@5.26.2%gcc@8.2+cpanm patches=0eac10ed90aeb0459ad8851f88081d439a4e41978e586ec743069e8b059370ac +shared+threads arch=linux-debiantesting-x86_64 
+                        ^gdbm@1.18.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+                            ^readline@7.0%gcc@8.2 arch=linux-debiantesting-x86_64 
+                                ^ncurses@6.1%gcc@8.2~symlinks~termlib arch=linux-debiantesting-x86_64 
+                ^automake@1.16.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+#+end_src
+
+** 5. Controle em nível de Sistema Operacional (SO)
+
+Spack é tri, mas não permite controlar toda a pilha de software
+- O SO tem uma influência por vezes determinando na variabilidade
+
+#+latex: \pause
+
+*Método Nativo* \to Kadeploy3
+
+http://kadeploy3.gforge.inria.fr/
+- Gerencia e utiliza perfis PXE com servidor TFTP
+- Dispara comandos de reboot com IPMI ou através de PDU gerenciável
+- O usuário instala seu SO nativamente em uma partição do disco
+
+#+latex: \pause
+
+*Método Virtualizado* \to CharlieCloud
+
+https://github.com/hpc/charliecloud
+- Baseado com Linux Containers
+- Não exige hardware específico (apenas o suporte à virtualização)
+
+** 6. Integração com gerenciadores de /Jobs/
+
+Gerenciador de /jobs/ em clusters de computadores
+- Permite a alocação e reserva de nós
+- Ferramentas: Slurm (SDumont, ...), OAR (Grid5000)
+
+#+latex: \pause
+
+Exemplo utilizando a sintaxe do Slurm
+#+latex: \vspace{-.5\baselineskip}
+#+attr_latex: :options fontsize=\small
+#+BEGIN_SRC sh
+#!/bin/bash
+#SBATCH --job-name="EXP00"
+#SBATCH --nodes=16
+#SBATCH --time=02:00:00
+#SBATCH --partition=gppd-hpc
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+
+# Lançamento da execução do projeto experimental
+#+END_SRC
+
+#+latex: \pause
+
+#+BEGIN_CENTER
+Integração de tudo o que foi visto até agora
+
+deve ser realizado automaticamente pelo script
+#+END_CENTER
+
+** Integração (não exaustiva) com Slurm
+
+#+attr_latex: :options fontsize=\small
+#+begin_src shell :results output
+#!/bin/bash
+#SBATCH --job-name="EXP00"
+#SBATCH --nodes=16
+#SBATCH --time=02:00:00
+#SBATCH --partition=gppd-hpc
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+
+# 1. Controle inicial dos nós computacionais (HW e SW)
+# 2. Registro das condições iniciais
+# 3. Ler o projeto experimental, e para cada experimento
+# 3.1 Aplicar os parâmetros (fatores e valores) específicos
+# 3.2 Registro das condições iniciais do experimento
+# 3.3 Executar o experimento
+# 3.4 Coletar os dados do experimento em um diretório
+# 4. Centralizar os dados em um único diretório
+# 5. Arquivar este script e logs junto com os dados
+#+end_src
+
+** 7. Estudo de caso (Alya -- Space Filling Curves)               :noexport:
+
+R. Borrell, J.C. Cajas, L. Schnorr, A. Legrand, and G. Houzeaux. SFC
+based multi-partitioning for accurate load balancing of CFD
+simulations. In Tenth International Conference on Computational Fluid
+Dynamics (ICCFD10), Barcelona, 2018.
+
+*** Combustação
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+[[./img/meshcomb.png]]
+
+*** Respiratório
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+[[./img/meshresp.png]]
+
+
+*** 
+#+BEGIN_CENTER
+_Objetivo_
+
+Avaliar um método iterativo de balanceamento de carga
+#+END_CENTER
+
+** Preparação do projeto experimental (Alya SFC) e /script/         :noexport:
+
+Todos os fatores tem somente um nível
+- (entrada) a malha com o problema
+- quantidade de passos de simulação
+- quantidade de passos de *balanceamento de carga*
+- quantidade de processo / nós computacionais
+
+#+begin_src shell :results output
+#!/bin/bash
+#SBATCH --job-name="EXP20"
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+#SBATCH --nodes=16
+#SBATCH --ntasks=768
+#SBATCH --time=02:00:00
+
+export CASENAME=fensap    # A entrada que será utilizada
+export TIMESTEPS=5        # Quantidade de passos de simulação
+export STEPS=20           # Quantidade de passos de balanceamento
+export NP=${SLURM_NTASKS} # Quantidade de processos
+# continua...
+#+end_src
+
+** Parte central do experimento EXP20 com Alya (parte #1)         :noexport:
+
+#+begin_src shell :results output
+# ...continuação
+
+# Diretório geral para contar todos os resultados
+export EXPEDIR=EXP20
+rm -rf $EXPEDIR; mkdir -p $EXPEDIR
+
+for RUN in $(seq 1 ${STEPS}); do
+   # criação de chave única
+   RUNKEY="${SLURM_JOB_NAME}_${SLURM_JOB_ID}_${NP}_STEP_${RUN}_of_${STEPS}"
+   rm -rf $RUNKEY; mkdir -p $RUNKEY
+
+   # Carga das versões necessárias
+   module unload mkl
+   module unload intel
+   module unload impi
+   module load gcc/7.2.0
+   module load openmpi/3.0.0
+
+   # continua...
+#+end_src
+
+** Parte central do experimento EXP20 com Alya (parte #2)         :noexport:
+
+#+begin_src shell :results output
+   # ...continuação
+
+   # Execução do experimento
+   $(which mpirun) \
+     	--mca btl_base_warn_component_unused 0 \
+    	--bind-to core:overload-allowed \
+   	--report-bindings \
+  	-x SCOREP_TOTAL_MEMORY=3900MB \
+  	-x SCOREP_MPI_ENABLE_GROUPS=ALL \
+  	-x SCOREP_ENABLE_TRACING=FALSE \
+  	-x SCOREP_ENABLE_PROFILING=TRUE \
+  	-x SCOREP_EXPERIMENT_DIRECTORY=$SCOREPDIR \
+  	$ALYA $CASENAME
+
+   # Copiar todos os arquivos registrados para o diretório $RUNKEY
+
+   # Mover o diretório deste experimento para o diretório geral
+   mv $RUNKEY $EXPEDIR
+done > ${LOG_GERAL}
+
+# Copia o log para o diretório do experimento
+cp ${LOG_GERAL} $EXPEDIR
+#+end_src
+
+* Análise de Dados
+** Análise de dados
+
+Resultado dos experimentos: conjunto de arquivos (/checkpoint/)
+
+#+attr_latex: :width 1\linewidth
+[[./img/loop.pdf]]
+
+Análise é conduzida /offline/, após a execução do experimento
+- No computador pessoal do investigador
+- Plataforma diferente daquela usada nos experimentos
+
+#+BEGIN_CENTER
+Processo iterativo de análise de dados
+#+END_CENTER
+
+** Adotar uma estratégia sistematizada de análise
+
+Permitir
+- Reexecutar algumas etapas do processo de análise
+- Revisar o fluxo de transformações de dados @@latex: \pause@@
+- ``Lembrar'' como uma figura foi concebida (transformação e dados)
+- Saber _precisamente_ como se chegou a valores relatados no artigo
+
+
+#+latex: \vfill\pause
+
+#+BEGIN_CENTER
+Empregar ferramentas modernas de
+
+*Ciência de Dados* para uma *Análise Reprodutível*
+#+END_CENTER
+
+#+latex: \vfill
+
+#+attr_latex: :width .4\linewidth
+[[./img/stickers.png]]
+
+
+#+latex: \pause
+
+#+BEGIN_CENTER
+Programação Literária + Ferramentas Modernas + Compartilhar
+#+END_CENTER
+
+** Programação Literária
+
+Proposta por Donald Knuth
+
+Permite converter um documento fonte em duas representações distintas
+- Um formato legível para humanos
+- Outro apto para execução em computadores
+
+#+latex: \pause
+
+Na prática: é um arquivo com código e texto interpostos
+
+#+latex: \vfill\hrule
+
+Análise de resultados experimentais
+- Permite manter em um mesmo documento
+  - Anotações preliminares
+  - Expectativas, suposições e reflexões
+  - Comandos de análise
+  - Visualização de resultados
+
+** Programação literária com OrgMode
+
+OrgMode, uma extensão do editor de texto Emacs
+
+#+attr_latex: :width .2\linewidth
+[[./org-mode-unicorn-logo.png]]
+
+Arquivos =.org=
+- Blocos de código (em diversas línguas) com o pacote =Babel=
+- Possível de exportar para =tex=, =pdf=, =odt=, ...
+
+#+BEGIN_CENTER
+*Caderno de Anotações*
+
+LabBook.org
+#+END_CENTER
+
+** Uma pequena demonstração com Org falando =shell=
+
+#+name: ex1Shell
+#+attr_latex: :options fontsize=\normalsize
+#+begin_src bash :results value :exports both :cache yes :eval no-export
+export RANDOM=0
+for n in `seq 5`; do printf "%d $RANDOM \n" $n ; done
+#+end_src
+
+#+RESULTS[1f73d7ca9ec270201b7a9578fc3d33bf65611573]: ex1Shell
+| 1 | 24315 |
+| 2 | 12703 |
+| 3 | 22240 |
+| 4 | 10073 |
+| 5 | 18561 |
+
+** Uma pequena demonstração com Org falando =R=
+
+#+attr_latex: :options fontsize=\normalsize
+#+header: :var dados=ex1Shell
+#+begin_src R :results output graphics :file ./img/example-literate.pdf :exports both :width 6 :height 3 :session
+library(tidyverse)
+dados %>%
+    ggplot(aes(V1, V2)) +
+    geom_point() + geom_line()
+#+end_src
+
+#+RESULTS:
+[[file:./img/example-literate.pdf]]
+
+** Checklist para gráficos de qualidade
+
+#+BEGIN_CENTER
+Ler documento auxiliar, mas vejamos um trecho...
+#+END_CENTER
+
+| <l>              | <l> | <l>                                                                                                                          |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Dados*            | \check   | O tipo do gráfico é adequado para a natureza do dado (curva, barras, setores, histograma, nuvem de pontos, etc)        |
+|                  | \check   | As aproximações/interpolações fazem sentido                                                                                  |
+|                  | \check   | As curvas são definidas com um número suficiente de pontos                                                                   |
+|                  | \check   | O método de construção da curva é claro: interpolação (linear, polinomial, regressão, etc)                                   |
+|                  | \check   | Os intervalos de confiança são visualizados (ou informados separadamente)                                                    |
+|                  | \check   | Os passos do histograma são adequados                                                                                        |
+|                  | \check   | Histogramas visualizam probabilidades (de 0 a 1)                                                                             |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Objetos Gráficos* | \check   | Os objetos gráficos são legíveis na tela, na versão impressa (P&B), em vídeo, etc                                            |
+|                  | \check   | O intervalo do gráfico é padrão, sem cores muito similares, sem verde (vídeo)                                                |
+|                  | \check   | Os eixos do gráfico estão claramente identificados e rotulados                                                               |
+|                  | \check   | Escalas e unidades estão explícitas                                                                                          |
+|                  | \check   | As curvas se cruzam sem ambiguidade                                                                                          |
+|                  | \check   | As grades ajudam o leitor                                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações*        | \check   | Eixos são rotulados por quantidades                                                                                          |
+|                  | \check   | Rótulos dos eixos são claros e autocontidos                                                                                  |
+|                  | \check   | Unidades estão indicadas nos eixos                                                                                           |
+|                  | \check   | Eixos são orientados da esquerda para a direita e de baixo para cima                                                         |
+|                  | \check   | Origem é (0,0), caso contrário deve estar claramente justificada                                                             |
+|                  | \check   | Sem buracos nos eixos                                                                                                        |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações (2)*    | \check   | Para gráficos de barras/histogramas a ordem das barras segue a ordenação clássica (alfabética, temporal, do melhor pro pior) |
+|                  | \check   | Cada curva tem uma legenda                                                                                                   |
+|                  | \check   | Cada barra tem uma legenda                                                                                                   |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Informação*       | \check   | Curvas estão na mesma escala                                                                                                 |
+|                  | \check   | O número de curvas em um mesmo gráfico é pequeno (menor que 6)                                                               |
+|                  | \check   | Compare as curvas no mesmo gráfico                                                                                           |
+|                  | \check   | Uma curva não pode ser removida sem redução de informação                                                                    |
+|                  | \check   | O gráfico fornece informações relevantes ao leitor                                                                           |
+|                  | \check   | Se o eixo vertical mostra médias, as barras de erro devem estar presentes                                                    |
+|                  | \check   | Não é possível remover qualquer objeto sem modificar a legibilidade do gráfico                                               |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Contexto*         | \check   | Todos os símbolos são definidos e referenciados no texto                                                                     |
+|                  | \check   | O gráfico produz mais informação que qualquer outra representação (escolha da variável)                                      |
+|                  | \check   | O gráfico tem um título                                                                                                      |
+|                  | \check   | O título é suficientemente autocontido para a compreensão parcial do gráfico                                                 |
+|                  | \check   | O gráfico é referenciado no texto                                                                                            |
+|                  | \check   | O texto comenta a figura                                                                                                     |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+|                  | \check   | *A representação gráfica deve ser elegante*                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+
+** Como fica um gráfico melhorado
+
+#+header: :var dados=ex1Shell
+#+begin_src R :results output graphics :file ./img/example-literate2.pdf :exports both :width 6 :height 2.5 :session
+library(tidyverse)
+dados %>%
+    ggplot(aes(V1, V2)) +
+    theme_bw() +
+    geom_point(size=2) + geom_line() +
+    ylab("Valor Aleatório") + xlab("Observação") +
+    ggtitle("Geração de Números Aleatórios em shell script") + 
+    lims(y = c(0, NA), x = c(1, NA))
+#+end_src
+
+#+RESULTS:
+[[file:./img/example-literate2.pdf]]
+
+** Reprodutibilidade da análise de desempenho
+
+Ir além do texto científico (artigo, relatório) \to _Companion_
+
+O companion deve ter
+- Caderno de anotações
+- Código fonte
+- Dados brutos
+- Dados processados
+
+#+latex: \pause
+
+1. Formato
+   - Dados: aberto e de estrutura simples \to arquivos CSV
+   - Texto: usando programação literária (OrgMode, RMD, IPython)
+
+2. Disponibilização
+   - Dificuldade de encontrar locais apropriados
+     - Dados muito volumosos
+   - Alternativas
+     - GitHub, Bitbucket, GitLab (restrições de volume)
+     - FigShare, *Zenodo*
+   - Exemplo com DOI =10.5281/zenodo.2605464= https://zenodo.org/record/2605464
+
+* Demonstração
+* Tutorial
+** Tutorial (com acompanhamento do ministrante)
+
+#+BEGIN_CENTER
+https://github.com/viniciusvgp/tutorial-mc-erad-2019
+
+ou
+
+https://gitlab.com/schnorr/erad19
+#+END_CENTER
+
+#+latex: \vfill
+
+1. Instalação de Ferramentas com Spack (local)
+2. Realização de Experimentos Computacionais (remoto, no *parque*)
+   #+BEGIN_SRC bash
+ssh erad@gppd-hpc.inf.ufrgs.br
+   #+END_SRC
+3. Análise de Dados (local) \\
+   http://www.inf.ufrgs.br/~vgpinto/erad-tuto.tar
+   
+4. Criação de Gráficos (local)
+
+* Conclusão
+** Conclusão
+
+Terminologia da Association for Computing Machinery (ACM)
+- Repetibilidade (mesmo time, mesma configuração experimental)
+- Replicabilidade (time diferente, mesma configuração experimental)
+- Reprodutibilidade (time diferente, configuração experimental diferente)
+
+#+BEGIN_CENTER
+_Reflexão_
+
+Como validar/refutar resultados com um HW diferente?
+#+END_CENTER
+
+#+latex: \pause\vfill\Large
+#+BEGIN_CENTER
+_melhorar nossas práticas experimentais_
+#+END_CENTER
+
+[[./img/loop.pdf]]
+
+
+** Coisas adicionais por adicionar                                :noexport:
+- [ ] Como ir mais longe
+** Obrigado por participar e pela atenção! Perguntas?
+
+#+Latex: \vfill
+#+BEGIN_CENTER
+Contato
+
+E-mail: schnorr@inf.ufrgs.br
+
+Site: http://www.inf.ufrgs.br/~schnorr
+#+END_CENTER
+#+latex: \vfill
+
+** Free Cultural Works
+
+#+attr_latex: :width 3cm
+[[./img/CC-BY-SA_icon.png]]
+
+#+latex: {\scriptsize
+#+latex: \noindent
+Este documento está licenciado sob a Licença
+/Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0)/ da
+/Creative Commons/ (CC). Em resumo, você deve creditar a obra da forma
+especificada pelo autor ou licenciante (mas não de maneira que sugira
+que estes concedem qualquer aval a você ou ao seu uso da obra). Você
+pode usar esta obra para fins comerciais. Se você alterar, transformar
+ou criar com base nesta obra, você poderá distribuir a obra resultante
+apenas sob a mesma licença, ou sob uma licença similar à
+presente. Para ver uma cópia desta licença, visite
+https://creativecommons.org/licenses/by-sa/4.0/.
+#+latex: }
+
+#+latex: \bigskip
+
+#+latex: {\scriptsize
+#+latex: \noindent
+Este documento foi produzido usando exclusivamente software livre:
+Sistema Operacional Debian GNU/Linux, compilador de texto
+@@latex:\LaTeX@@, editor gráfico Inkscape, /workflow/ reprodutível em
+OrgMode com Emacs, as linguagens de programação R, com os pacotes do
+universo /tidyverse/, e /shell script/, o processador PS/PDF GhostScript,
+entre outros.
+#+latex: }
+
+* Configuração do EMACS                                            :noexport:
+** Manual
+
+#+begin_src emacs-lisp :results output :session :exports both
+(add-to-list 'load-path ".")
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+(setq ispell-local-dictionary "brasileiro")
+(flyspell-mode t)
+
+(setq org-latex-listings 'minted
+      org-latex-packages-alist '(("" "minted"))
+      org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+(setq org-latex-minted-options
+       '(("frame" "lines")
+         ("fontsize" "\\scriptsize")))
+#+end_src
+
+#+RESULTS:
+
+** Local
+
+# Local Variables:
+# eval: (add-to-list 'load-path ".")
+# eval: (require 'ox-extra)
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (setq org-latex-listings t)
+# eval: (setq org-latex-packages-alist '(("" "listings")))
+# eval: (setq org-latex-packages-alist '(("" "listingsutf8")))
+# eval: (setq org-latex-listings 'minted)
+# eval: (setq org-latex-packages-alist '(("" "minted")))
+# eval: (setq org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+# eval: (setq org-latex-minted-options '(("frame" "lines") ("fontsize" "\\scriptsize")))
+# End:
+
+
+

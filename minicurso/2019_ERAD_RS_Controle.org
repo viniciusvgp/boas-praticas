@@ -1,0 +1,1374 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+#+TITLE: Boas Práticas para Experimentos Computacionais em Clusters de Alto Desempenho
+#+AUTHOR: Lucas Mello Schnorr\footnote{Lucas Mello Schnorr possui graduação em Ciência da Computação pela Universidade Federal de Santa Maria (2003), mestrado em Computação pela Universidade Federal do Rio Grande do Sul (2005), doutorado em Computação pela Universidade Federal do Rio Grande do Sul com um acordo de cotutela com o Institut National Polytechnique de Grenoble (2009), pós-doutorado pelo Centre National de la Recherche Scientifique (2011) e pós-doutorado pelo Institut National de Recherche en Informatique et en Automatique (2017). Desde 2013 é Professor Adjunto da Universidade Federal do Rio Grande do Sul e orientador do Programa de Pós-Graduação em Computação. Conduz pesquisas em ambiente internacional. Tem experiência na área da Computação, com ênfase em Sistemas de Computação e Processamento de Alto Desempenho.}, Vinícius Garcia Pinto\footnote{Vinícius Garcia Pinto  possui graduação em Ciência da Computação pela Universidade Federal de Santa Maria (2010), mestrado em Computação pelo Universidade Federal do Rio Grande do Sul (2013) e doutorado em Computação pela Universidade Federal do Rio Grande do Sul em cotutela com a Université Grenoble Alpes / França (2018). Foi professor da Faculdade São Francisco de Assis e da Universidade de Caxias do Sul. Tem experiência em Programação Paralela e Computação de Alto Desempenho} @@latex:\\@@ \emph{Instituto de Informática, Universidade Federal do Rio Grande do Sul \\Porto Alegre, Brasil}
+
+#+STARTUP: overview indent
+#+LANGUAGE: pt_BR
+#+OPTIONS: H:3 creator:nil timestamp:nil skip:nil toc:nil num:t ^:nil ~:~
+#+OPTIONS: author:true title:true date:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_CLASS: SBCbookchapter
+#+LATEX_CLASS_OPTIONS: [12pt]
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage[brazilian]{babel}
+#+LATEX_HEADER: \usepackage{longtable}
+#+LATEX_HEADER: \usepackage{palatino}
+#+LATEX_HEADER: \usepackage{enumitem}
+#+LATEX_HEADER: \setlist[itemize]{leftmargin=1.2em}
+#+LATEX_HEADER: \usepackage{listings}
+#+LATEX_HEADER: \renewcommand\lstlistingname{Listagem}
+#+LATEX_HEADER: \usepackage{listingsutf8}
+
+# You need at least Org 9 and Emacs 24 to make this work.
+
+* Proposta                                                         :noexport:
+** Resumo
+
+Este documento apresenta uma proposta de minicurso para a edição 2019
+da Escola Regional de Alto Desempenho, a ser realizada na cidade de
+Três de Maio, noroeste do RS. O minicurso se posiciona na temática de
+análise de desempenho de aplicações paralelas em clusters de
+computadores de alto desempenho. Especificamente, o minicurso se
+propõe a sensibilizar os participantes aos fatores que impactam a
+coleta de medidas representativas para que os experimentos sejam mais
+confiáveis. Ele traz exemplos interessantes de problemas de análise
+oriundos em medidas mal feitas, como já foi previamente relatado
+\cite{stanisic2017characterizing}. O minicurso tem três partes: (a) motivar cuidados essenciais na
+realização de experimentos computacionais para controlar a
+variabilidade experimental; (b) apresentação dos principais formas de
+controlar parâmetros em sistemas Linux, tais como controle de
+frequência do processador e atividades do sistema operacional; e (c)
+como analisar os dados coletados com linguagens de programação e
+ferramentas modernas de manipulação de dados que habilitam a
+reprodutibilidade desta análise. O minicurso é da categoria
+intermediário pois demanda conhecimento prévio em programação
+paralela, scripting em /bash/ e Linux.
+
+** Tipo
+
+Intermediário para Avançado, para quase graduados ou pós-graduandos.
+
+** Conhecimentos necessários
+
+- Programação paralela baseada na especificação MPI e OpenMP
+- Uso de terminal com =SSH= para rodar experimentos
+- Conceito de sistemas operacionais e Linux 
+- Scripting em bash e/ou python
+
+** Relevância para a ERAD
+
+Além do ensino da programação de aplicações paralelas para as
+arquiteturas multi-core e clusters de computadores, devemos formar
+alunos que saibam como realizar experimentos corretamentamente nestas
+plataformas computacionais. O minicurso aborda portanto esse assunto
+complementar, frequentemente não abordado em cursos de graduação, e é
+particularmente útil para estudantes que pretendem seguir na academia.
+
+** Detalhamento dos tópicos abordados
+
+O minicurso tem três partes:
+
+1. *Motivação*: apresentar cuidados essenciais na realização de
+   experimentos computacionais para controlar a variabilidade
+   experimental, e ilustrar casos interessantes que levam a problemas;
+   - Baseado em estudos de caso próprios
+   - Alguns casos de \cite{stanisic2017characterizing}
+   - Exemplos de publicações nos fórums de IC e PG de ERADs anteriores
+   - Lembretes estatísticos (variabilidade computacional, etc) para motivar
+
+2. *Controle e Coleta*: Apresentação dos principais formas de controlar
+   sistemas computacionais, focados em ambientes para processamento de
+   alto nível (SO Linux, múltiplos nós, redes de baixa latência), e de
+   projeto experimental:
+   - Checklist experimental com boas práticas
+     - Binding de /threads/, controle de frequência, etc
+   - Registro automático de informações sobre a plataforma
+     - Hardware: lstopo, CPU pstates, governor, lspci, ifconfig
+     - Software: ompi, ldd, nm
+   - Ferramentas para instalação de dependências
+     - spack
+   - Uso de máquinas virtuais para =freeze= de versões
+     - charliecloud, singularity
+   - Integração com gerenciadores de jobs
+     - slurm, oar
+   - Divisão em projeto experimental e execução experimental
+   - Caso específico de coleta de rastros (observação de dados em escala)
+
+3. *Análise*: Como analisar os dados coletados com linguagens de
+   programação e ferramentas modernas de manipulação de dados que
+   habilitam a reprodutibilidade desta análise.
+
+   - Programação literal para análise dos resultados
+     - OrgMode + R
+     - Geração de gráficos (/checklist for good graphics/)
+   - Reprodutibilidade da análise de desempenho
+     - Filosofia de disponibilidade de dados/código
+     - Ciência aberta e disponibilização de anexos de artigos
+
+** Breve biografia do proponente
+
+Possui graduação em Ciência da Computação pela Universidade Federal de
+Santa Maria (2003), mestrado em Computação pela Universidade Federal
+do Rio Grande do Sul (2005), doutorado em Computação pela Universidade
+Federal do Rio Grande do Sul (2009), pós-doutorado pela Centre
+National de la Recherche Scientifique (2011) e pós-doutorado pela
+Institut National de Recherche en Informatique et en
+Automatique(2017). Atualmente é Professor Adjunto da Universidade
+Federal do Rio Grande do Sul e orientador do Programa de Pós-Graduação
+em Computação (nível máximo na avaliação da CAPES). Conduz pesquisas
+em ambiente internacional. Tem experiência na área de Ciência da
+Computação, com ênfase em Sistemas de Computação e Processamento de
+Alto Desempenho.
+
+** Público-alvo
+
+Alunos de graduação em Ciência da Computação e Engenharia da
+Computação.
+
+** Observações
+
+Se por ventura esta proposta for aceita, agradeço se puderem alocá-la
+para os primeiros dias da ERAD/RS 2019 (quarta ou quinta), e agradeço
+se puderem me fornecer mais tempo para a redação do texto (caso
+acharem necessário). O minicurso pode ser adaptado para durações
+diferentes, de 1h até 5hs. Uma parte prática pode ser proposta aos
+participantes com acesso a cluster remotos.
+
+* *Minicurso*                                                         :ignore:
+** Latex configurations                                             :ignore:
+
+#+BEGIN_EXPORT latex
+\sloppy
+#+END_EXPORT
+
+** Frontpage                                                        :ignore:
+** Abstract                                                         :ignore:
+
+# Não precisamos de um resumo em inglês.
+#+LaTeX: %\begin{abstract}
+# Put the abstract here.
+#+LaTeX: %\end{abstract}
+
+#+BEGIN_resumo
+A temática deste minicurso é em análise de desempenho de
+aplicações paralelas em clusters de alto
+desempenho. O minicurso se propõe a sensibilizar os
+participantes aos fatores que afetam a coleta de medidas, para tornar os
+experimentos mais confiáveis. O minicurso tem três partes: (a) motivar cuidados
+essenciais em medidas computacionais para controlar
+a variabilidade experimental; (b) apresentação de formas
+de controlar parâmetros em sistemas Linux;  e (c) como analisar
+de maneira reprodutível os dados coletados com linguagens de
+programação e ferramentas modernas de manipulação de dados.
+#+END_resumo
+
+** Introdução
+
+Um dos pilares do método científico é o uso de experimentos para
+validar ou refutar hipóteses e teorias que tentam explicar fenômenos
+naturais. Para ser confiável, tais experimentos devem ser
+reprodutíveis, de forma que outros pesquisadores possam refazer as
+observações independentemente. A reprodutibilidade se torna possível
+no momento que se exerce um controle sobre a maior quantidade possível
+de variáveis que possam afetar o fenômeno sob investigação. A prática
+consiste também em registrar o valor das variáveis não
+controladas (ou não controláveis) de forma que elas possam servir de
+contexto observado do fenômeno.
+
+Experimentos computacionais na grande área de sistemas de computação
+não são diferentes. O controle e registro de variáveis dos sistemas
+computacionais é passo obrigatório para tornar qualquer observação
+computacional mais confiável. Em um cenário com um único computador,
+esse controle se exerce através do estabelecimento de configurações de
+todas as camadas do computador, das configurações de hardware (por
+exemplo, da BIOS) até as de software (sistema operacional e
+arcabouços). Na área de processamento paralelo de alto desempenho onde
+múltiplos computadores são utilizados conjuntamente, esse controle
+deve ser exercido sob os elementos da rede de interconexão.
+
+Tal controle experimental tem desvantagens e vantagens. Por um lado,
+os experimentos se tornam um processo mais burocrático, envolvendo
+preparação adicional, cuidado maior no antes, durante e depois dos
+experimentos, e disciplina reforçada. Tais procedimentos podem fazer
+com que o avanço da investigação seja mais lento. Por outro lado, um
+controle reforçado permite que a investigação seja conduzida a partir
+de uma efeito real, claro, fazendo com que as conclusões delineadas a
+respeito do fenômeno sejam mais perenes e significativas. Nesta mesma
+linha, tal controle torna o relato das observações realizadas, na
+forma de artigos científicos ou relatórios de pesquisa, possa ser
+enriquecido e também facilmente reprodutível. Por exemplo, os dados
+coletados podem ser retrabalhados sem a necessidade de realizar uma
+nova longa bateria experimental.
+
+As boas práticas para experimentos computacionais em clusters de alto
+desempenho se estendem portanto ao relato das conclusões.  Os dados
+coletados devem ser trabalhados através de programas de computadores
+(/scripts/) de maneira a retirar o humano da preparação de estatísticas,
+gráficos e tabelas. Toda transformação de dados deve ser então
+realizada de maneira automática através de programas preparados pelo
+analista. Assumindo que um cuidado elevado seja empregado pelo
+analista na criação destes programas, isso garante que a transformação
+dos dados reflita exatamente a mensagem que se deseja transmitir.
+
+Levando-se em conta este contexto, este minicurso tem por objetivo
+sensibilizar os participantes a estas questões. Apresenta portanto um
+conjunto de boas práticas a serem aplicadas desde a realização de
+experimentos computacionais em clusters de alto desempenho até a
+transformação e análise dos dados. Caracterizando-se como uma
+atividade multidisciplinar, o minicurso envolve conceitos de sistemas
+operacionais, redes, programação, análise de dados, e processamento
+paralelo. Ele está estruturado em duas partes:
+
+- *Parte 1: Controle e Coleta* -- apresentação de uma lista não
+  exaustiva com as principais formas de controlar sistemas
+  computacionais, focados em ambientes para processamento de alto
+  nível (SO Linux, múltiplos nós, redes de baixa latência), e de
+  projeto experimental \cite{jain1991art}, para realização de baterias
+  de experimentos com relevância estatística.
+
+- *Parte 2: Análise de Dados* -- como analisar os dados coletados com
+  linguagens de programação e ferramentas modernas de transformação de
+  dados que habilitam a reprodutibilidade desta análise, envolvendo
+  conceitos como programação literária \cite{Knuth1984} e análise de
+  dados com a linguagem R \cite{rmanual}.
+
+Esta separação em duas partes reflete um processo metodológico de duas
+fases. Primeiro, os experimentos são realizados através de mecanismos
+automáticos enriquecidos com coleta de dados, guiados por um projeto
+experimental onde constam as variáveis controladas e
+observadas. Segundo, os dados registrados são analisados pelo analista
+através de mecanismos, também automáticos, de tratamento de dados. Há
+portanto uma clara divisão onde a interpretação dos dados observados é
+realizada /à posteriori/.  Considera-se tal divisão importante pois
+permite um isolamento da fase de coleta. Os dados coletados podem ser
+analisados sob múltiplas facetas, permitindo interpretações
+diversas. Essa separação também traz a vantagem de forçar o
+experimentador e se preocupar com o registro da maior quantidade de
+informações do sistema computacional. A preocupação é induzida
+propositalmente pois uma vez finalizada a primeira parte, ao perceber
+que variáveis não controláveis não foram registradas, o experimentador
+deve realizar os experimentos com todos os custos de tempo e recurso
+associados. Portanto, somente uma reexecução completa garante que as
+configurações observadas refletem a máquina utilizada no experimento.
+
+*** Old                                                          :noexport:
+**** Contexto
+
+1. *Motivação*: apresentar cuidados essenciais na realização de
+   experimentos computacionais para controlar a variabilidade
+   experimental, e ilustrar casos interessantes que levam a problemas;
+   - Baseado em estudos de caso próprios
+   - Alguns casos de \cite{stanisic2017characterizing}
+   - Exemplos de publicações nos fórums de IC e PG de ERADs anteriores
+   - Lembretes estatísticos (variabilidade computacional, etc) para motivar
+
+**** Motivação
+**** Conceitos básicos de estatística
+*** Organização do documento                                       :ignore:
+
+Este texto está organizado da seguinte forma. A Seção [[#sec.controle]]
+apresenta as principais formas de controlar sistemas computacionais,
+focados em ambientes para processamento de alto nível (SO Linux,
+múltiplos nós, redes de baixa latência), e de projeto experimental.  A
+Seção [[#sec.analise]] apresenta métodos de análise com linguagens de
+programação e ferramentas modernas de manipulação de dados que
+habilitam a reprodutibilidade desta análise. Enfim, a Seção
+[[#sec.conclusao]] conclui este texto com um sumário do que foi descrito e
+ponteiros para aprofundar os conceitos apresentados.
+
+** Controle e Coleta
+:PROPERTIES:
+:CUSTOM_ID: sec.controle
+:END:
+
+*** Introdução                                                     :ignore:
+
+A parte de controle e coleta envolve a fase da realização do
+experimento computacional. No âmbito do processamento de alto
+desempenho, consideramos que os experimentos são realizados em um
+/cluster/ de computadores interconectados através de uma rede de
+interconexão específica para a comunicação de mensagens da aplicação
+paralela. Um exemplo com quatro nós computacionais está ilustrado na
+esquerda da Figura \ref{img.controle_coleta}.  Um conjunto de
+processos será executado sobre os vários nós deste tipo de
+plataforma. Habitualmente, executa-se um processo por /core/ disponível
+nos nós computacionais.
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\linewidth]{./img/controle-coleta.pdf}
+\caption{Panorama geral do controle e coleta em experimentos computacionais:
+         um \emph{cluster} de computadores com quatro nós e sua rede de interconexão
+         combinado com uma aplicação paralela são sujeitos da definição de um
+         projeto experimental que depois é executado para se coletar os dados para análise.}
+\label{img.controle_coleta}
+\end{figure}
+#+END_EXPORT
+
+Tal execução paralela envolve características que impactam o controle
+e coleta de dados: o indeterminismo da execução paralela, a aparição
+de anomalias, e a complexidade do sistema computacional. É natural a
+existência do *indeterminismo* na ordem que as operações são de fato
+executadas, devido ao caráter concorrente da execução paralela. O
+aparecimento de *anomalias* inesperadas, em qualquer camada do sistema
+computacional, pode causar tempos maiores na execução de uma
+determinada sequência de operações. Enfim, temos a *complexidade* do
+sistema computacional, com inúmeras camadas em nível de hardware e
+software. Essa complexidade torna difícil considerar todas as
+possíveis facetas configuráveis de um /cluster/ de computadores.
+
+A combinação dessas características aumenta a /variabilidade/ dos
+experimentos computacionais. Ou seja, o efeito combinado do
+indeterminismo, da aparição de anomalias, da complexidade, torna o
+comportamento de qualquer experimento mais sujeito a variações nas
+medições. Um exemplo disso é a avaliação do tempo de execução de uma
+aplicação paralela: além de calcular a média de um determinado
+conjunto de execuções, o experimentador também calcula a variabilidade
+da média através de um intervalo de confiança calculado, por exemplo,
+a partir do desvio padrão. Quando maior a dispersão, menos confiável é
+a média e por consequência qualquer conclusão que possa se tirar do
+experimento. Qualquer ação do experimentador para reduzir tal
+dispersão é benéfico para melhor estudar determinado sistema
+computacional.
+
+Das três características listadas, pouco pode ser feito em relação ao
+indeterminismo e ao aparecimento de anomalias. O indeterminismo é de
+certa forma desejado pois ele permite a execução concorrente,
+paralela, grande objetivo do processamento de alto desempenho. O
+aparecimento de anomalias inesperadas é natural em qualquer sistema
+computacional devido a grande quantidade de camadas de controle
+existentes, desde o baixo nível do hardware até a aplicação sendo
+executada. Enfim, para diminuir a variabilidade dos experimentos
+computacionais, resta controlar manualmente a maior quantidade de
+configurações possíveis do sistema computacional, diminuindo a sua
+complexidade.
+
+Esta seção apresenta um resumo de conceitos e boas práticas para
+controlar um sistema computacional e obter medidas mais
+significativas.  A Seção [[#sec.metodologia]] apresenta conceitos a
+respeito da metodologia experimental separada em duas fases. A Seção
+[[#sec.boas]] apresenta uma /checklist/ com boas práticas para controle da
+complexidade de sistemas computacionais. A Seção [[#sec.registro]]
+apresenta uma discussão e formas de registrar informações sobre a
+plataforma e ambiente de execução automaticamente. A Seção
+[[#sec.dependencias]] apresenta ferramentas para instalação de
+dependências para a pilha de software sobre o sistema operacional. A
+Seção [[#sec.virtuais]] lista ferramentas de virtualização através de
+/containers/ do Linux para controlar também o sistema operacional. A
+Seção [[#sec.jobs]] apresenta formas de integrar todo o mecanismo de
+controle e coleta em /scripts/ para gerenciadores de /jobs/ tais como
+Slurm \cite{yoo2003slurm} e OAR \cite{capit2005batch}. Enfim, a Seção
+[[#sec.estudodecaso]] apresenta um estudo de caso que mostra como tais
+conceitos e práticas podem ser operacionalizados.
+
+*** Metodologia experimental
+:PROPERTIES:
+:CUSTOM_ID: sec.metodologia
+:END:
+
+Segundo Jain \cite{jain1991art}, um experimento computacional se
+inicia através da definição de um projeto experimental. Ele deve ser
+constituído levando-se em conta os objetivos da investigação,
+definindo quais são as variáveis de controle -- os *fatores* -- e quais
+são as *variáveis de resposta*, ou seja, o que será observado. O
+objetivo é entender como os diferentes valores dos fatores -- os
+*níveis* --influenciam a resposta. Como exemplo, podemos utilizar uma
+aplicação paralela. Uma variável de resposta pode ser simplesmente o
+tempo de execução ou a aceleração obtida com a paralelização. Como
+fatores, podemos considerar que o número de processos (seguindo a
+quantidade de núcleos de processamento), a quantidade de nós
+computacionais (de acordo com a disponibilidade do /cluster/), a
+frequência do processador (na praia de valores aceita pelo hardware) e
+a rede de interconexão (configurações alternativas de largura de
+banda) podem ter uma influência direta nas variáveis de resposta.
+
+Existem vários tipos de projetos experimentais. Na sua versão mais
+simples, um projeto é capaz de estudar o impacto dos valores de um
+único fator, sendo que os valores dos demais fatores se mantém
+fixos. Tal tipo de projeto não permite o estudo da interação que possa
+existir entre os fatores. No exemplo anterior, seria inviável estudar
+a relação entre a quantidade de processos e a rede de
+interconexão. Tais fatores tem possivelmente uma relação devido a
+contenção da rede, mais fácil de ser atingida com um número maior de
+processos comunicantes. Por outro lado, o exemplo mais representativo
+de um projeto experimental mais complexo é o fatorial completo. Ele
+permite estudar a influência de todas as combinações de valores de
+todos os fatores nas variáveis de resposta. Tal projeto é bastante
+caro de ser executado, pois sua natureza combinatória o torna
+proibitivo de ser executado com um número já moderado de valores e
+fatores. Um exemplo intermediário é o projeto fatorial fracionário,
+onde alguns fatores se mantém fixos enquanto os demais são estudados
+com todas as combinações.  A escolha do projeto experimental depende
+do recurso de tempo e de plataforma que se deseja investir para
+entender o fenômeno que se estuda.
+
+A esquerda da Figura \ref{img.controle_coleta} ilustra a fase de
+/definição do projeto experimental/ culminando na definição do *Projeto
+Experimental* no centro da imagem. Na prática, este projeto
+experimental pode consistir em uma tabela onde as colunas representam
+os fatores, e cada linha representa uma determinada configuração a ser
+executada na plataforma. Os valores das células nas colunas
+representam os níveis dos fatores que devem ser adotados por aquela
+execução específica. A ordem aleatória dos itens do projeto
+experimental é fundamental, pois permite absorver anomalias
+inesperadas durante a execução da bateria experimental.
+
+Definido o projeto experimental, passa-se a fase de /execução do
+projeto experimental/, como ilustrado na direita da Figura
+\ref{img.controle_coleta}. Essa fase pode ser representada através de
+programa de computador (idealmente escrito em linguagem de /script)/ que
+lê o projeto experimental e executa a aplicação paralela na plataforma
+alvo de acordo com os valores de fatores preestabelecidos. É portanto
+fundamental que tal script tenha controle das configurações da
+plataforma e da aplicação. Embora existem arcabouços que possam tornar
+genérica tal fase de execução, frequentemente são construídos
+procedimentos específicos para cada combinação de plataforma e
+aplicação, dada a especialização obrigatória desta fase. Um conjunto
+de dados observados, incluindo as variáveis de resposta, é registrado
+em arquivos de dados. Tais arquivos contém também todas as informações
+de variáveis não controladas e configurações de sistema.
+
+*** Boas práticas para controle da complexidade
+:PROPERTIES:
+:CUSTOM_ID: sec.boas
+:END:
+
+Como anteriormente discutido, o controle da complexidade da plataforma
+computacional permite diminuir a variabilidade dos fenômenos sendo
+estudados. Esse controle visa a reduzir a quantidade de variáveis
+controláveis, fixando e registrando suas configurações para valores
+conhecidos de forma que possam ser utilizados mais tarde para a
+análise dos dados. Quais configurações devem ser realizadas depende
+bastante de qual tipo de experimento está se conduzido. A listagem a
+seguir não é exaustiva e se propõem a simplesmente dar uma noção de
+quais configurações são úteis em determinados contextos.
+
+- [ ] Vinculação (/binding/) fixa de fluxos de execução (/threads/),
+  permite evitar a migração automática pelos algoritmos de
+  balanceamento de carga embutidos no sistema operacional. Embora
+  esses algoritmos tenham sido concebidos para eventualmente melhorar
+  o desempenho, a migração de /threads/ acontece de maneira não
+  explícita, ou seja, a aplicação não fica sabendo e é relativamente
+  difícil rastrear em qual núcleo de processamento (/core/) ela
+  efetivamente está sendo executada em cada intervalo de tempo.
+- [ ] Controle de frequência dos núcleos de processamento (/cores/) do
+  processador, permite evitar que o HW ou o SW (neste caso, o sistema
+  operacional), realize mudanças da frequência de processamento. Esse
+  tipo de controle pode ser executado através da fixação de uma
+  política de frequência por usuário, estabelecendo o uso da
+  frequência máxima. Deve-se ter atenção ao fato que o HW, por possuir
+  diversos elementos fechados, pode adotar uma política de frequência
+  inadvertidamente.
+- [ ] Desativar /turboboost/ (em processadores Intel) pois este faz com
+  que, sob altas demandas de processamento, a frequência seja a máxima
+  possível para aquele processador. Como a ativação deste recurso é de
+  maneira não transparente ao sistema operacional ou à aplicação, cabe
+  desativá-lo para evitar que tal variabilidade afete o entendimento
+  dos fenômenos sendo investigados.
+- [ ] Desativar /hyperthreading/ (em processadores Intel), ou seja,
+  desativar os núcleos de processamento lógicos, tendo em vista que
+  seus recursos são mais limitados que os núcleos físicos
+  (/cores/). Esse tipo de recurso computacional, por mais que dobre a
+  quantidade de /cores/ visíveis em nível de sistema operacional,
+  aumenta a variabilidade experimental. Isso acontece principalmente
+  em aplicações limitadas pela CPU, embora aplicações limitadas pelo
+  acesso à memória possam ter algum ganho de desempenho.
+- [ ] Detectar a configuração NUMA do nó computacional e estabelecer
+  uma política fixa de distribuição de fluxos de execução, em
+  processadores com múltiplos processadores.
+- [ ] Configurar uma política TCP/Ethernet adequada para a rede de
+  interconexão, sabendo que por /default/ o /kernel/ do Linux vem
+  configurado com tamanhos de pacote e outras configurações
+  relacionadas específicas para redes 100 Mbit Ethernet. Esse tipo de
+  configuração pode impactar negativa nas redes de interconexão de
+  alto desempenho tais como 10 GBit Ethernet ou Infiniband.
+
+Outras informações, incluindo outras configurações passíveis de
+verificação específicas para o sistema operacional Linux, podem ser
+obtidas em um trabalho relacionado \cite{stanisic2017characterizing}.
+
+*** Registro automático de informações sobre a plataforma
+:PROPERTIES:
+:CUSTOM_ID: sec.registro
+:END:
+
+Usualmente os usuários registram manualmente informações sobre a
+plataforma na qual os experimentos estão sendo executados. Tais
+informações, de forma geral, compreendem apenas características
+básicas do /hardware/, tais como modelo da CPU, tamanho da memória e
+tipo da interface de rede, e do software como sistema operacional,
+versão do compilador e distribuição MPI. Além de ser pouco prática,
+tal estratégia pode incorrer em informações incompletas e até mesmo
+incorretas. Podemos imaginar uma situação na qual dados referentes a
+CPU são coletados antes do início do experimento, neste momento a CPU
+está operando com uma frequência de 1200 MHz, entretanto o controle de
+frequência (~governor~) está configurado na opção ~ondemand~, o que
+provavelmente fará com que, durante a execução do experimento, o
+processador passe a operar em uma frequência bem mais alta (e.g., 2300
+MHz).
+
+Para evitar tais situações, é conveniente adotar uma estratégia de
+registro automático de informações sobre a plataforma. É recomendável
+que estas informações sejam coletadas toda vez que uma execução for
+realizada e que sejam armazenadas juntamente com os resultados. Para
+coletar informações sobre o /hardware/, podemos partir do seguinte
+conjunto de ferramentas, assumindo um ambiente baseado em Linux. Cabe
+ressaltar que, além dos comandos abaixo, outros específicos podem ser
+necessários caso os experimentos envolvam outros recursos de /hardware/
+como GPUs, FPGAs ou interfaces de rede proprietárias.
+
+**** Sistema operacional, topologia de hardware e frequência do processador (HW)
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+
+*lstopo* -- fornecido pela ferramenta ~hwloc~, permite obter a topologia
+do sistema, incluindo hierarquia de memória cache, nós NUMA, núcleos
+físicos e lógicos bem como dispositivos PCI conectados.  *cpufreq-info*
+-- fornecido pela ferramenta ~cpufrequtils~, permite obter a frequência
+atual, mínima e máxima para cada núcleo do processador, de maneira
+genérica independente do fabricante do processador. Informações sobre
+a política de controle de frequência atual (~governor~) e as demais
+disponíveis também podem ser obtidas. *pstate driver* -- trata-se de um
+módulo de /kernel/ específico para processadores Intel com
+funcionalidade semelhante àquela fornecida pelo cpufreq. *lspci* --
+lista todos os dispositivos PCI conectados ao sistema. *ifconfig* (ou *ip*
+em um Linux moderno) -- este comando permite obter as configurações da
+interface de rede.
+
+**** Informações associadas à aplicação paralela (SW)
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+
+
+Quanto ao software além das informações básicas como versão do sistema
+operacional e do compilador, pode-se obter algumas informações
+adicionais com os seguintes comandos. *ompi-info* -- assumindo que a
+aplicação paralela faz uso da implementação OpenMPI da especificação
+MPI, este comando permite listar todas as configurações que controlam
+o comportamento interno da implementação, como /buffers/ e protocolos de
+envio/recepção. *ldd* -- mostra as bibliotecas compartilhadas requeridas
+por um executável e o onde elas se encontram (=PATH=) na árvore de
+diretórios. *env* (assumindo um /shell/ baseado em =sh=) -- lista as
+variáveis de ambiente no /shell/ corrente. *nm* -- lista todos os símbolos
+de arquivos objeto, um programa útil para se utilizar como informação
+de assinatura de binários executáveis.
+
+
+
+#     - Hardware: lstopo, CPU pstates, governor, lspci, ifconfig
+#     - Software: ompi, ldd, nm
+
+*** Ferramentas para instalação de dependências
+:PROPERTIES:
+:CUSTOM_ID: sec.dependencias
+:END:
+
+Aplicações paralelas que executam em /clusters/ de alto desempenho
+frequentemente apresentam uma pilha de software extensa, incluindo
+diversos níveis de dependências e parâmetros opcionais. Dessa forma, a
+configuração do ambiente experimental implica em obter, compilar e
+ligar dezenas de bibliotecas. Tal cenário, motiva a utilização de
+gerenciadores de pacotes. Entretanto, em ambientes compartilhados como
+/clusters/, não é viável que os usuários tenham permissão para utilizar
+o gerenciador de pacotes do sistema (e.g. ~dpkg~, =apt=, ~rpm~).
+
+Spack \cite{gamblin2015spack} é um gerenciador de pacotes que permite
+aos usuários obter, compilar e instalar programas e bibliotecas em
+seus próprios diretórios sem fazer uso de privilégios de administrador
+nem de comandos específicos do sistema operacional. Em oposição a
+gerenciadores similares de uso geral como o ~homebrew~, o Spack oferece
+funcionalidades específicas para ambientes de computação de alto
+desempenho, entre elas, configurações e dependências personalizadas,
+instalações não-destrutivas e coexistência de múltiplas
+instalações. Tais funcionalidades permitem testar e avaliar uma ampla
+gama de configurações. Os comandos abaixo, ilustram como o Spack pode
+ser usado para gerenciar diferentes configurações da biblioteca ~Boost~
+que podem coexistir simultaneamente na mesma árvore de diretórios.
+
+- Configuração da biblioteca Boost na versão 1.69.0 com compilador
+  padrão (~gcc~) ligado com a distribuição OpenMPI para prover suporte à
+  interface MPI: 
+  #+ATTR_LATEX: :options frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false
+  #+begin_src sh :exports code :eval no
+  spack install -v boost@1.69.0+mpi^openmpi
+  #+end_src
+
+- Configuração da biblioteca Boost na versão 1.68.0 com compilador
+  padrão (~gcc~) ligado com a distribuição MPICH para prover suporte à
+  interface MPI:
+  #+ATTR_LATEX: :options frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false
+  #+begin_src sh :exports code :eval no
+  spack install -v boost@1.68.0+mpi^mpich
+  #+end_src
+
+- Configuração da biblioteca Boost na versão 1.69.0 com compilador
+  ~clang~ ligado com a distribuição OpenMPI com compilador ~gcc~ para
+  prover suporte à interface MPI:
+  #+ATTR_LATEX: :options frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false
+  #+begin_src sh :exports code :eval no
+  spack install -v boost@1.69.0+mpi%clang^openmpi%gcc
+  #+end_src
+
+*** Controle em nível de sistema operacional
+:PROPERTIES:
+:CUSTOM_ID: sec.virtuais
+:END:
+
+Embora o Spack seja uma ferramenta que permita um controle preciso da
+instalação de bibliotecas e arcabouços, ele não é capaz de gerenciar
+totalmente a pilha de software. Por exemplo, a forma como as chamadas
+de sistema são realizadas no sistema operacional, tanto em nível de
+usuário (através da =libc=), quando em nível de superusuário, se mantém
+sem controle. Existem alternativas para controlar também o sistema
+computacional, através de métodos nativos ou virtualizados.
+
+Métodos nativos exigem algum suporte de hardware, tal como a
+necessidade de gerenciar e utilizar perfis PXE em/de servidores TFTP,
+disparar comandos de reinicialização através de IPMI ou uma PDU
+gerenciável, etc. Ferramentas como Kadeploy3 \cite{kadeploy3} utilizam
+tal infraestrutura de hardware para manter em cada nó computacional um
+sistema operacional principal em uma partição, ao mesmo tempo que
+possibilita a instalação completa de outros sistemas operacionais em
+outras partições. O usuário do cluster pode então instalar seu próprio
+sistema operacional em todos os nós gerenciados por Kadeploy3, se
+tornando superusuário, com controle completo da pilha de software.
+
+Métodos virtualizados, principalmente aqueles baseados em /containers/
+Linux, permitem obter o mesmo tipo de controle sem a necessidade de
+reinicializar a máquina ou de se tornar superusuário. Não exigem
+também nenhum tipo de hardware específico pois são baseados em
+recursos do sistema operacional Linux. Exemplos de ferramentas que
+permitem essa alternativa incluem CharlieCLoud
+\cite{priedhorsky2017charliecloud} ou Singularity
+\cite{kurtzer2017singularity}. Estudos \cite{alles2018singularity}
+baseados em /containers/ identificaram que esse tipo de controle impacta
+minimamente o desempenho de aplicações paralelas quando estas são
+executadas nativamente.
+
+*** Integração com gerenciadores de /jobs/
+:PROPERTIES:
+:CUSTOM_ID: sec.jobs
+:END:
+
+Os nós computacionais de clusters de computadores são frequentemente
+gerenciados por ferramentas específicas que permitem a alocação e
+reserva desses nós. Ferramentas como Slurm \cite{yoo2003slurm} e OAR
+\cite{capit2005batch} fazem este ofício. O usuário do cluster que
+pretende executar uma aplicação paralela codifica um /script/ que contém
+informações essenciais para a alocação como o tempo de alocação
+pedido, a quantidade de nós, qual tipo de recurso, etc.
+
+O restante do /script/ é executado no /frontend/ do cluster de maneira que
+ele pode ser utilizado para implementar o controle dos nós
+computacionais (conforme a listagem discutida na Seção [[#sec.boas]]),
+realizar o registro automático de informações sobre a plataforma
+(Seção [[#sec.registro]]), adoção de uma versão específica da pilha de
+software (Seções [[#sec.dependencias]] e [[#sec.virtuais]]) e, enfim, a
+execução das diretivas impostas pelo projeto experimental previamente
+preparado. Essas diretivas incluem mudanças de configuração em nível
+de usuário ou do sistema operacional, como troca de frequência,
+limitações de memória, de banda passante da rede, ou de qualquer outro
+parâmetro que esteja sendo estudado pelo experimentador. Tais mudanças
+devem ser executadas no próprio /script/ de execução do experimento, de
+forma automática. Recomenda-se inclusive que após a mudança das
+configurações, essas sejam reobtidas para que fiquem registrados
+possíveis erros de parametrização. Isso é importante para, antes de
+iniciar o processo de análise, confirmar que todos os valores de
+fatores foram de fato aplicados conforme dito no projeto experimental.
+
+O /script/ que realiza a reserva pode, no final, concentrar todas as
+informações e medidas realizadas em um único diretório, que é
+independente. Os /logs/ de execução registrados pelo gerenciador de
+recursos pode ficar no próprio diretório que contém as outras
+informações do experimento. Assim, o processo de análise pode ser
+padronizado para aqueles dados.
+
+O /script/ da Listagem \ref{lis.slurm} traz um exemplo que resume as
+atividades a serem realizadas de maneira integrada para executar o
+projeto experimental. Sendo não exaustiva, esse exemplo traz as quatro
+principais etapas. Cada uma dessas etapas é implementada através de
+códigos /bash/ ou outra linguagem de /script/ (como /python/, por
+exemplo). Recomenda-se enfim que este /script/ seja arquivado junto com
+as demais informações coletadas, de maneira que o analista dos dados
+saiba em que momento as informações foram coletadas.
+
+#+ATTR_LATEX: :options inputencoding=utf8, label=lis.slurm, frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+caption: Exemplo de script Slurm para execução de um projeto experimental.
+#+begin_src sh :exports code :eval no
+#!/bin/bash
+#SBATCH --nodes=16
+#SBATCH --time=02:00:00
+#SBATCH --partition=gppd-hpc
+
+# 1. Controle inicial dos nós computacionais (HW e SW)
+# 2. Registro das condições iniciais
+# 3. Ler o projeto experimental, e para cada experimento
+# 3.1 Aplicar os parâmetros (fatores e valores) específicos
+# 3.2 Registro das condições iniciais do experimento
+# 3.3 Executar o experimento
+# 3.4 Coletar os dados do experimento em um diretório
+# 4. Centralizar os dados em um único diretório
+#+end_src
+
+*** Estudo de caso com um estudo de balanceamento de carga no Alya
+:PROPERTIES:
+:CUSTOM_ID: sec.estudodecaso
+:END:
+
+# - Caso específico de coleta de rastros (observação de dados em escala)
+
+Para ilustrar como um experimento de coleta de dados é realizada na
+prática, utilizaremos um estudo de caso baseado no uso de /Space
+Filling Curves/ (SFC) para melhorar o balanceamento de carga da
+aplicação Alya \cite{borrell2018sfc}. Neste estudo, foi investigado se
+o particionamento obtido com uma técnica simples e iterativa do tipo
+SFC pode gerar um balanceamento de carga computacional melhor que uma
+abordagem via particionamento Metis para malhas grandes. A vantagem de
+SFC é que o particionamento é significativamente mais rápido que via
+Metis. A plataforma alvo foi o MareNostrum4 (MN4), do Barcelona
+Supercomputing Center.
+
+O projeto experimental envolvia fatores com um único nível, ou seja,
+variáveis de entrada com configurações fixas para servir de base da
+análise. Elas incluem a entrada (a malha com o problema a ser
+utilizado como base), a quantidade de passos de tempo de simulação, a
+quantidade de passos de balanceamento de carga, e a quantidade de
+processos e de nós computacionais. Essas configurações fixas fazem
+parte do início do /script/ Slurm, ilustrado na Listagem
+\ref{lis.alya1}, onde o nome da tarefa é =EXP20=, a quantidade de nós é
+16 e a quantidade de processos é 768, sendo que duas horas são
+solicitadas para a execução do experimento. Além desses parâmetros,
+também são definidas as saídas padrão (=--output=) e de erro (=--error=)
+seguindo a parametrização do Slurm. Os demais parâmetros que serão
+utilizados no /script/ são definidos como variáveis de ambiente.
+
+#+ATTR_LATEX: :options inputencoding=utf8, label=lis.alya1, frame=single, basicstyle=\ttfamily\scriptsize, keywordstyle=\bfseries, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+caption: Configurações iniciais em exemplo para experimento \texttt{EXP20} com Alya.
+#+begin_src sh :exports code :eval no
+#!/bin/bash
+#SBATCH --job-name="EXP20"
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+#SBATCH --nodes=16
+#SBATCH --ntasks=768
+#SBATCH --time=02:00:00
+
+export CASENAME=fensap    # A entrada que será utilizada
+export TIMESTEPS=5        # Quantidade de passos de simulação
+export STEPS=20           # Quantidade de passos de balanceamento
+export NP=${SLURM_NTASKS} # Quantidade de processos
+
+# continua...
+#+end_src
+
+A Listagem \ref{lis.alya2} apresenta a parte principal da execução do
+projeto experimental, guiada pelo laço principal de passos de
+balanceamento. Em cada laço, é gerado uma chave única (=RUNKEY=) que
+identificará a integralidade dos dados gerados naquele experimento. Em
+seguida, as chamadas para o programa =module= são responsáveis por
+descarregar e carregar as bibliotecas necessárias (um recurso
+semelhante aquele disponibilizado pelo Spack). O comando =mpirun= é
+então utilizado para executar a aplicação nos 16 nós computacionais,
+lançando 768 processos (48 por nó, sendo que cada nó tem dois
+processadores cada um com 24 /cores/ físicos). O parâmetro =-x= fornecido
+ao =mpirun= serve para repassar aquelas variáveis de ambiente para todos
+os nós computacionais, tendo em vista que as variáveis que começam por
+=SCOREP= servem para controlar o registro de informações importantes da
+execução. Os demais parâmetros para o comando MPI servem para
+configurar aspectos relacionados a vinculação dos processos aos /cores/
+e relatar qual vinculação foi executada, de forma que isso possa ser
+considerado no processo de análise posterior. Antes do final do laço,
+e após a execução da aplicação, os dados são centralizados no
+diretório do experimento e em seguida movidos para o diretório final
+que contém o resultado de todas as execuções.
+
+#+ATTR_LATEX: :options inputencoding=utf8, label=lis.alya2, frame=single, basicstyle=\ttfamily\scriptsize, keywordstyle=\bfseries, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+caption: Parte central do experimento \texttt{EXP20} com Alya.
+#+begin_src sh :exports code :eval no
+# ... continuação
+
+# Diretório geral para contar todos os resultados
+export EXPEDIR=EXP20
+rm -rf $EXPEDIR; mkdir -p $EXPEDIR
+
+for RUN in $(seq 1 ${STEPS}); do
+   RUNKEY="${SLURM_JOB_NAME}_${SLURM_JOB_ID}_${NP}_STEP_${RUN}_of_${STEPS}"
+   rm -rf $RUNKEY; mkdir -p $RUNKEY
+
+   module unload mkl
+   module unload intel
+   module unload impi
+   module load gcc/7.2.0
+   module load openmpi/3.0.0
+
+   $(which mpirun) \
+     	--mca btl_base_warn_component_unused 0 \
+    	--bind-to core:overload-allowed \
+   	--report-bindings \
+  	-x SCOREP_TOTAL_MEMORY=3900MB \
+  	-x SCOREP_MPI_ENABLE_GROUPS=ALL \
+  	-x SCOREP_ENABLE_TRACING=FALSE \
+  	-x SCOREP_ENABLE_PROFILING=TRUE \
+  	-x SCOREP_EXPERIMENT_DIRECTORY=$SCOREPDIR \
+  	$ALYA $CASENAME
+
+   # Copiar todos os arquivos registrados para o diretório $RUNKEY
+
+   # Mover o diretório deste experimento para o diretório geral
+   mv $RUNKEY $EXPEDIR
+done
+#+end_src
+
+** Análise de dados
+:PROPERTIES:
+:CUSTOM_ID: sec.analise
+:END:
+
+A etapa de análise de dados envolve a fase pós-execução do
+experimento. Usualmente, esta etapa é executada no computador pessoal
+do usuário que, em geral, não é a mesma plataforma na qual os
+experimentos foram executados. A análise de dados consiste em um
+processo iterativo e reflexivo, no qual o usuário parte de uma
+análise em alto nível dos dados inicialmente coletados e a partir
+desta aprofunda-se em pontos específicos. Frequentemente, a análise de
+dados desenrola-se de maneira iterativa, onde uma análise anterior
+permite identificar e delimitar cenários e configurações que alimentam
+uma nova execução da etapa de controle e coleta como detalhado na Seção [[#sec.controle]]. Esta
+nova execução gerará mais dados, que implicarão em uma nova iteração
+do processo de análise.
+
+As características do processo de análise de dados motivam a adoção de
+uma estratégia sistematizada, que permita, facilmente, reexecutar
+algumas etapas do processo de análise bem como revisar o fluxo de
+experimentos, reflexões e conclusões que levou a uma determinada
+suposição ou resultado. A adoção de tal estratégia é benéfica, não
+apenas ao usuário durante o desenvolvimento do trabalho, mas também às
+outras partes envolvidas no processo científico e que não,
+necessariamente, estarão próximas temporal ou fisicamente do usuário,
+tais como orientadores, revisores de publicações, autores de trabalhos
+relacionados ou até mesmo o próprio autor em momento futuro. Dessa
+forma, esta seção tem por objetivo ilustrar ferramentas e conceitos
+que permitam sistematizar e disponibilizar uma análise de desempenho.
+
+
+O restante desta seção apresentará conceitos e ferramentas que podem
+ser empregados no desenvolvimento de uma análise de dados
+reprodutível. A Seção [[literateProg]] ilustra como a programação
+literária pode ser usada no processo de análise de dados
+experimentais. Já a Seção [[reproducibility]] discute conceitos
+relacionados a reprodutibilidade da análise de desempenho em si tais
+como formato e plataforma de distribuição.
+
+*** Programação Literária
+<<literateProg>>
+
+A Programação Literária proposta por Donald Knuth \cite{Knuth1984} tem
+por base duas operações (/weave/ e /tangle/) que permitem converter um
+documento fonte em duas representações distintas, um formato legível
+para humanos e outro apto para execução em computadores. Esta
+funcionalidade é bastante útil na análise de resultados experimentais
+pois permite manter em um mesmo documento tanto as anotações
+preliminares como expectativas, suposições e reflexões acerca do
+experimento quanto os comandos usados para colocá-lo em execução e
+posteriormente processar e visualizar seus resultados.
+
+A extensão Org-mode \cite{Dominik:2010:OMR:1952135} do editor de texto
+Emacs \cite{emacsManual} oferece, entre outros recursos,
+funcionalidades de programação literária. Arquivos criados com esta
+extensão (arquivos ~org~) são arquivos em texto puro que podem ser
+abertos e lidos em qualquer editor de texto, embora seja conveniente o
+uso do editor Emacs para aproveitamento de todas as funcionalidades. O
+pacote ~Babel~ possibilita a definição de blocos ativos de código e de
+dados dentro de documentos ~org~, tais blocos podem ser avaliados e a
+saída correspondente é capturada e incluída no documento. Os blocos
+podem ser escritos em diferentes linguagens de programação, e podem
+ser encadeados de forma que os dados de saída produzidos por um bloco
+sejam usados como entrada de outro.  Os trechos de código abaixo
+ilustram o comportamento desta funcionalidade. O bloco a seguir é
+escrito em ~shell script~, com a possível saída produzida representa na
+tabela abaixo.
+
+#+name: ex1Shell
+#+ATTR_LATEX: :options frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false
+#+begin_src bash :results value :exports both :cache yes :eval no-export
+for n in `seq 5`; do printf "%d $RANDOM \n" $n ; done
+#+end_src
+
+#+CAPTION: Possível saída produzida pelo trecho de código em ~shell script~
+#+LABEL: tabShell
+#+RESULTS[54e71c5a9f735d7fa884f5cb2f683a386dabb7ef]: ex1Shell
+| 1 | 21020 |
+| 2 | 20873 |
+| 3 |  7597 |
+| 4 | 19882 |
+| 5 | 30785 |
+
+A avaliação do trecho de código acima produzirá uma saída, que será
+encadeada como entrada do código abaixo escrito na linguagem R. Quando
+avaliado, o código abaixo produzirá como saída, uma imagem contendo um
+gráfico construído a partir dos dados gerados pelo primeiro trecho de
+código.
+
+#+name: ex2R
+#+ATTR_LATEX: :options frame=single, basicstyle=\ttfamily\small, keywordstyle=\bfseries, showstringspaces=false
+#+begin_src R :results output graphics :file example-literate.pdf :exports both :width 6 :height 2 :session *R* :var dados=ex1Shell :eval no-export
+library(ggplot2)
+library(tidyverse)
+dados %>%
+    ggplot(aes(V1, V2)) +
+    geom_point() +
+    theme_bw()
+#+end_src
+
+#+CAPTION: Gráfico gerado pelo código ~R~ utilizando a saída do código ~shell~ como entrada
+#+LABEL: exampleLiterate
+#+ATTR_LATEX: :width 0.95\linewidth
+#+RESULTS: ex2R
+[[file:example-literate.pdf]]
+
+Um mesmo conjunto de dados pode ser usado inúmeras vezes como entrada
+para blocos de código diversos. Além do gráfico da Figura
+[[exampleLiterate]], podemos usar os dados da Tabela [[tabShell]] para
+calcular valores estatísticos como mínimo, máximo, média, mediana e
+quartis. O trecho de código abaixo ilustra o comando em R que permite
+a obtenção destas informações.
+
+#+begin_src R :results output :exports both :session *R* :eval no-export
+dados$V2 %>% summary()
+#+end_src
+
+#+RESULTS:
+:    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+:    7597   19882   20873   20031   21020   30785
+
+# - Programação literal para análise dos resultados
+#   - OrgMode + R
+#   - Geração de gráficos (/checklist for good graphics/)
+
+A programação literária, por si só, já é uma prática aconselhada para
+facilitar o registro e análise de resultados. Entretanto, ela não
+garante que os gráficos gerados na análise em questão sejam claros e
+diretos. O resultado do processo de criação de gráficos pode ser
+aprimorado com a aplicação de alguns passos de verificação e controle
+\cite{jain1991art, schnorrvincentLPS} apresentados na Tabela
+[[tab:checklist]].
+
+#+LABEL: tab:checklist
+#+CAPTION: /Checklist/ para gráficos
+#+ATTR_LATEX: :booktabs :environment longtable :align p{2.1cm}lp{11cm}
+| <l>              | <l> | <l>                                                                                                                          |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Dados*            | \check   | O tipo do gráfico é adequado para a natureza do dado (curva, barras, setores, histograma, nuvem de pontos, etc)        |
+|                  | \check   | As aproximações/interpolações fazem sentido                                                                                  |
+|                  | \check   | As curvas são definidas com um número suficiente de pontos                                                                   |
+|                  | \check   | O método de construção da curva é claro: interpolação (linear, polinomial, regressão, etc)                                   |
+|                  | \check   | Os intervalos de confiança são visualizados (ou informados separadamente)                                                    |
+|                  | \check   | Os passos do histograma são adequados                                                                                        |
+|                  | \check   | Histogramas visualizam probabilidades (de 0 a 1)                                                                             |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Objetos Gráficos* | \check   | Os objetos gráficos são legíveis na tela, na versão impressa (P&B), em vídeo, etc                                            |
+|                  | \check   | O intervalo do gráfico é padrão, sem cores muito similares, sem verde (vídeo)                                                |
+|                  | \check   | Os eixos do gráfico estão claramente identificados e rotulados                                                               |
+|                  | \check   | Escalas e unidades estão explícitas                                                                                          |
+|                  | \check   | As curvas se cruzam sem ambiguidade                                                                                          |
+|                  | \check   | As grades ajudam o leitor                                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações*        | \check   | Eixos são rotulados por quantidades                                                                                          |
+|                  | \check   | Rótulos dos eixos são claros e autocontidos                                                                                  |
+|                  | \check   | Unidades estão indicadas nos eixos                                                                                           |
+|                  | \check   | Eixos são orientados da esquerda para a direita e de baixo para cima                                                         |
+|                  | \check   | Origem é (0,0), caso contrário deve estar claramente justificada                                                             |
+|                  | \check   | Sem buracos nos eixos                                                                                                        |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações (2)*    | \check   | Para gráficos de barras/histogramas a ordem das barras segue a ordenação clássica (alfabética, temporal, do melhor pro pior) |
+|                  | \check   | Cada curva tem uma legenda                                                                                                   |
+|                  | \check   | Cada barra tem uma legenda                                                                                                   |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Informação*       | \check   | Curvas estão na mesma escala                                                                                                 |
+|                  | \check   | O número de curvas em um mesmo gráfico é pequeno (menor que 6)                                                               |
+|                  | \check   | Compare as curvas no mesmo gráfico                                                                                           |
+|                  | \check   | Uma curva não pode ser removida sem redução de informação                                                                    |
+|                  | \check   | O gráfico fornece informações relevantes ao leitor                                                                           |
+|                  | \check   | Se o eixo vertical mostra médias, as barras de erro devem estar presentes                                                    |
+|                  | \check   | Não é possível remover qualquer objeto sem modificar a legibilidade do gráfico                                               |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Contexto*         | \check   | Todos os símbolos são definidos e referenciados no texto                                                                     |
+|                  | \check   | O gráfico produz mais informação que qualquer outra representação (escolha da variável)                                      |
+|                  | \check   | O gráfico tem um título                                                                                                      |
+|                  | \check   | O título é suficientemente autocontido para a compreensão parcial do gráfico                                                 |
+|                  | \check   | O gráfico é referenciado no texto                                                                                            |
+|                  | \check   | O texto comenta a figura                                                                                                     |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+|                  | \check   | *A representação gráfica deve ser elegante*                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+
+Ao aplicarmos as orientações da Tabela [[tab:checklist]] à Figura
+[[exampleLiterate]], notamos que o gráfico em questão pode ser
+aprimorado. Inicialmente, devemos adicionar rótulos aos eixos vertical
+e horizontal. Dada a natureza dos dados não há unidades a serem
+indicadas nos mesmos. Em seguida, adicionamos um título ao gráfico, e
+por fim verificamos que a origem deve ser o ponto (0,1) e não (0,0)
+pois as observações foram numeradas a partir de 1. O código R abaixo
+produz a Figura [[exampleLiterate2]] que contém a versão aprimorada do
+gráfico.
+
+#+name: ex3R
+#+begin_src R :results output graphics :file example-literate2.pdf :exports both :width 6 :height 2 :session *R*  :eval no-export
+library(ggplot2)
+library(tidyverse)
+
+dados %>%
+    ggplot(aes(V1, V2)) +
+    theme_bw() +
+    geom_point() +
+    ylab("Valor Aleatório") +
+    xlab("Observação") +
+    ggtitle("Geração de Números Aleatórios em shell script") + 
+    lims(y = c(0, NA), x = c(1, NA))
+#+end_src
+
+#+CAPTION: Gráfico gerado pelo código ~R~ utilizando a saída do código ~shell~ como entrada (versão aprimorada)
+#+LABEL: exampleLiterate2
+#+RESULTS: ex3R
+[[file:example-literate2.pdf]]
+
+
+*** Reprodutibilidade da análise de desempenho
+<<reproducibility>>
+
+Demonstrabilidade e reprodutibilidade são conceitos-chave no método
+científico. Entretanto, frequentemente, tais processos ficam limitados
+ou comprometidos devido à falta de informações além do texto
+científico. No contexto da computação, e em especial da área de
+análise de desempenho, a disponibilização do código fonte e dos dados
+de entrada e saída são essenciais para permitir a reprodutibilidade
+dos experimentos. 
+
+Existem dois aspectos principais que devem ser considerados na
+disponibilização de anexos de publicações científicas. O primeiro
+deles se refere ao formato utilizado. Tal deve ser aberto e de
+estrutura simples. O formato CSV, por exemplo, é um formato adequado
+para disponibilização de resultados numéricos brutos, pois é simples e
+de fácil leitura tanto por seres humanos quanto por ferramentas
+automatizadas. Para disponibilização de resultados qualitativos, que
+incluam não apenas os dados brutos mas também análises e reflexões,
+pode-se usar formatos que ofereçam alguma estrutura hierárquica e
+permitam criar uma espécie de caderno de laboratório, tais como
+Org-mode (apresentado na Subseção [[literateProg]]), R Markdown ou
+IPython.
+
+O segundo aspecto refere-se à plataforma utilizada para
+disponibilização dos dados. Lamentavelmente, os repositórios de textos
+científicos, tais como IEEE Xplore[fn::https://ieeexplore.ieee.org/],
+ACM DL[fn::https://dl.acm.org] e Portal de Conteúdo da
+SBC[fn::https://portaldeconteudo.sbc.org.br/], ainda não oferecem
+espaço para armazenamento de anexos de artigos. Idealmente, esses
+dados deveriam estar disponíveis juntamente com o texto científico. 
+
+A alternativa passa a ser a disponibilização do material complementar
+em outras plataformas não necessariamente científicas, incluindo, no
+texto científico, uma referência (/link/) para o material.  Neste caso,
+os principais pontos a serem considerados são a livre acessibilidade,
+a perenidade, versionamento e o espaço disponível. Embora de fácil
+acesso, soluções baseadas em computação em nuvem como Dropbox,
+Onedrive e Google Drive tendem a ser limitadas em termos de
+perenidade, versionamento e espaço disponível. O uso de páginas
+pessoais em servidores institucionais tende a ser mais flexível, porém
+está sujeito a política de cada instituição. Plataformas de
+hospedagem e versionamento de código fonte como
+GitHub[fn::http://github.com/], Bitbucket[fn::https://bitbucket.org/]
+e GitLab[fn::https://gitlab.com/] são boas opções em termos de
+acessibilidade e versionamento porém implicam restrições quando é
+necessário armazenar dados não-textuais ou ainda em grande volume. Por
+fim, pode-se citar plataformas voltadas para armazenamento de dados
+científicos como o Figshare[fn::http://figshare.com/] e o
+Zenodo[fn::https://zenodo.org/]. Estas plataformas permitem o
+armazenamento de qualquer formato de arquivo com poucas restrições de
+tamanho. Cada registro recebe um identificador DOI, o que facilita a
+busca e a citação dos conjuntos de dados. A principal limitação dessas
+plataformas está relacionada a impossibilidade de corrigir ou apagar
+registros já publicados, o que pode ser um limitante para trabalhos em
+andamento ou sob revisão. Tal limitação, entretanto, pode ser
+contornada por meio da integração nativa com plataformas como GitHub,
+o que facilita a publicação de /releases/ ou de resultados consolidados.
+
+   # - Reprodutibilidade da análise de desempenho
+   #   - Filosofia de disponibilidade de dados/código
+   #   - Ciência aberta e disponibilização de anexos de artigos
+
+** Conclusão
+:PROPERTIES:
+:CUSTOM_ID: sec.conclusao
+:END:
+
+Este minicurso sensibiliza os participantes da importância do emprego
+de boas práticas na realização de experimentos computacionais na área
+de processamento paralelo de alto desempenho. Após uma breve
+motivação, o minicurso se divide em duas partes, uma primeira que
+trata dos procedimentos de controle e coleta de dados experimentais,
+seguindo de uma segunda parte que trata da análise dos dados de
+maneira reprodutível.
+
+As boas práticas apresentadas neste minicurso não são exaustivas. O
+enfoque dado foi em experimentos computacionais limitados pela CPU,
+levando a verificações relacionadas a vinculação de fluxos de execução
+aos núcleos de processamento, por exemplo. Caso os experimentos tenham
+um enfoque na rede, em entrada/saída (disco), em memória =RAM=, em uso
+de GPUs, ou algum outro aspecto computacional, novas diretivas de
+controle e verificação devem ser concebidas. Essas novas diretivas
+podem envolver também elementos de software (bibliotecas, arcabouços,
+/middlewares/).  De maneira colaborativa foi instituído um repositório
+intitulado ``Good Practices for Computational Experiments in High
+Performance Clusters''[fn::https://gitlab.com/schnorr/experiments]
+para organizar tais diretivas.
+
+Enfim, lembramos que qualquer decisão experimental requer claramente
+um ponto de vista crítico no seu emprego. Cada experimento tem suas
+particularidades que devem ser levadas em conta na hora de escolher
+quais tipos de controle devem ser executados antes, durante o
+experimento. Espera-se mesmo assim que o texto deste minicurso
+ressalte a importância de procedimentos sistemáticos na condução do
+experimentos computacionais, de forma a culminar em resultados
+credíveis.
+
+** Referências                                                      :ignore:
+
+# See next section to understand how refs.bib file is created.
+
+#+LATEX: \bibliographystyle{plain}
+#+LATEX: \bibliography{refs}
+
+* Arquivo BIB                                                      :noexport:
+
+Tangle this file with C-c C-v t
+
+#+begin_src bib :tangle refs.bib :eval no-export
+@inproceedings{borrell2018sfc,
+    title = {{SFC based multi-partitioning for accurate load balancing of CFD simulations}},
+    author = {R. Borrell and J.C. Cajas and L. Schnorr and A. Legrand and G. Houzeaux},
+    booktitle = {Tenth International Conference on Computational Fluid Dynamics (ICCFD10)},
+    year = {2018},
+    address = {Barcelona}
+}
+
+@article{kadeploy3,
+    title = {{Kadeploy3: Efficient and Scalable Operating System Provisioning}},
+    author = {Jeanvoine, Emmanuel and Sarzyniec, Luc and Nussbaum, Lucas},
+    journal = "USENIX ;login:",
+    volume = 38,
+    number = 1,
+    year = {2013},
+    pages = {38-44},
+    month = Feb
+}
+
+@inproceedings{yoo2003slurm,
+  title={Slurm: Simple linux utility for resource management},
+  author={Yoo, Andy B and Jette, Morris A and Grondona, Mark},
+  booktitle={Workshop on Job Scheduling Strategies for Parallel Processing},
+  pages={44--60},
+  year={2003},
+  organization={Springer}
+}
+
+@inproceedings{capit2005batch,
+  title={A batch scheduler with high level components},
+  author={Capit, Nicolas and Da Costa, Georges and Georgiou, Yiannis and Huard, Guillaume and Martin, Cyrille and Mouni{\'e}, Gr{\'e}gory and Neyron, Pierre and Richard, Olivier},
+  booktitle={CCGrid 2005. IEEE International Symposium on Cluster Computing and the Grid, 2005.},
+  volume={2},
+  pages={776--783},
+  year={2005},
+  organization={IEEE}
+}
+
+@inproceedings{stanisic2017characterizing,
+  TITLE = {{Characterizing the Performance of Modern Architectures Through Opaque Benchmarks: Pitfalls Learned the Hard Way}},
+  AUTHOR = {Stanisic, Luka and Mello Schnorr, Lucas and Degomme, Augustin and Heinrich, Franz and Legrand, Arnaud and Videau, Brice},
+  URL = {https://hal.inria.fr/hal-01470399},
+  BOOKTITLE = {{IPDPS 2017 - 31st IEEE International Parallel \& Distributed Processing Symposium (RepPar workshop)}},
+  ADDRESS = {Orlando, United States},
+  YEAR = {2017},
+  MONTH = Jun,
+  KEYWORDS = {Reproducible research ; Benchmark ; Performance evaluation and modelling},
+  PDF = {https://hal.inria.fr/hal-01470399/file/IPDPS_REPPAR_2017_camera_ready.pdf},
+  HAL_ID = {hal-01470399},
+  HAL_VERSION = {v2},
+}
+
+@book{Foster:1995:DBP:527029,
+ author = {Foster, Ian},
+ title = {Designing and Building Parallel Programs: Concepts and Tools for Parallel Software Engineering},
+ year = {1995},
+ isbn = {0201575949},
+ publisher = {Addison-Wesley Longman Publishing Co., Inc.},
+ address = {Boston, MA, USA},
+}
+
+@article{orgmode,
+  author =	"Eric Schulte and Dan Davison and Thomas Dye and Carsten Dominik",
+  title =	"A Multi-Language Computing Environment for Literate Programming and Reproducible Research",
+  journal =	"J. of Stat. Soft.",
+  volume =	"46",
+  number =	"3",
+  day =  	"25",
+  year = 	"2012",
+  CODEN =	"JSSOBK",
+  ISSN = 	"1548-7660",
+  bibdate =	"2011-10-03",
+  accepted =	"2011-10-03",
+  acknowledgement = "",
+  submitted =	"2010-12-22",
+}
+
+@incollection{schnorr2013visualizing,
+  title={Visualizing More Performance Data Than What Fits on Your Screen},
+  author={Schnorr, Lucas M and Legrand, Arnaud},
+  booktitle={Tools for High Performance Computing 2012},
+  pages={149--162},
+  year={2013},
+  publisher={Springer}
+}
+
+@inproceedings{gamblin2015spack,
+  title =	 {The Spack package manager: Bringing order to HPC
+                  software chaos},
+  author =	 {Gamblin, Todd and LeGendre, Matthew and Collette,
+                  Michael R and Lee, Gregory L and Moody, Adam and de
+                  Supinski, Bronis R and Futral, Scott},
+  booktitle =	 {High Performance Computing, Networking, Storage and
+                  Analysis, 2015 SC-International Conference for},
+  pages =	 {1--12},
+  year =	 2015,
+  organization = {IEEE}
+}
+
+@article{Knuth1984,
+  author =	 {Knuth, D. E.},
+  doi =		 {10.1093/comjnl/27.2.97},
+  issn =	 {0010-4620},
+  journal =	 {The Computer Journal},
+  month =	 2,
+  number =	 2,
+  pages =	 {97--111},
+  publisher =	 {Oxford University Press},
+  title =	 {{Literate Programming}},
+  volume =	 27,
+  year =	 1984
+}
+
+@book{Dominik:2010:OMR:1952135,
+  author =	 {Dominik, Carsten},
+  title =	 {The Org Mode 7 Reference Manual - Organize Your Life
+                  with GNU Emacs},
+  year =	 2010,
+  isbn =	 9781906966089,
+  publisher =	 {Network Theory Ltd.},
+}
+
+@book{emacsManual,
+  address =	 {Boston, USA},
+  author =	 {Richard Stallman and others},
+  edition =	 17,
+  pages =	 635,
+  publisher =	 {Free Software Foundation},
+  title =	 {{GNU Emacs Manual}},
+  url =
+                  {https://www.gnu.org/software/emacs/manual/pdf/emacs.pdf},
+  urldate =	 {2017-12-04},
+  year =	 2017
+}
+
+@book{jain1991art,
+  title={The Art of Computer Systems Performance Analysis: Techniques for Experimental Design, Measurement, Simulation, and Modeling},
+  author={Jain, R.},
+  isbn={9780471503361},
+  lccn={lc90045479},
+  year={1991},
+  publisher={Wiley}
+}
+
+@Misc{schnorrvincentLPS,
+  title={{Literate Programming and Statistics (CMP595)}},
+  author={Schnorr, Lucas Mello and Vincent, Jean-Marc},
+  note={\url{https://github.com/schnorr/lps}},
+  year={2018}
+}
+
+@Manual{rmanual,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2018},
+    url = {https://www.R-project.org/},
+  }
+
+@inproceedings{priedhorsky2017charliecloud,
+  title={Charliecloud: Unprivileged containers for user-defined software stacks in hpc},
+  author={Priedhorsky, Reid and Randles, Tim},
+  booktitle={Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+  pages={36},
+  year={2017},
+  organization={ACM}
+}
+
+@article{kurtzer2017singularity,
+  title={Singularity: Scientific containers for mobility of compute},
+  author={Kurtzer, Gregory M and Sochat, Vanessa and Bauer, Michael W},
+  journal={PloS one},
+  volume={12},
+  number={5},
+  pages={e0177459},
+  year={2017},
+  publisher={Public Library of Science}
+}
+
+@inproceedings{alles2018singularity,
+  author = {Guilherme Alles and Lucas Mello Schnorr and Alexandre Carissimi},
+  title = {Assessing the Computation and Communication Overhead of Linux Containers for HPC Applications},
+  booktitle = {Anais do Simpósio em Sistemas Computacionais de Alto Desempenho (WSCAD)},
+  year = {2018},
+  publisher = {Sociedade Brasileira de Computação}
+}
+
+
+#+end_src
+* Configuração do EMACS                                            :noexport:
+** Manual
+
+#+begin_src emacs-lisp :results output :session :exports both
+(add-to-list 'load-path ".")
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+(add-to-list 'org-latex-classes
+             '("SBCbookchapter"
+               "\\documentclass{SBCbookchapter}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+end_src
+
+#+RESULTS:
+
+** Local
+
+# Local Variables:
+# eval: (add-to-list 'load-path ".")
+# eval: (require 'ox-extra)
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (add-to-list 'org-latex-classes '("SBCbookchapter" "\\documentclass{SBCbookchapter}" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+# eval: (setq org-latex-listings t)
+# eval: (setq org-latex-packages-alist '(("" "listings")))
+# eval: (setq org-latex-packages-alist '(("" "listingsutf8")))
+# End:

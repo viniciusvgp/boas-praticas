@@ -23,7 +23,7 @@ O material foi preparado na forma de um tutorial auto-guiado para
 exercitar, em cenários estimulados, algumas partes das boas práticas
 apresentadas no minicurso e tutorial. O material acompanhada:
 
-- [[./slides/2019_ERAD_RS_Controle_slides.pdf][Slides]] (apresentados na ERAD/RS e ERAD/SP)
+- [[./slides/2019_ERAD_RS_Controle_slides.pdf][Slides]] (apresentados nas ERAD/RS e ERAD/SP)
 - [[./minicurso/2019_ERAD_RS_Controle.pdf][Texto do Minicurso]] (dos anais da ERAD/RS)
 
 Ele é dividido em quatro partes, sugeridas nesta ordem:

@@ -18,7 +18,6 @@
 * #2.0 Passos iniciais
 
 Execute os tutoriais precedentes nesta série:
-- [[./0_Programa_Teste.org][#0 (Programa Teste)]]
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
 
 Lembre-se
@@ -32,11 +31,11 @@ Lembre-se
 Vamos utilizar o pacote ~DoE.base~ ([[https://cran.r-project.org/web/packages/DoE.base/][descrição mais detalhada]]) da
 linguagem ~R~ para gerar um projeto experimental fatorial completo
 combinando os fatores a serem analisados.  Como o objetivo nesta série
-de tutorial é analisar o tempo de execução e speedup em função da
-quantidade de processos e dois tamanhos de problema, definimos dois
-fatores: /processes/ e /size/. Testaremos três quantidades de processos:
-2, 10 e 20, e dois tamanhos 300 e 400, para um total de 6
-combinações possíveis, com três replicações cada.
+de tutorial é analisar o tempo de execução e speedup em função de dois
+escalonadores e dois tamanhos de problema, definimos dois fatores:
+/scheduler/ e /size/. Testaremos dois escalonadores: ~random~ e ~dmdas~ e dois
+tamanhos 4800 e 9600, para um total de 4 combinações possíveis, com
+três replicações cada.
 
 O comando =set.seed(0)= (veja abaixo) é utilizado para fixar uma ordem
 aleatória, permitindo a geração do mesmo ordenamento da bateria
@@ -44,40 +43,37 @@ experimental. O código abaixo pode ser executado no interpretador =R=
 com o pacote =DoE.base= instalado.
 
 #+begin_src R :results output :exports both :session *R* :eval no-export
-library(DoE.base)
+suppressMessages(library(DoE.base))
 set.seed(0)
-btmz_erad <- fac.design(factor.names = list(
-                                size = c(300, 400),
-                                processes = c(2, 10, 20)),
-               replications=3, 
-               randomize=TRUE)
-print(btmz_erad)
+exp_erad <-
+    fac.design(factor.names =
+                   list(
+                       size = c(4800, 9600),
+                       scheduler = c("random", "dmdas")),
+               replications = 3,
+               randomize = TRUE)
+
+print(exp_erad)
 #+end_src
 
 #+RESULTS:
 #+begin_example
 
-creating full factorial with 6 runs ...
+creating full factorial with 4 runs ...
 
-   run.no run.no.std.rp size processes Blocks
-1       1           6.1  400        20     .1
-2       2           2.1  400         2     .1
-3       3           5.1  300        20     .1
-4       4           4.1  400        10     .1
-5       5           3.1  300        10     .1
-6       6           1.1  300         2     .1
-7       7           6.2  400        20     .2
-8       8           5.2  300        20     .2
-9       9           3.2  300        10     .2
-10     10           2.2  400         2     .2
-11     11           1.2  300         2     .2
-12     12           4.2  400        10     .2
-13     13           2.3  400         2     .3
-14     14           4.3  400        10     .3
-15     15           6.3  400        20     .3
-16     16           3.3  300        10     .3
-17     17           1.3  300         2     .3
-18     18           5.3  300        20     .3
+   run.no run.no.std.rp size scheduler Blocks
+1       1           2.1 9600    random     .1
+2       2           1.1 4800    random     .1
+3       3           4.1 9600     dmdas     .1
+4       4           3.1 4800     dmdas     .1
+5       5           1.2 4800    random     .2
+6       6           2.2 9600    random     .2
+7       7           4.2 9600     dmdas     .2
+8       8           3.2 4800     dmdas     .2
+9       9           3.3 4800     dmdas     .3
+10     10           2.3 9600    random     .3
+11     11           4.3 9600     dmdas     .3
+12     12           1.3 4800    random     .3
 class=design, type= full factorial 
 NOTE: columns run.no and run.no.std.rp  are annotation, 
  not part of the data frame
@@ -90,14 +86,11 @@ um arquivo ~CSV~ que deverá ser registrado juntamente com os /logs/
 contendo os resultados brutos do experimento. 
 
 #+begin_src R :results output :exports both :session *R* :eval no-export
-export.design(btmz_erad,
+export.design(exp_erad,
               filename = "projeto-experimental",
               type = "csv",
-              replace = TRUE
-              )
+              replace = TRUE)
 #+end_src
-
-#+RESULTS:
 
 Vejamos o conteúdo do arquivo CSV criado:
 
@@ -107,33 +100,26 @@ cat projeto-experimental.csv
 
 #+RESULTS:
 #+begin_example
-"name","run.no.in.std.order","run.no","run.no.std.rp","size","processes","Blocks"
-"1","6",1,"6.1","400","20",".1"
-"2","2",2,"2.1","400","2",".1"
-"3","5",3,"5.1","300","20",".1"
-"4","4",4,"4.1","400","10",".1"
-"5","3",5,"3.1","300","10",".1"
-"6","1",6,"1.1","300","2",".1"
-"7","6",7,"6.2","400","20",".2"
-"8","5",8,"5.2","300","20",".2"
-"9","3",9,"3.2","300","10",".2"
-"10","2",10,"2.2","400","2",".2"
-"11","1",11,"1.2","300","2",".2"
-"12","4",12,"4.2","400","10",".2"
-"13","2",13,"2.3","400","2",".3"
-"14","4",14,"4.3","400","10",".3"
-"15","6",15,"6.3","400","20",".3"
-"16","3",16,"3.3","300","10",".3"
-"17","1",17,"1.3","300","2",".3"
-"18","5",18,"5.3","300","20",".3"
+"name","run.no.in.std.order","run.no","run.no.std.rp","size","scheduler","Blocks"
+"1","2",1,"2.1","9600","random",".1"
+"2","1",2,"1.1","4800","random",".1"
+"3","4",3,"4.1","9600","dmdas",".1"
+"4","3",4,"3.1","4800","dmdas",".1"
+"5","1",5,"1.2","4800","random",".2"
+"6","2",6,"2.2","9600","random",".2"
+"7","4",7,"4.2","9600","dmdas",".2"
+"8","3",8,"3.2","4800","dmdas",".2"
+"9","3",9,"3.3","4800","dmdas",".3"
+"10","2",10,"2.3","9600","random",".3"
+"11","4",11,"4.3","9600","dmdas",".3"
+"12","1",12,"1.3","4800","random",".3"
 #+end_example
 
 Para facilitar o processo, este arquivo [[./projeto-experimental.csv][está registrado aqui]], e pode
 ser baixado no parque computacional da seguinte forma:
 
 #+begin_src shell :results output
-cd ~/SEUNOME
-wget https://gitlab.com/schnorr/erad19/raw/master/projeto-experimental.csv
+wget https://github.com/viniciusvgp/boas-praticas/raw/master/projeto-experimental.csv
 #+end_src
 
 * #2.2 Remota: Script de execução do projeto
@@ -146,111 +132,48 @@ simplificação, foi gerado previamente um projeto experimental (arquivo
 
 Vamos revisar o /script/ que automatiza a execução do experimento.
 
-#+begin_src shell :tangle executa-projeto.slurm
-#!/bin/bash
-#SBATCH --job-name=exp0
-#SBATCH --time=01:00:00
-#SBATCH --nodes=2
-#SBATCH --tasks-per-node=10
-#SBATCH --ntasks=20
-#SBATCH --partition=tupi
-
-# Diretório de base (atualize para seu caso
-export BASE=~/SEUNOME/
-
-# Ingressar no diretório de base
-pushd $BASE
-
-# Criar um diretório para conter todos os resultados
-rm -rf $SLURM_JOB_NAME
-mkdir -p $SLURM_JOB_NAME
-pushd $SLURM_JOB_NAME
-
-# Define o Machine File necessário para MPI
-MACHINEFILE="nodes.$SLURM_JOB_ID"
-srun $SRUN_PACK /bin/hostname | sort -n | awk "{print $2}" > $MACHINEFILE
-
+#+begin_src shell :tangle executa-projeto.sh
+# ... continuaçã
+# Diretório geral para contar todos os resultados
+export EXPEDIR=CHA
 # Verificar se projeto experimental é fornecido
-PROJETO=$BASE/projeto-experimental.csv
+PROJETO=projeto-experimental.csv
 if [[ -f $PROJETO ]]; then
-  echo "O projeto experimental é o seguinte"
-  cat $PROJETO | sed -e "s/^/PROJETO|/"
-  # Salva o projeto no diretório corrente (da saída)
-  cp $PROJETO .
+    echo "O projeto experimental é o seguinte"
+    cat $PROJETO | sed -e "s/^/PROJETO|/"
+    # Salva o projeto no diretório corrente (da saída)
+    cp $PROJETO .
 else
-  echo "Arquivo $PROJETO está faltando."
-  exit
+    echo "Arquivo $PROJETO está faltando."
+    exit
 fi
-
-# Verificar se programa é fornecido
-PROGRAMA=$BASE/mpi_mm.c
-if [[ -f $PROGRAMA ]]; then
-  echo "O programa é o seguinte"
-  cat $PROGRAMA | sed -e "s/^/PROGRAMA|/"
-  # Salva o programa no diretório corrente (da saída)
-  cp $PROGRAMA .
-else
-  echo "Arquivo $PROGRAMA está faltando."
-  exit
-fi
-
+mkdir -p $EXPEDIR
+#Criar arquivo de tempos
+touch $EXPEDIR/"times"
 # Ler o projeto experimental, e para cada experimento
 tail -n +2 $PROJETO |
-while IFS=, read -r name runnoinstdorder runno runnostdrp \
-	 size processes Blocks
-do
-    # Limpar valores
-    export name=$(echo $name | sed "s/\"//g")
-    export processes=$(echo $processes | sed "s/\"//g")
-    export size=$(echo $size | sed "s/\"//g")
-
-    # Definir uma chave única
-    KEY="$name-$processes-$size"
-
-    # Usar a versão apropriada de MPI
-    MPICC=mpicc   #$(spack location -i openmpi@$mpi)/bin/mpicc
-    MPIRUN=mpirun #$(spack location -i openmpi@$mpi)/bin/mpirun
-
-    # Altera o código fonte com o tamanho do problema
-    sed -i -e "s/#define NRA \(.*\)$/#define NRA $size/" \
-           -e "s/#define NCA \(.*\)$/#define NCA $size/" $PROGRAMA
-
-    # Compilar o programa com a versão apropriada
-    $MPICC $PROGRAMA -o mpi_mm
-    ls -l mpi_mm
-    ldd mpi_mm
-    sync
-
-    echo $KEY
-
-    # Prepara comando de execução
-    runline=""
-    runline+="mpirun -np $processes "
-
-    runline+=" -machinefile $MACHINEFILE "
-#    runline+="--mca oob_tcp_if_include 192.168.30.0/24 --mca btl_tcp_if_include 192.168.30.0/24 "
-    runline+="./mpi_mm "
-    runline+="> ${KEY}.log"
-
-    # 3.3 Executar o experimento
-    echo "Running >> $runline <<"
-    eval "$runline < /dev/null"
-    echo "Done!"
-done
-
-cp $BASE/slurm-$SLURM_JOB_ID.out .
-
-exit
+    while IFS=, read -r name runnoinstdorder runno runnostdrp size scheduler Blocks
+    do
+	# Limpar valores
+	export name=$(echo $name | sed ’s/\"//g’)
+	export scheduler=$(echo $scheduler | sed ’s/\"//g’)
+	export size=$(echo $size | sed ’s/\"//g’)
+	export KEY="$name-$schduler-$size"
+	export STARPU_SCHED=$scheduler
+	./chameleon/bin/timing/time_dpotrf_tile --nb=960 --n_range=
+	$size:$size:$size --nowarmup > $EXPEDIR/${KEY}."stdout"
+	out=($(cat $EXPEDIR/${KEY}."stdout" | tail -n 1))
+	echo ${out[3]} >> $EXPEDIR/"times"
+    done
 #+end_src
 
 #+RESULTS:
 
-Para facilitar o processo, este arquivo [[./executa-projeto.slurm][está registrado aqui]], e pode
+Para facilitar o processo, este arquivo [[./executa-projeto.sh][está registrado aqui]], e pode
 ser baixado no parque computacional da seguinte forma:
 
 #+begin_src shell :results output
-cd ~/SEUNOME
-wget https://gitlab.com/schnorr/erad19/raw/master/executa-projeto.slurm
+wget https://github.com/viniciusvgp/boas-praticas/raw/master/executa-projeto.sh
 #+end_src
 
 * #2.3 Remota/Local: Compactar o diretório experimental
@@ -258,146 +181,11 @@ wget https://gitlab.com/schnorr/erad19/raw/master/executa-projeto.slurm
 No parque, compacte o diretório experimental:
 
 #+begin_src shell :results output
-cd ~/SEUNOME
-tar cfz exp0.tgz exp0/
-#+end_src
-
-Baixe para sua máquina local (ou container):
-
-#+begin_src shell :results output
-scp -i chave.rsa erad@gppd-hpc.inf.ufrgs.br:./SEUNOME/exp0.tgz .
-tar xfz exp0.tgz
+tar cfz exp0.tgz CHA/
 #+end_src
 
 Siga para o passo [[3_Analise.org][#3 Análise]].
 
-* Introdução ao Slurm                                              :noexport:
-
-Neste tutorial usaremos o gerenciador de filas =Slurm= ([[https://slurm.schedmd.com][site oficial]]). O
-~Slurm~ é uma ferramente /open-source/ que permite a execução de /jobs/
-interativos ou não-interativos.
-
-O comando ~salloc~ abaixo exemplifica como pode ser realizada
-solicitação de um /job/ interativo nomeado =MeuJobErad= na partição de
-nome ~hype~, pelo período de 1 hora e 30 minutos.
-
-#+begin_src shell :results output :exports both
-salloc -p hype -J MeuJobErad -t 00:10:00
-#+end_src
-
-Quando a solicitação for atendida (o que pode ocorrer imediatamente
-caso a plataforma esteja ociosa), o usuário estará apto a acessar a
-máquina requisitada via ~ssh~ ou a executar diretamente sua aplicação
-por meio do comando ~srun~.
-
-Para /jobs/ não-interativos (recomendados, pela automatização possível)
-deve-se utilizar o comando ~sbatch~. Neste caso, o usuário fornecerá um
-/script/ contendo todos os passos para realizar o experimento na
-plataforma desejada. /Jobs/ não-interativos são bastante úteis quando a
-plataforma é compartilhada entre muitos usuários estando
-frequentemente ocupada e com uma significativa fila de espera. Neste
-cenário, o /job/ do usuário poderá executar a qualquer momento após a
-submissão, podendo ser iniciado em alguns segundos ou até mesmo após
-vários dias da submissão. A política de filas não necessariamente é
-/FIFO (First-In First-Out)/ pois alguns usuários podem ter preferência
-sobre outros, por exemplo, contas internas /vs/ externas, preferência ao
-proprietário/financiador da plataforma, preferência a equipe de
-manutenção/suporte, etc.
-
-Um ~job~ termina após uma das seguintes condições (a que occorer
-primeiro): a execução da última linha do /script/ fornecido ou após o
-término do tempo de processamento solicitado na reserva. Além destes
-dois casos bases, o /job/ também pode ser encerrado por pedido do
-usuário através do comando ~scancel~ ou por situações inesperadas como
-problemas na plataforma ou comandos do administrador. 
-
-O código abaixo ilustra um exemplo de /script/ a ser submetido com o
-comando ~sbatch script-exemplo.sh~ ([[./script-exemplo.sh][veja o arquivo aqui]]). Este /script/
-exemplo solicita a reserva de 2 nós na plataforma =hype= pelo período
-máximo de 40 minutos. As saídas padrão (/stdout/) e de erro (/stdin/)
-serão redirecionadas para arquivos nomeados com o identificador do
-/job/.
-
-#+begin_src shell :results output :exports both :tangle script-exemplo.sh :eval no-exoort
-#!/bin/bash
-#SBATCH --nodes=2
-#SBATCH --partition=hype
-#SBATCH --time=00:20:00
-#SBATCH --output=%x_%j.out
-#SBATCH --error=%x_%j.err
-
-# Comandos para execução do experimento 
-
-#+end_src
-
-* Execução de uma aplicação paralela exemplo                       :noexport:
-** Obtenção e Configuração da Aplicação
-
-Utilizaremos como exemplo uma aplicação da versão /Multi-Zone do
-conjunto de /benchmarks/ do /NAS Parallel Benchmarks/ (NPB, [[https://www.nas.nasa.gov/publications/npb.html][mais
-informações aqui]]), em específico a aplicação ~BT~ (/Block Tri-diagonal/)
-com as classes W (execução local), A e D (execução no =PCAD=).  As
-classes nos /benchmarks/ NAS representam diferentes tamanhos de entrada
-do problema. A aplicação ~BT~ resolve um sistema sintético de equações
-diferenciais parciais não lineares.  A versão /Multi-Zone/ é a variante
-do NPB com implementações híbridas combinando MPI e OpenMP. Neste
-contexto, escolhemos a aplicação ~BT-MZ~ para este tutorial pois é a que
-apresenta maiores desafios quanto ao balanceamento de carga em
-comparação com os outros /benchmarks/ da variante /Multi-Zone/.
-
-#+BEGIN_COMMENT Vinícius
-- [x] Completar aqui com detalhes do BT em comparação com outros
-      benchmarks Explicar o MZ (multi-zone)
-#+END_COMMENT
-
-#+BEGIN_COMMENT Lucas
-- [x] Demonstrar como fazer para usar um MPI instalado com o spack
-#+END_COMMENT
-
-#+begin_src shell :results output :exports both :eval no-export
-wget https://www.nas.nasa.gov/assets/npb/NPB3.4-MZ.tar.gz
-tar -xf NPB3.4-MZ.tar.gz
-cd NPB3.4-MZ/NPB3.4-MZ-MPI
-cp config/NAS.samples/make.def.gcc_mpich config/make.def
-make bt-mz CLASS=A
-make bt-mz CLASS=W
-#+end_src
-
-A etapa de compilação dos /benchmarks/ do NAS utiliza arquivos de
-configuração, como o ~config/make.def~ dos comandos acima, para indicar
-quais compiladores e bibliotecas devem ser empregados na construção
-dos binários. Para utilizar compiladores e bibliotecas que não estão
-no ~PATH~ padrão, basta editar este arquivo. Tal estratégia pode ser
-usada para construção de binários utilizando uma implementação ~MPI~
-instalada com o ~Spack~ conforme ilustrado na etapa anterior deste
-tutorial. 
-
-** Execução dos Experimentos (manualmente)
-
-Faremos a execução dos experimentos na ordem definida no projeto
-experimental. 
-
-#+begin_src shell :results output :exports code :eval no-export
-tail -n +2 btmz-exec-order.csv |
-while IFS=, read -r name runnoinstdorder runno runnostdrp \
-	 threads processes class Blocks
-do
-    # OpenMP threads
-    runline="OMP_NUM_THREADS=$threads "
-    # MPI processes
-    runline+="mpirun -np $processes "
-    # Binary
-    runline+="bin/bt-mz.$class.x "
-    # Log
-    runline+="> btmz-$runno-$threads-$processes-$class.log"
- 
-    echo "Running >> $runline <<"
-    eval "$runline < /dev/null"
-    echo "Done!"
-done 
-#+end_src
-
-** Execução Não-Interativa de Experimentos com /Slurm/ na plataforma =PCAD=
 * Controle e Registro
 
 Veja [[Controle.org][mais informações aqui]] (opcional).

@@ -41,12 +41,11 @@ Ele é dividido em quatro partes, sugeridas nesta ordem:
 * Tutoriais
 
 *Objetivo deste Tutorial*: O objetivo é fazer um projeto experimental
-para analisar o desempenho (tempo de execução e speedup) de um
-programa de multiplicação de matrizes escrito em MPI. O desempenho
-será analisado em função de diferentes quantidade de processos e dois
-tamanhos de problema.
+para analisar o desempenho (tempo de execução e speedup) de uma
+operação de álgebra linear disponibilizada pela biblioteca [[https://gitlab.inria.fr/solverstack/chameleon][Chameleon]] e
+escrito com a biblioteca [[http://starpu.gforge.inria.fr/][StarPU]]. O desempenho será analisado em função
+de diferentes escalonadores e dois tamanhos de problema.
 
-- #0 [[./0_Programa_Teste.org][Programa Teste]]
 - #1 [[./1_Ferramentas.org][Instalação de Ferramentas com Spack]]
 - #2 [[./2_Experimentos.org][Realização de Experimentos Computacionais]]
 - #3 [[./3_Analise.org][Análise de Dados e Criação de gráficos]] (com supervisão)
@@ -59,6 +58,7 @@ Veja mais informações sobre [[./ambiente.org][como o ambiente =docker= foi pre
 
 - [[http://www.inf.ufrgs.br/~schnorr][Prof. Lucas (http://www.inf.ufrgs.br/~schnorr)]]
 - [[http://www.inf.ufrgs.br/~vgpinto][Prof. Vinícius (http://www.inf.ufrgs.br/~vgpinto)]]
+- [[http://www.inf.ufrgs.br/~llnesi][Doutorando Lucas Nesi (http://www.inf.ufrgs.br/~llnesi)]]
 * Melhorias                                                        :noexport:
 
 Constatações observadas

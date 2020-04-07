@@ -12,24 +12,6 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
-* #1.0 Passos iniciais
-
-1. Para entrar no parque computacional, faça o seguinte
-   #+begin_src shell :results output
-   ssh -i chave.rsa erad@gppd-hpc.inf.ufrgs.br
-   #+end_src
-2. No parque computacional, criar um diretório para si.
-   - Substitua SEUNOME por algo que te identifique unicamente
-   #+begin_src shell :results output
-   mkdir -p SEUNOME
-   #+end_src
-
-Lembre-se
-1. Todos os comandos devem ser executados no diretório SEUNOME
-4. Existem dois tipos de tarefas
-   - *Local*: pode ser feito na máquina do laboratório
-   - *Remota*: deve ser feita no parque computacional
-
 * #1.1 Local/Remota: Introdução
 
 Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,

@@ -49,170 +49,55 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* #1.2 Local: Instalação de duas variantes de =zlib=
+* #1.2 Local: Instalação do pacote de álgebra linear =Chameleon=
 
-Uma primeira versão com as seguintes opções:
+O pacote Chameleon não está disponível no repositório padrão do
+~spack~. Dessa forma, primeiramente deve ser obtido o reposiório
+apropriado com:
+#+begin_src shell :results output :exports both :eval no-export
+git clone https://gitlab.inria.fr/solverstack/spack-repo.git
+#+end_src
+
+O novo repositório pode ser adicionado ao ~spack~ com:
+#+begin_src shell :results output :exports both :eval no-export
+spack repo add spack-repo
+#+end_src
+
+Em seguida, podemos proceder com a instalação:
+#+begin_src shell :results output :exports both :eval no-export
+spack install chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast
++fxt~mpi~cuda~openmp~examples
+#+end_src
+
+Observe que o comando de instalação especifica tanto a versão do
+~Chameleon~ (0.9.2) quanto da dependência StarPU (1.3.1).
+
+Note que, além do StarPU, o pacote ~Chameleon~ possui diversas outras
+dependências que serão gerenciadas automaticamente pelo ~spack~. O
+comando ~spack spec~ pode ser usado para conferir quais dependências
+serão instaladas:
 
 #+begin_src shell :results output :exports both :eval no-export
-spack install zlib@1.2.8+pic~shared+optimize
+spack spec chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast
+~mpi~cuda~openmp~examples
 #+end_src
 
-Uma segunda versão com as seguintes opções (=optimize= desativado):
+O comando =spack location= fornece o caminho para a instalação de uma
+versão específica. O ~spack~ permite que várias instalações de um mesmo
+/software/ coexistam.
 
 #+begin_src shell :results output :exports both :eval no-export
-spack install zlib@1.2.8+pic~shared~optimize
+spack location -i chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast
++fxt~mpi~cuda~openmp~examples
 #+end_src
 
-Perceba como as duas coexistem com o comando:
+O comando abaixo permite instalar uma segunda versão do ~Chameleon~,
+habilitando o suporte à ~MPI~.
 
 #+begin_src shell :results output :exports both :eval no-export
-spack find -v zlib
+spack install chameleon@0.9.2+mpi+cuda
 #+end_src
 
-Como usar uma ou outra:
-
-#+begin_src shell :results output :exports both :eval no-export
-spack location -i zlib+optimize
-spack location -i zlib~optimize
-#+end_src
-
-Perceba que o comando =spack location= fornece o caminho para a
-instalação daquela versão específica de =zlib=. Tal comando pode ser
-utilizado para configurar outro pacote para usar uma ou outra versão.
-
-* #1.3 Remota: Instalação do =MPI=                                   :noexport:
-
-Esta tarefa é pré-requisito para [[./2_Experimentos.org]].
-
-Vamos fazer uso do =slurm= para instalar algumas versões de OpenMPI no
-parque.
-
-Para isso, tenha certaza que no seu _diretório pessoal SEUNOME_ o =spack=
-já esteja instalado (isso possivelmente já foi feito na tarefa #1.1).
-
-#+begin_src shell :results output
-cd ~/SEUNOME/
-git clone https://github.com/spack/spack.git
-#+end_src
-
-Agora crie um script para instalar as versões de OpenMPI no parque.
-
-Nome do arquivo sugerido =instala-openmpi.slurm=
-  #+begin_src shell :tangle instala-openmpi.slurm
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=01:00:00
-
-source ~/SEUNOME/spack/share/spack/setup-env.sh
-spack install -v openmpi@4.0.1
-spack install -v openmpi@3.1.3
-spack install -v openmpi@2.0.4
-  #+end_src
-
-Em seguida, no parque computacional, submeta o job:
-
-#+begin_src shell :results output
-sbatch instala-openmpi.slurm
-#+end_src
-
-Perceba o número de JOBID fornecido pelo slurm, e acompanhe a compilação com:
-
-#+begin_src shell :results output
-tail -f slurm-JOBID.out
-#+end_src
-
-*Atenção*: a instalação leva aproximadamente 20 minutos com 8 cores.
-
-* Old                                                              :noexport:
-** Instalação do =spack=                                            :noexport:
-
-#+begin_src shell :results output
-git clone https://github.com/spack/spack.git
-source spack/share/spack/setup-env.sh 
-spack --help
-#+end_src
-
-** Instalação de =libboost=                                         :noexport:
-
-Pode-se especificar uma instalação com detalhamento de dependências.
-
-O comando =spack spec= permite ver qual será a materialização da
-instalação antes dela ser efetivamente instalada. Abaixo pretende-se
-instalar =libboost= com a variante =mpi=, especificando que MPI deve ser
-fornecido pelo pacote =openmpi= na sua versão 2.0 e tudo isso no âmbito
-do compilador =gcc= na sua versão 8.2.
-
-#+begin_src shell :results output :exports both :eval no-export
-spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
-#+end_src
-
-** Instalação de =hwloc=                                            :noexport:
-
-Neste tutorial instalaremos o pacote ~hwloc~. Este pacote permite obter
-a topologia do ~hardware~ da plataforma e pode ser útil na identificação
-dos /cores/ físicos e lógicos, dos nós NUMA, dos dispositivos PCI
-conectados, da memória RAM entre outros. 
-
-Instalaremos o ~hwloc~ na versão =2.0.2=, habilitando as opções ~pci~ e ~cairo~
-e desabilitando as opções ~gl~ e ~cuda~.
-
-#+begin_src shell :results output :exports code :eval no-export
-spack install -v hwloc@2.0.2~gl+cairo~cuda+pci
-#+end_src
-
-Após a conclusão da instalação, podemos verificar os pacotes
-instalados:
-
-#+begin_src shell :results output :exports both :eval no-export
-spack find
-#+end_src
-
-#+RESULTS:
-#+begin_example
-
-==> 34 installed packages
--- linux-debian-x86_64 / gcc@8.3.0 ------------------------------
-bzip2@1.0.6    font-util@1.3.1    gettext@0.19.8.1  libbsd@0.9.1         libpng@1.6.34    m4@1.4.18       perl@5.26.2    readline@7.0        xz@5.2.4
-cairo@1.16.0   fontconfig@2.12.3  glib@2.56.3       libffi@3.2.1         libsigsegv@2.11  ncurses@6.1     pixman@0.38.0  sqlite@3.26.0       zlib@1.2.11
-diffutils@3.7  freetype@2.9.1     gperf@3.0.4       libiconv@1.15        libtool@2.4.6    openssl@1.1.1b  pkgconf@1.6.0  tar@1.31
-expat@2.2.5    gdbm@1.18.1        hwloc@2.0.2       libpciaccess@0.13.5  libxml2@2.9.8    pcre@8.42       python@2.7.16  util-macros@1.19.1
-
-#+end_example
-
-Podemos notar que vários outros pacotes além do ~hwloc~ foram
-instalados, estes pacotes foram instalados automaticamente pelo ~Spack~
-pois são dependências necessárias para a compilação e/ou funcionamento
-do ~hwloc~.
-
-** MPI Providers
-
-A interface para troca de mensagens ~MPI~ possui implementação em
-diversas distribuições. Com os comandos abaixo podemos verificar quais
-pacotes implementam a interface ~MPI~ e, então, escolher qual(is)
-instalar. E importante lembrar que várias instalações/configurações
-podem coexistir (como vimos acima).
-
-#+begin_src shell :results output :exports both :eval no-export
-spack providers mpi
-#+end_src
-
-#+RESULTS:
-#+begin_example
-mpi:
-intel-mpi              mpich     mpich@3:   mvapich2  openmpi@1.6.5   openmpi@2.0.0:
-charmpp@6.7.1:  intel-parallel-studio  mpich@1:  mpilander  openmpi   openmpi@1.7.5:  spectrum-mpi
-#+end_example
-
-** Dependências explícitas                                        :noexport:
-
-Qualquer distribuição instalada pode ser associada a pacotes que
-dependem do ~MPI~. Vejamos abaixo como instalar o pacote ~libboost~
-utilizando as distribuições ~mpich~ e ~openmpi~.
-
-#+begin_src shell :results output :exports both :eval no-export 
-spack install -v boost+mpi^mpich
-spack install -v boost+mpi^openmpi
-#+end_src
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (ox-extras-activate '(ignore-headlines))

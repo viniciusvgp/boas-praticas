@@ -124,10 +124,9 @@ wget https://github.com/viniciusvgp/boas-praticas/raw/master/projeto-experimenta
 
 * #2.2 Remota: Script de execução do projeto
 
-Acessaremos a plataforma =PCAD= do GPPD/INF-UFRGS para execução de
-experimentos de demonstração. Ilustraremos, no exemplo abaixo, um
-/script/ para execução não-interativa da aplicação. Para efeitos de
-simplificação, foi gerado previamente um projeto experimental (arquivo
+Ilustraremos, no exemplo abaixo, um /script/ para execução
+não-interativa da aplicação. Para efeitos de simplificação, foi gerado
+previamente um projeto experimental (arquivo
 ~projeto-experimental.csv~). Veja passo #2.1 para gerá-lo.
 
 Vamos revisar o /script/ que automatiza a execução do experimento.

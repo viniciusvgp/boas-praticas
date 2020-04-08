@@ -12,7 +12,7 @@
 #+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
 #+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
 
-* #1.1 Local/Remota: Introdução
+* #1.1 Introdução
 
 Utilizaremos o gerenciador de pacotes ~spack~ para obter, configurar,
 compilar e instalar programas e bibliotecas sem permissões especiais
@@ -49,7 +49,7 @@ h5utils  hadoop       hapdip   harminv    hdf5  henson      hic-pro  hiop       
 
 #+end_example
 
-* #1.2 Local: Instalação do pacote de álgebra linear =Chameleon=
+* #1.2 Instalação do pacote de álgebra linear =Chameleon=
 
 O pacote Chameleon não está disponível no repositório padrão do
 ~spack~. Dessa forma, primeiramente deve ser obtido o reposiório

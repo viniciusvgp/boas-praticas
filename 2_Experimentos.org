@@ -20,13 +20,7 @@
 Execute os tutoriais precedentes nesta série:
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
 
-Lembre-se
-1. Todos os comandos devem ser executados no diretório SEUNOME
-2. Existem dois tipos de tarefas
-   - *Local*: pode ser feito na máquina do laboratório
-   - *Remota*: deve ser feita no parque computacional
-
-* #2.1 Local: Definição do Projeto Experimental
+* #2.1 Definição do Projeto Experimental
 
 Vamos utilizar o pacote ~DoE.base~ ([[https://cran.r-project.org/web/packages/DoE.base/][descrição mais detalhada]]) da
 linguagem ~R~ para gerar um projeto experimental fatorial completo
@@ -122,7 +116,7 @@ ser baixado no parque computacional da seguinte forma:
 wget https://github.com/viniciusvgp/boas-praticas/raw/master/projeto-experimental.csv
 #+end_src
 
-* #2.2 Remota: Script de execução do projeto
+* #2.2 Script de execução do projeto
 
 Ilustraremos, no exemplo abaixo, um /script/ para execução
 não-interativa da aplicação. Para efeitos de simplificação, foi gerado
@@ -132,7 +126,7 @@ previamente um projeto experimental (arquivo
 Vamos revisar o /script/ que automatiza a execução do experimento.
 
 #+begin_src shell :tangle executa-projeto.sh
-# ... continuaçã
+# ... continuação
 # Diretório geral para contar todos os resultados
 export EXPEDIR=CHA
 # Verificar se projeto experimental é fornecido

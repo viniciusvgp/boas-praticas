@@ -154,7 +154,7 @@ tail -n +2 $PROJETO |
 	export KEY="$name-$schduler-$size"
 	export STARPU_SCHED=$scheduler
 	./chameleon/bin/timing/time_dpotrf_tile --nb=960 --n_range=
-	$size:$size:$size --nowarmup > $EXPEDIR/${KEY}."stdout"
+	$size:$size:$size --nowarmup -c > $EXPEDIR/${KEY}."stdout"
 	out=($(cat $EXPEDIR/${KEY}."stdout" | tail -n 1))
 	echo ${out[3]} >> $EXPEDIR/"times"
     done

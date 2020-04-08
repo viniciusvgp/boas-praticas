@@ -25,8 +25,8 @@ previamente instaladas.  Para usá-lo, assumindo que tenhas =docker=
 instalado na máquina =host=, basta:
 
 #+begin_src shell :results output
-docker pull schnorr/erad19
-docker run -it schnorr/erad19
+docker pull schnorr/erad20
+docker run -it schnorr/erad20
 #+end_src
 
 ** Comece aqui com seu ambiente Debian Linux (usuários avançados)
@@ -57,11 +57,11 @@ echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://c
 Para construí-lo (/docker build/), basta utilizar um Dockerfile com o
 conteúdo abaixo, também disponível no arquivo [[./Dockerfile]]. A imagem
 foi previamente construída com o seguinte comando (atribuindo a tag
-=erad19= para a imagem):
+=erad20= para a imagem):
 
 #+begin_src shell :results output
-docker build -t erad19 .
-docker run -it erad19
+docker build -t erad20 .
+docker run -it erad20
 #+end_src
 
 #+begin_src fundamental :tangle Dockerfile
@@ -85,6 +85,18 @@ RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http
 
 RUN useradd -s /bin/bash --create-home user
 USER user
+
+# Clone spack repository 
+RUN git clone https://github.com/spack/spack.git
+RUN source spack/share/spack/setup-env.sh
+
+# Clone and add extra spack repository 
+RUN git clone https://gitlab.inria.fr/solverstack/spack-repo.git
+RUN spack repo add spack-repo
+
+# Install chameleon
+RUN spack install chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast
++fxt~mpi~cuda~openmp~examples
 
 ENTRYPOINT /bin/bash
 WORKDIR /home/user

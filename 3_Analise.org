@@ -15,13 +15,12 @@
 * #3.0 Passos iniciais
 
 Execute os tutoriais precedentes nesta série:
-- [[./0_Programa_Teste.org][#0 (Programa Teste)]]
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
 - [[./1_Experimentos.org][#2 (Experimentos)]]
 
 Ou, utilize [[./exp0.tgz][este arquivo que foi previamente coletado]].
 
-* #3.1 Local/Container Parsing para extração de informações
+* #3.1 Parsing para extração de informações
 
 No container, vamos criar um CSV com informações das medidas.
 
@@ -106,7 +105,7 @@ Ahh, usamos NFS.
 
 Entao vamos em frente mesmo assim.
 
-* #3.2 Local/Container Leitura em R
+* #3.2 Leitura em R
 
 No container, lance um processo R no diretório onde foi gravado o
 arquivo =resultados.csv=, para tal, basta:

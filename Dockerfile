@@ -16,6 +16,9 @@ RUN apt -y install libopenmpi-dev
 # R packages
 RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
 
+# GAWK
+RUN apt -y install gawk
+
 RUN useradd -s /bin/bash --create-home user
 USER user
 

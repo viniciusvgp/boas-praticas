@@ -25,10 +25,10 @@ Este material acompanha os minicursos/tutoriais:
 abaixo para obter a versão correspondente ao momento em que cada
 minicurso/tutorial foi ministrado:
 - ERAD/RS 2019 -
-  https://github.com/viniciusvgp/boas-praticas/commits/erad-rs-2019
+  [[https://github.com/viniciusvgp/boas-praticas/tree/erad-rs-2019]]
 - ERAD/SP 2019 - 
-  [[https://github.com/viniciusvgp/boas-praticas/commits/erad-sp-2019]]
-
+  [[https://github.com/viniciusvgp/boas-praticas/tree/erad-sp-2019]]
+  
 O material foi preparado na forma de um tutorial auto-guiado para
 exercitar, em cenários estimulados, algumas partes das boas práticas
 apresentadas no minicurso e tutorial. O material acompanhada:

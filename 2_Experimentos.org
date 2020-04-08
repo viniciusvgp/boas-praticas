@@ -169,9 +169,9 @@ ser baixado no parque computacional da seguinte forma:
 wget https://github.com/viniciusvgp/boas-praticas/raw/master/executa-projeto.sh
 #+end_src
 
-* #2.3 Remota/Local: Compactar o diretório experimental
+* Compactar o diretório experimental
 
-No parque, compacte o diretório experimental:
+Compacte o diretório experimental:
 
 #+begin_src shell :results output
 tar cfz exp0.tgz CHA/

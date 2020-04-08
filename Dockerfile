@@ -21,3 +21,13 @@ USER user
 
 ENTRYPOINT /bin/bash
 WORKDIR /home/user
+
+# Clone spack repository 
+RUN git clone https://github.com/spack/spack.git
+
+# Clone and add extra spack repository 
+RUN git clone https://gitlab.inria.fr/solverstack/spack-repo.git
+RUN ./spack/bin/spack repo add spack-repo
+
+# Install chameleon
+RUN ./spack/bin/spack install chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast+fxt~mpi~cuda~openmp~examples

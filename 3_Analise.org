@@ -18,97 +18,19 @@ Execute os tutoriais precedentes nesta série:
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
 - [[./1_Experimentos.org][#2 (Experimentos)]]
 
-Ou, utilize [[./exp0.tgz][este arquivo que foi previamente coletado]].
+Ou, utilize [[./cha_results.txt][este arquivo que foi previamente coletado.]]
 
 * #3.1 Parsing para extração de informações
 
-No container, vamos criar um CSV com informações das medidas.
+Os passos anteriores de execução do Chameleon geram um arquivo txt do
+seguinte formato:
 
-A primeira coluna será a chave, a segunda o tempo.
-
-Nome sugerido para o CSV: =resultados.csv=.
-
-#+begin_src shell :results output
-tar xfz exp0.tgz
-for file in exp0/*.log; do
-  KEY=$(basename $file .log)
-  TIME=$(cat $file | grep Execution | sed "s/.*://")
-  echo $KEY, $TIME
-done > resultados.csv
-cat resultados.csv
-#+end_src
-
-#+RESULTS:
-#+begin_example
-10-2-400, 3.931268
-11-2-300, 1.954268
-1-20-400,
-12-10-400, 1.252950
-13-2-400, 4.108260
-14-10-400, 1.111597
-15-20-400, 1.140633
-16-10-300, 0.571220
-17-2-300, 1.949823
-18-20-300, 0.791935
-2-2-400, 3.919913
-3-20-300, 0.793258
-4-10-400, 1.254441
-5-10-300, 0.496930
-6-2-300, 1.953920
-7-20-400, 1.158824
-8-20-300, 0.811984
-9-10-300, 0.646577
-#+end_example
-
-Os dados acima estão estranho, pois está faltando uma medida.
-
-Vamos olhar o log da execução que ficou estranho.
-
-#+begin_src shell :results output
-cat exp0/1-20-400.log
-#+end_src
-
-#+RESULTS:
-#+begin_example
---------------------------------------------------------------------------
-Open MPI tried to fork a new process via the "execve" system call but
-failed.  Open MPI checks many things before attempting to launch a
-child process, but nothing is perfect. This error may be indicative
-of another problem on the target host, or even something as silly as
-having specified a directory for your application. Your job will now
-abort.
-
-  Local host:        tupi2
-  Application name:  ./mpi_mm
-  Error:             Stale file handle
---------------------------------------------------------------------------
---------------------------------------------------------------------------
-[[57280,1],1]: A high-performance Open MPI point-to-point messaging module
-was unable to find any relevant network interfaces:
-
-Module: OpenFabrics (openib)
-  Host: tupi1
-
-Another transport will be used instead, although this may result in
-lower performance.
-
-NOTE: You can disable this warning by setting the MCA parameter
-btl_base_warn_component_unused to 0.
---------------------------------------------------------------------------
---------------------------------------------------------------------------
-mpirun noticed that process rank 10 with PID 11724 on node tupi2 exited on signal 85 (Unknown signal 85).
---------------------------------------------------------------------------
-9 total processes failed to start
-#+end_example
-
-Ahh, usamos NFS.
-
-Entao vamos em frente mesmo assim.
+"Nome,Escalonador,Tamanho,Tempo"
 
 * #3.2 Leitura em R
 
 No container, lance um processo R no diretório onde foi gravado o
-arquivo =resultados.csv=, para tal, basta:
+arquivo =cha_results.txt=, para tal, basta:
 
 #+begin_src R :results output :session :exports both
 R
@@ -120,94 +42,77 @@ Carregue o meta-pacote tidyverse com todas as demais funções que
 precisamos.
 
 #+begin_src R :results output :session :exports both
+options(crayon.enabled = FALSE)
 library(tidyverse)
 #+end_src
 
 #+RESULTS:
 
-Vamos ler o arquivo CSV
+Vamos ler o arquivo CSV, informando o nome das colunas e seus tipos.
 
 #+begin_src R :results output :session :exports both
-df <- read_csv("resultados.csv", col_names=FALSE)
+df <- read_csv("cha_results.txt", col_names=c("Nome","Escalonador","Tamanho","Tempo"), col_types=cols(
+  Nome = col_integer(),
+  Escalonador = col_character(),
+  Tamanho = col_integer(),
+  Tempo = col_double()
+))
 df
 #+end_src
 
 #+RESULTS:
 #+begin_example
-Parsed with column specification:
-cols(
-  X1 = col_character(),
-  X2 = col_double()
-)
 
-# A tibble: 18 x 2
-   X1            X2
-   <chr>      <dbl>
- 1 10-2-400   3.93 
- 2 11-2-300   1.95 
- 3 1-20-400  NA    
- 4 12-10-400  1.25 
- 5 13-2-400   4.11 
- 6 14-10-400  1.11 
- 7 15-20-400  1.14 
- 8 16-10-300  0.571
- 9 17-2-300   1.95 
-10 18-20-300  0.792
-11 2-2-400    3.92 
-12 3-20-300   0.793
-13 4-10-400   1.25 
-14 5-10-300   0.497
-15 6-2-300    1.95 
-16 7-20-400   1.16 
-17 8-20-300   0.812
-18 9-10-300   0.647
+# A tibble: 12 x 4
+    Nome Escalonador Tamanho Tempo
+   <int> <chr>         <int> <dbl>
+ 1     1 random         9600 1.40 
+ 2     2 random         4800 0.448
+ 3     3 dmdas          9600 1.00 
+ 4     4 dmdas          4800 0.394
+ 5     5 random         4800 0.359
+ 6     6 random         9600 1.29 
+ 7     7 dmdas          9600 0.972
+ 8     8 dmdas          4800 0.397
+ 9     9 dmdas          4800 0.362
+10    10 random         9600 1.21 
+11    11 dmdas          9600 0.907
+12    12 random         4800 0.397
 #+end_example
 
 Vamos realizar uma transformação de dados:
-- =separate= para separar a primeira coluna em três colunas
-- =mutate= para recalcular as colunas com valores inteiros
-- =rename= para renomear uma coluna
-- =filter= para filtrar somente linhas que respeitam uma condição
 - =group_by= para criar grupos sobre os quais as próximas operações se aplicaram
 - =summarize= para transformar todas as linhas de um grupo em uma linha
 
 #+begin_src R :results output :session :exports both
 df %>%
-    separate(X1, into=c("Name", "Processes", "Size")) %>%
-    mutate(Processes = as.integer(Processes),
-           Size = as.integer(Size)) %>%
-    rename(Time = X2) %>%
-    filter(!is.na(Time)) %>%
-    group_by(Processes, Size) %>%
+    group_by(Escalonador, Tamanho) %>%
     summarize(N=n(),
-              Média = mean(Time, na.rm=TRUE),
-              Erro = 3*sd(Time)/sqrt(N)) -> df.0
+              Média = mean(Tempo, na.rm=TRUE),
+              Erro = 3*sd(Tempo)/sqrt(N)) -> df.0
 df.0
 #+end_src
 
 #+RESULTS:
-#+begin_example
-
-# A tibble: 6 x 5
-# Groups:   Processes [3]
-  Processes  Size     N Média    Erro
-      <int> <int> <int> <dbl>   <dbl>
-1         2   300     3 1.95  0.00428
-2         2   400     3 3.99  0.183  
-3        10   300     3 0.572 0.130  
-4        10   400     3 1.21  0.142  
-5        20   300     3 0.799 0.0194 
-6        20   400     2 1.15  0.0273
-#+end_example
+: 
+: # A tibble: 4 x 5
+: # Groups:   Escalonador [2]
+:   Escalonador Tamanho     N Média   Erro
+:   <chr>         <int> <int> <dbl>  <dbl>
+: 1 dmdas          4800     3 0.384 0.0336
+: 2 dmdas          9600     3 0.96  0.0834
+: 3 random         4800     3 0.401 0.0773
+: 4 random         9600     3 1.30  0.166
 
 Vamos agora criar o gráfico:
+- O eixo x se referem ao escalonador
 - as cores se referem ao tamanho
 - o ponto é baseado no média
 - as barras de erro em função do erro (assumindo distrib. gaussiana)
 
 #+begin_src R :results output graphics :file img/grafico1.png :exports both :width 600 :height 400 :session
 df.0 %>%
-    ggplot(aes(x = Processes, y = Média, color=as.factor(Size))) +
+    ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
     theme_bw(base_size = 25) +
     geom_point(size=3) +
     geom_errorbar(aes(ymin = Média - Erro,
@@ -221,15 +126,15 @@ df.0 %>%
 Uma segunda versão com facetas:
 - veja o =facet_wrap=, baseado em uma coluna
 
-#+begin_src R :results output graphics :file img/grafico2.png :exports both :width 600 :height 400 :session
+#+begin_src R :results output graphics :file img/grafico2.png :exports both :width 700 :height 400 :session
 df.0 %>%
-    ggplot(aes(x = Processes, y = Média, color=as.factor(Size))) +
+    ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
     theme_bw(base_size = 25) +
     geom_point(size=3) +
     geom_errorbar(aes(ymin = Média - Erro,
                       ymax = Média + Erro), width=.5) +
     ylim(0,NA) +
-    facet_wrap(~Size)
+    facet_wrap(~Tamanho)
 #+end_src
 
 #+RESULTS:

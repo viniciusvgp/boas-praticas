@@ -51,7 +51,7 @@ apt -y install libopenmpi-dev
 # Pacotes R que serão utilizados
 echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
 
-# Pré-requisito instalação do Chamaleon com Spack
+# Pré-requisito para instalação do Chamaleon com Spack
 apt -y install gawk
 
 # Instalação do Chameleon por meio do Spack

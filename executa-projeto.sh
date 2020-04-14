@@ -23,10 +23,9 @@ tail -n +2 $PROJETO |
 	export name=$(echo $name | sed ’s/\"//g’)
 	export scheduler=$(echo $scheduler | sed ’s/\"//g’)
 	export size=$(echo $size | sed ’s/\"//g’)
-	export KEY="$name-$schduler-$size"
+	export KEY="$name-$scheduler-$size"
 	export STARPU_SCHED=$scheduler
-	./chameleon/bin/timing/time_dpotrf_tile --nb=960 --n_range=
-	$size:$size:$size --nowarmup > $EXPEDIR/${KEY}."stdout"
+	./chameleon/bin/timing/time_dpotrf_tile --nb=960 --n_range=$size:$size:$size --nowarmup -c > $EXPEDIR/${KEY}."stdout"
 	out=($(cat $EXPEDIR/${KEY}."stdout" | tail -n 1))
-	echo ${out[3]} >> $EXPEDIR/"times"
+	echo $name","$scheduler","$size","${out[3]} >> $EXPEDIR/"times"
     done

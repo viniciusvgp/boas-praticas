@@ -34,7 +34,7 @@ exercitar, em cenários estimulados, algumas partes das boas práticas
 apresentadas no minicurso e tutorial. O material acompanhada:
 
 - [[./slides/2020_ERAD_RS_Controle_slides.pdf][Slides]] 
-- [[./minicurso/2020_ERAD_RS_Controle.pdf][Texto do Minicurso]] 
+- [[https://sol.sbc.org.br/livros2/livros/index.php/sbc/catalog/view/44/188/375-1][Texto do Minicurso]] 
 
 Ele é dividido em quatro partes, sugeridas nesta ordem:
 

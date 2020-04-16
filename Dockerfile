@@ -38,6 +38,7 @@ RUN ./spack/bin/spack repo add spack-repo
 # Install chameleon
 RUN ./spack/bin/spack install chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast~mpi~cuda~openmp~examples
 
+# Basic Emacs init file
 RUN echo "(setq org-confirm-babel-evaluate nil) \
           (setq org-babel-interpreters (quote (\"emacs-lisp\" \"python\" \"ditaa\" \"sql\" \"sh\" \"R\" \"haskell\" \"js\" \"calc\" \"mathomatic\"))) \
 	  (add-to-list 'load-path \"/usr/share/emacs/site-lisp/ess/\") \

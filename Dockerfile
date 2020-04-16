@@ -1,4 +1,4 @@
-FROM r-base:3.5.1
+FROM r-base:3.6.1
 
 RUN apt update && apt -y upgrade
 RUN apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev
@@ -19,6 +19,9 @@ RUN echo "install.packages(c('tidyverse', 'devtools', 'DoE.base'), repos = 'http
 # GAWK
 RUN apt -y install gawk
 
+# Emacs and ESS
+RUN apt -y install emacs ess
+
 RUN useradd -s /bin/bash --create-home user
 USER user
 
@@ -34,3 +37,8 @@ RUN ./spack/bin/spack repo add spack-repo
 
 # Install chameleon
 RUN ./spack/bin/spack install chameleon@0.9.2+starpu~mpi~cuda ^starpu@1.3.1~fast~mpi~cuda~openmp~examples
+
+RUN echo "(setq org-confirm-babel-evaluate nil) \
+          (setq org-babel-interpreters (quote (\"emacs-lisp\" \"python\" \"ditaa\" \"sql\" \"sh\" \"R\" \"haskell\" \"js\" \"calc\" \"mathomatic\"))) \
+	  (add-to-list 'load-path \"/usr/share/emacs/site-lisp/ess/\") \
+	  (org-babel-do-load-languages 'org-babel-load-languages '( (R . t) (python . t) (shell . t) (emacs-lisp t) (lisp t) (C t) (org t)))" > .emacs

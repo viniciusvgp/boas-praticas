@@ -74,7 +74,7 @@ docker run -it erad20
 #+end_src
 
 #+begin_src fundamental :tangle Dockerfile
-FROM r-base:3.5.1
+FROM r-base:3.6.1
 
 RUN apt update && apt -y upgrade
 RUN apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev

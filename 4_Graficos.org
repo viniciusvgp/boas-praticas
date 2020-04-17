@@ -9,62 +9,51 @@
 #+EXPORT_EXCLUDE_TAGS: noexport
 
 #+TITLE:     Criação de Gráficos
-#+AUTHOR:    Lucas Mello Schnorr, Vinícius Garcia Pinto
-#+EMAIL:     {schnorr, vgpinto}@inf.ufrgs.br
+#+AUTHOR:    Lucas Nesi, Lucas Mello Schnorr, Vinícius Garcia Pinto
+#+EMAIL:     {llnesi, schnorr, vgpinto}@inf.ufrgs.br
 
 # ggplot2
 Além da computação de medidas estatísticas, a linguagem ~R~ também pode
 ser usada para criação de gráficos. O pacote ~ggplot2~ implementa uma
 gramática de gráficos, o que permite gerar gráficos claros e
-expressivos. A Figura [[lfig:tempo]] mostra um gráfico simples onde cada
-execução é representada por um ponto. Cores foram adicionadas para
-separar as duas classes. 
+expressivos. 
 
+Vamos agora criar o gráfico:
+- O eixo x se referem ao escalonador
+- as cores se referem ao tamanho
+- o ponto é baseado no média
+- as barras de erro em função do erro (assumindo distrib. gaussiana)
 
-#+name: fig:tempo
-#+begin_src R :results output graphics :file figtempo.png :exports both :width 600 :height 400 :session *R*  :eval no-export
-library(ggplot2)
-
-expData %>% 
-    mutate(X = paste0(Threads, "x", Processes)) %>%
-    ggplot(aes(y = Time, x = X, color = Class)) +
-    geom_point() +
-    theme_bw() +
-    xlab("Threads x Processes")  +
-    ggtitle("NPB BT-MZ Execution Time")
-
+#+begin_src R :results output graphics :file img/grafico1.png :exports both :width 600 :height 400 :session
+df.0 %>%
+    ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
+    theme_bw(base_size = 25) +
+    geom_point(size=3) +
+    geom_errorbar(aes(ymin = Média - Erro,
+                      ymax = Média + Erro), width=.5) +
+    ylim(0,NA)
 #+end_src
 
-#+LABEL: lfig:tempo
-#+RESULTS: fig:tempo
-[[file:figtempo.png]]
+#+RESULTS:
+[[file:img/grafico1.png]]
 
+Uma segunda versão com facetas:
+- veja o =facet_wrap=, baseado em uma coluna
 
-Gráficos como o da Figura [[lfig:tempo]], que apresentam valores com grande
-variação, tendem a ocultar informações. No caso da aplicação ~BT-MZ~, o
-tempo de execução maior da classe A esconde detalhes das execuções da
-classe W devido a escala necessária para exibir os valores da
-primeira. O pacote ~ggplot~ permite contornar este tipo de problema por
-meio do uso de ~facets~ conforme ilustrado na Figura [[lfig:tempofacet]].
-
-#+name: fig:tempofacet
-#+begin_src R :results output graphics :file figtempo-facet.png :exports both :width 600 :height 400 :session *R*  :eval no-export
-library(ggplot2)
-
-expData %>% 
-    mutate(X = paste0(Threads, "x", Processes)) %>%
-    ggplot(aes(y = Time, x = X, color = Class)) +
-    geom_point() +
-    facet_grid(Class~., scales="free_y") + 
-    theme_bw() +
-    xlab("Threads x Processes") +
-    ggtitle("NPB BT-MZ Execution Time")
-   
+#+begin_src R :results output graphics :file img/grafico2.png :exports both :width 700 :height 400 :session
+df.0 %>%
+    ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
+    theme_bw(base_size = 25) +
+    geom_point(size=3) +
+    geom_errorbar(aes(ymin = Média - Erro,
+                      ymax = Média + Erro), width=.5) +
+    ylim(0,NA) +
+    facet_wrap(~Tamanho)
 #+end_src
 
-#+LABEL: lfig:tempofacet
-#+RESULTS: fig:tempofacet
-[[file:figtempo-facet.png]]
+#+RESULTS:
+[[file:img/grafico2.png]]
+
 
 
 * Local Variables                                                  :noexport:

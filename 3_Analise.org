@@ -16,7 +16,8 @@
 
 Execute os tutoriais precedentes nesta série:
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
-- [[./1_Experimentos.org][#2 (Experimentos)]]
+- [[./2_Experimentos.org][#2 (Experimentos)]]
+- [[./3_Analise.org][#3 (Análise)]]
 
 Ou, utilize [[./cha_results.txt][este arquivo que foi previamente coletado.]]
 
@@ -103,6 +104,9 @@ df.0
 : 2 dmdas          9600     3 0.96  0.0834
 : 3 random         4800     3 0.401 0.0773
 : 4 random         9600     3 1.30  0.166
+
+
+Siga para o passo [[4_Graficos.org][#4 Gráficos]].
 
 * Old                                                              :noexport:
 

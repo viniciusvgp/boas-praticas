@@ -20,7 +20,16 @@
 Execute os tutoriais precedentes nesta série:
 - [[./1_Ferramentas.org][#1 (Ferramentas)]]
 
+Caso este tutorial esteja sendo executado com auxílio do [[file:Dockerfile][container]]
+Docker [[file:ambiente.org][fornecido]], execute o comando abaixo logo após iniciar a sessão
+~R~ e antes de executar os demais passos.
+
+#+begin_src R :results output :exports both :session *R* :eval no-export
+.libPaths(c("~/R", .libPaths()))
+#+end_src
+
 * #2.1 Definição do Projeto Experimental
+
 
 Vamos utilizar o pacote ~DoE.base~ ([[https://cran.r-project.org/web/packages/DoE.base/][descrição mais detalhada]]) da
 linguagem ~R~ para gerar um projeto experimental fatorial completo
@@ -167,6 +176,19 @@ ser baixado no ambiente computacional da seguinte forma:
 #+begin_src shell :results output
 wget https://github.com/viniciusvgp/boas-praticas/raw/master/executa-projeto.sh
 #+end_src
+
+Caso este tutorial esteja sendo seguido com auxílio do [[file:Dockerfile][container]]
+Docker [[file:ambiente.org][fornecido]], sugerimos a utilização dos comandos abaixo para a
+execução do projeto experimental na instalação do Chameleon
+já disponibilizada no container.
+
+#+begin_src shell :results output :exports both
+git clone https://github.com/viniciusvgp/boas-praticas.git
+cd boas-praticas
+spack view soft ./chameleon chameleon@0.9.2
+./executa-projeto.sh
+#+end_src
+
 
 * Compactar o diretório experimental
 

@@ -162,7 +162,7 @@ tail -n +2 $PROJETO |
 #+RESULTS:
 
 Para facilitar o processo, este arquivo [[./executa-projeto.sh][está registrado aqui]], e pode
-ser baixado no parque computacional da seguinte forma:
+ser baixado no ambiente computacional da seguinte forma:
 
 #+begin_src shell :results output
 wget https://github.com/viniciusvgp/boas-praticas/raw/master/executa-projeto.sh

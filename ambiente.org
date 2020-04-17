@@ -77,7 +77,7 @@ docker run -it erad20
 FROM r-base:3.6.1
 
 RUN apt update && apt -y upgrade
-RUN apt -y install libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev libboost-dev git python curl autoconf file libgmp-dev libopenmpi-dev gawk emacs ess && apt clean
+RUN apt -y install r-cran-ggplot2 r-cran-tidyverse libxml2-dev libssl-dev libcurl4-openssl-dev libgit2-dev libboost-dev git python curl autoconf file libgmp-dev libopenmpi-dev gawk emacs ess && apt autoremove -y && apt clean -y
 
 RUN useradd -s /bin/bash --create-home user
 USER user
@@ -87,7 +87,7 @@ WORKDIR /home/user
 
 # R packages
 RUN mkdir /home/user/R
-RUN echo "install.packages(c('ggplot2', 'tidyverse', 'devtools', 'DoE.base'), repos = 'https://cloud.r-project.org', lib = '/home/user/R/')" | R --vanilla
+RUN echo "install.packages(c('devtools', 'DoE.base'), repos = 'https://cloud.r-project.org', lib = '/home/user/R/')" | R --vanilla
 
 # Clone spack repository 
 RUN git clone https://github.com/spack/spack.git

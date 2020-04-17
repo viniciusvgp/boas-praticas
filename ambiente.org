@@ -90,7 +90,7 @@ RUN apt -y install libgmp-dev
 RUN apt -y install libopenmpi-dev
 
 # R packages
-RUN echo "install.packages(c('ggplot2', 'tidyverse', 'devtools', 'DoE.base'), repos = 'http://cran.us.r-project.org')" | R --vanilla
+RUN echo "install.packages(c('ggplot2', 'tidyverse', 'devtools', 'DoE.base'), repos = 'https://cloud.r-project.org')" | R --vanilla
 
 # GAWK
 RUN apt -y install gawk

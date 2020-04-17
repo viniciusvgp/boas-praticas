@@ -52,12 +52,15 @@ library(tidyverse)
 Vamos ler o arquivo CSV, informando o nome das colunas e seus tipos.
 
 #+begin_src R :results output :session :exports both
-df <- read_csv("cha_results.txt", col_names=c("Nome","Escalonador","Tamanho","Tempo"), col_types=cols(
-  Nome = col_integer(),
-  Escalonador = col_character(),
-  Tamanho = col_integer(),
-  Tempo = col_double()
-))
+df <- 
+    read_csv("cha_results.txt", 
+             col_names=c("Nome","Escalonador","Tamanho","Tempo"), 
+             col_types=cols(
+                 Nome = col_integer(),
+                 Escalonador = col_character(),
+                 Tamanho = col_integer(),
+                 Tempo = col_double()
+             ))
 df
 #+end_src
 

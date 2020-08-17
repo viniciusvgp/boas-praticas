@@ -14,7 +14,7 @@ RUN mkdir /home/user/R
 RUN echo "install.packages(c('devtools', 'DoE.base'), repos = 'https://cloud.r-project.org', lib = '/home/user/R/')" | R --vanilla
 
 # Clone spack repository 
-RUN git clone https://github.com/spack/spack.git
+RUN git clone -b v0.14.2 --depth 1 https://github.com/spack/spack.git
 
 # Clone and add extra spack repository 
 RUN git clone https://gitlab.inria.fr/solverstack/spack-repo.git && ./spack/bin/spack repo add spack-repo

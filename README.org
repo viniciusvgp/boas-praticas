@@ -24,6 +24,8 @@ Este material acompanha os minicursos/tutoriais:
 *Observação:* este repositório evolui com o tempo. Utilize os /links/
 abaixo para obter a versão correspondente ao momento em que cada
 minicurso/tutorial foi ministrado:
+- ERAD/RS 2020 - 
+  [[https://github.com/viniciusvgp/boas-praticas/tree/erad-rs-2020]]
 - ERAD/RS 2019 -
   [[https://github.com/viniciusvgp/boas-praticas/tree/erad-rs-2019]]
 - ERAD/SP 2019 - 

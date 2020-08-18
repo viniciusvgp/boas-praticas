@@ -1,0 +1,1162 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+#+startup: beamer overview indent
+
+#+TITLE: Introdução à Reprodutibilidade de Experimentos Computacionais de Alto Desempenho
+#+SUBTITLE:  Tutorial 1
+#+AUTHOR: Vinícius Garcia Pinto @@latex:\\@@
+#+AUTHOR: Lucas Leandro Nesi @@latex:\\@@
+#+AUTHOR: Lucas Mello Schnorr @@latex:\\@@
+#+EMAIL: vinicius.pinto@inf.ufrgs.br, lucas.nesi@inf.ufrgs.br, schnorr@inf.ufrgs.br
+#+DATE: 19 de agosto de 2020
+
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [presentation, aspectratio=169]
+#+BEAMER_THEME: metropolis [numbering=fraction, progressbar=frametitle]
+#+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t title:nil
+#+LANGUAGE: pt-br
+#+TAGS: noexport(n) ignore(i)
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+EXPORT_SELECT_TAGS: export
+#+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
+#+LATEX_HEADER: \bibliography{refs.bib}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage{palatino}
+
+#+LATEX_HEADER: %\setbeamertemplate{background canvas}{%
+#+LATEX_HEADER: %    \includegraphics[width=\paperwidth]{img/ERAD20-Fundo-IC.pdf}
+#+LATEX_HEADER: %}
+
+#+LATEX_HEADER: \definecolor{erad20blue}{HTML}{005c8b} 
+#+LATEX_HEADER: \definecolor{erad20orange}{HTML}{f58431} 
+
+#+LATEX: \setbeamercolor{normal text}{% 
+#+LATEX:   fg=erad20blue, 
+#+LATEX:   bg=black!2 
+#+LATEX: } 
+ 
+#+LATEX: \setbeamercolor{alerted text}{%
+#+LATEX:   fg=erad20orange
+#+LATEX: } 
+
+# You need at least Org 9 and Emacs 24 to make this work.
+
+#+LATEX: {
+#+LATEX:  \setbeamertemplate{background canvas}{\includegraphics[width=\paperwidth]{img/ERAD20-Capa-SP.pdf}}
+#+LATEX:  \maketitle
+#+LATEX: }
+
+* Reuniões                                                         :noexport:
+** Tempos ERAD-RS
+
+| 5:41:53 | Inicio           | 10 |
+| 5:51:44 | Introdução       | 14 |
+| 6:05:37 | Controle Coleta  | 17 |
+| 6:22:53 | Analise de Dados | 10 |
+| 6:32:42 | Demonstração     | 30 |
+| 7:03:53 | Perguntas        |    |
+
+** 2020-08-14
+LMS
+- Apresentação
+- Propaganda
+- Introdução
+LLN
+- Controle e Coleta
+VGP
+- Análise de Dados
+- Demonstração
+- Conclusão
+* Apresentação
+** Para começar...          
+
+1. Baixar e lançar o container
+#+ATTR_LATEX: :options inputencoding=utf8, frame=lines, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+BEGIN_SRC bash
+docker pull viniciusvgp/boas-praticas:erad20
+docker run -it viniciusvgp/boas-praticas:erad20
+#+END_SRC
+
+2. Copiar de/para o container
+
+#+ATTR_LATEX: :options inputencoding=utf8, frame=lines, basicstyle=\ttfamily\footnotesize, keywordstyle=\ttfamily\footnotesize, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src bash :results output
+docker ps # permite recuperar o containerID
+docker cp foo.txt <containerID>:/home/user
+docker cp <containerID>:/home/user/foo.txt .
+#+end_src
+
+** Contextualização do Minicurso
+
+Grande maioria dos trabalhos envolve experimentos computacionais
+- Utilizam pelo menos uma máquina
+- Podem envolver vários computadores
+
+#+beamer: \pause
+
+Necessidade de analisar os dados, as medições, é onipresente
+- Por vezes, a quantidade de dados é pequena
+- Podem envolver muitos gigabytes de dados
+
+#+beamer: \pause
+
+Análise de desempenho por vezes é feita de maneira superficial
+- As conclusões não são necessariamente portáveis no tempo
+
+** Objetivos
+
+Sensibilizar participantes aos fatores que afetam a coleta de medidas
+- *Tornar os experimentos mais confiáveis*
+- Permitir *conclusões mais perenes*, *mais ricas* em informação
+
+#+beamer: \vfill\pause
+
+Detalhamento
+
+1. Motivar cuidados essenciais em medidas computacionais
+   - Controle da variabilidade experimental
+2. Apresentar formas de controlar parâmetros em sistemas Linux
+3. Como analisar dados de maneira reprodutível
+4. Prática (em formato de tutorial auto-guiado com auxílio)
+
+** Estrutura do Minicuro                                          :noexport:
+
+*** ERAD/RS 2019, MC #5 (Lab. #6)                                :noexport:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Sessão _#1_: 11/04, 9:30h -- 10:30h \\
+(Introdução, Controle e Coleta, Análise de Dados)
+
+Sessão _#2_: 11/04, 14h -- 16h \\
+(Demonstração, Prática, Fechamento)
+
+- Instal. ferramentas (SPACK)
+- Exp. computacionais
+  - Reserva de nós (SLURM)
+  - Coleta de dados (bash)
+  - Execução de aplicação paralela
+- Análise de dados (R+tidyverse)
+- Criação de gráficos (ggplot2)
+
+*** ERAD/SP 2019, Tutorial II (Sala 303)                         :noexport:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Sessão _#1_: 13/04, 15h -- 16:30h \\
+(Introdução, Controle e Coleta, Análise de Dados)
+
+Sessão _#2_: 13/04, 17h -- 18h30 \\
+(Demonstração, Prática, Fechamento)
+
+- Instal. ferramentas (SPACK)
+- Exp. computacionais
+  - Reserva de nós (SLURM)
+  - Coleta de dados (bash)
+  - Execução de aplicação paralela
+- Análise de dados (R+tidyverse)
+- Criação de gráficos (ggplot2)
+
+** Referência
+
+Literate Programming. Donald E. Knuth.
+
+Applied Statistics and Probability for Engineers. Montgomery & Runger.
+
+R for Data Science. Grolemund & Wickham.
+
+#+beamer: \vspace{-0.5cm}
+
+*** 
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_env: block
+:END:
+#+attr_latex: :width .5\linewidth
+[[./img/220px-Literate_Programming_book_cover.jpg]]
+
+*** 
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_env: block
+:END:
+#+attr_latex: :width .5\linewidth
+[[./img/applied-book.jpg]]
+
+*** 
+:PROPERTIES:
+:BEAMER_col: 0.3
+:BEAMER_env: block
+:END:
+#+attr_latex: :width .5\linewidth
+[[./img/r4ds.png]]
+
+*** 
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+
+#+beamer: \pause
+
+#+BEGIN_CENTER
+Exemplos oriundos dos trabalhos do grupo de pesquisa
+#+END_CENTER
+
+* Propaganda
+** Coisas adicionais por adicionar                                :noexport:
+- [X] Slides sobre o HPC@UFRGS
+- [X] Perímetros de investigação
+- [X] Plataforma Computacional
+- [ ] Formas de Controle
+** Instituto de Informática da UFRGS em Porto Alegre -- RS        :noexport:
+
+** Quem somos nós?
+*** Vinícius Garcia Pinto
+:PROPERTIES:
+:BEAMER_col: 0.33
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+Pós-doutorando e
+Prof. substituto - INF/UFRGS
+#+beamer: {\small
+[[http://www.inf.ufrgs.br/~vgpinto][http://www.inf.ufrgs.br/~vgpinto]]
+vgpinto@inf.ufrgs.br 
+#+beamer: }
+
+#+attr_latex: :width .5\linewidth
+[[./img/vinicius-garcia-pinto.png]]
+
+*** Lucas Leandro Nesi
+:PROPERTIES:
+:BEAMER_col: 0.33
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Doutorando do PPGC - INF/UFRGS
+
+#+beamer: {\small
+[[http://www.inf.ufrgs.br/~llnesi][http://www.inf.ufrgs.br/~llnesi]]
+llnesi@inf.ufrgs.br 
+#+beamer: }
+
+#+attr_latex: :width .55\linewidth
+[[./img/lucas-nesi.jpg]]
+
+*** Lucas Mello Schnorr
+:PROPERTIES:
+:BEAMER_col: 0.33
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+Prof. INF/UFRGS & orientador PPGC
+#+beamer: {\small
+[[http://www.inf.ufrgs.br/~schnorr][http://www.inf.ufrgs.br/~schnorr]]
+schnorr@inf.ufrgs.br
+#+beamer: }
+
+#+attr_latex: :width .5\linewidth
+[[./img/lucas-schnorr.png]]
+
+** Programa de Pós-Graduação em Computação (PPGC)
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.8
+:END:
+Site do programa: http://www.inf.ufrgs.br/ppgc/
+
+Oferece
+- _Mestrado_, entradas anuais em março
+  - Edital é lançado no segundo semestre
+  - Requisito fundamental é o Poscomp
+- _Doutorado_, entrada com fluxo continuo
+
+Fatos marcantes
+- Conceito máximo (7) pela CAPES 
+- Internacionalização da formação e da investigação
+- Número de Doutores formados: 361
+- Número de Mestres formados: 1647
+
+
+
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.2
+:END:
+#+attr_latex: :width \linewidth
+[[./img/logo-ppgc-187x118.png]]
+
+** GPPD - Grupo de Processamento Paralelo e Distribuído
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.75
+:END:
+Site do grupo de pesquisa:
+
+http://www.inf.ufrgs.br/gppd/site/
+
+Eixos principais de investigação
+- *High Performance Computing* (Computação de Alto Desempenho)
+- Computer Architecture
+- Big Data
+- Cloud Computing
+- FoG & Edge Computing
+
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.25
+:END:
+#+attr_latex: :width .9\linewidth
+[[./img/gppd-logo.png]]
+
+** Parque Computacional de Alto Desempenho (PCAD)
+
+Site: http://gppd-hpc.inf.ufrgs.br/
+
+Possui aproximadamente 30 nós: 700+ núcleos de CPU e 73.000+ de GPU
+- Computação de alto desempenho heterogênea
+
+#+attr_latex: :width .45\linewidth
+[[./img/fotos-schema.pdf]]
+
+Temos um GT (Grupo de Trabalho)
+- Formamos alunos no gerenciamento destas plataformas
+
+* Introdução
+** Método Científico em Sistemas de Computação
+
+#+BEGIN_CENTER
+_Experimentos_
+
+validar ou refutar hipóteses
+#+END_CENTER
+
+Confiabilidade \to experimentos reprodutíveis
+1. Exercer um controle sobre as variáveis controláveis
+2. Registrar o valor das variáveis não controladas (contexto)
+
+
+Experimentos em Sistemas Computacionais não são diferentes
+- Único computador: software e hardware
+- Cluster: todos os nós e a rede de interconexão
+
+** Vantagens e desvantagens
+
+#+BEGIN_CENTER
+@@latex:{\large@@ Controle experimental @@latex:}@@
+#+END_CENTER
+
+
+*** Desvantagens
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Experimentos se tornam mais burocráticos
+- Cuidado maior no antes, durante e depois dos experimentos
+- Disciplina reforçada @@latex: \pause@@
+- *Processo investigativo pode ser tornar mais lento*
+
+#+beamer: \pause
+
+*** Vantagens
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+- Conclusões delineadas sejam mais perenes, significativas
+- Relato facilitado (pois há substrato para derivar conclusões)
+- Facilita a reprodutibilidade
+
+** Boas práticas para experimentos em clusters HPC
+
+Automatização de tarefas
+- Coleta dos dados por /scripts/
+- Transformação/derivação de dados
+- Preparação de estatísticas, gráficos e tabelas
+
+#+beamer: \pause\vfill
+Características
+- Impõem um cuidado na preparação da automatização
+- Permite auditar o processo investigativo
+- Trata-se de uma atividade multidisciplinar
+| Sistemas operacionais  | Programação      | Redes |
+| _Processamento_ _Paralelo_ | Análise de dados |       |
+- *Deve-se começar mesmo com uma estratégia simples*
+
+** Visão geral
+
+1. Teórica: Controle e Coleta
+   - Lista não exaustiva de controle de sistemas computacionais
+   - Projeto experimental @@latex: \vfill@@
+2. Teórica: Análise de Dados
+   - Como analisar os dados com ferramentas modernas de /data science/?
+   - Programação literária @@latex: \vfill\pause@@
+
+Prática, com quatro tutoriais curtos
+1. Instalação de ferramentas que permitem a rastreabilidade (=spack=)
+2. Realização de experimentos computacionais (=bash=)
+3. Análise de dados (=R+tidyverse=)
+4. Criação de gráficos (=ggplot2=)
+
+** Metodologia experimental em duas fases
+*** Fase 1 (Controle e Coleta)
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+Mecanismos automáticos guiados por um projeto experimental
+
+#+attr_latex: :width .9\linewidth
+[[./img/controle-coleta.pdf]]
+
+** Metodologia experimental em duas fases
+*** Fase 2 (Análise)
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+
+Mecanismos automáticos de tratamento dos dados
+- Interpretação dos dados é feita /à posteriori/
+
+*** 
+
+Isolamento: força o experimentador a coletar bastante dados
+
+* Controle e Coleta
+** Características impactantes \to aumento da variabilidade
+
+Fatores
+- *Indeterminismo* da execução paralela (pela concorrência)
+- Aparição de *anomalias* durante a execução
+- *Complexidade* do sistema computacional
+
+#+latex: \vfill\pause
+
+_Aumento da Variabilidade_ dos experimentos
+- Medidas são incertas, tem uma dispersão natural
+- Quanto maior a dispersão, _mais incertas são as conclusões_  @@latex:\pause@@
+  - _Exemplo_: Medir o tempo de execução de uma aplicação paralela
+    - Fazer várias execuções, calcular a *média*, calcular a *dispersão*
+
+#+latex: \vfill\pause
+
+#+BEGIN_CENTER
+Nada se pode fazer em relação ao indeterminismo e às anomalias
+
+Resta tentar _reduzir a complexidade do sistema computacional_
+#+END_CENTER
+
+** Controle e Coleta: Visão Geral
+
+#+attr_latex: :width 0.85\linewidth
+[[./img/controle-coleta.pdf]]
+
+1. Metodologia experimental
+2. Controle da complexidade
+3. Registro de informações
+4. Instalação de dependências
+5. Controle em nível de sistema operacional
+# 6. Integração com gerenciadores de /Jobs/
+
+** 1. Metodologia experimental
+
+Projeto experimental
+- Fatores (variáveis de controle) e níveis (seus valores)
+- Variáveis de resposta (observações medidas)
+
+#+beamer: \pause
+
+_Exemplo_ (aplicação paralela)
+- 3\times Variáveis de resposta: /makespan/, uso de energia, balanceamento
+- 4\times Fatores: qtdade processos, qtdade nós, freq. processador, rede
+
+#+beamer: \pause
+#+beamer: \vspace{-0.7cm}
+
+*** Leitura praticamente obrigatória
+:PROPERTIES:
+:BEAMER_col: 0.7
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+latex: \bigskip
+
+The Art of Computer Systems Performance Analysis: Techniques for
+Experimental Design, Measurement, Simulation, and Modeling by _Raj
+Jain_. Wiley, 1991.
+
+*** 
+:PROPERTIES:
+:BEAMER_col: 0.2
+:BEAMER_opt: [t]
+:BEAMER_env: block
+:END:
+
+#+attr_latex: :width .7\linewidth
+[[./img/jain.jpg]]
+
+** Tipos de projetos experimentais
+
+Projetos simples, variam um único fator a cada vez
+- Não permite o estudo da interação entre fatores
+
+#+beamer: \pause
+
+*Projeto fatorial completo*, todas as combinações possíveis de fatores
+- Permite estudo das interações
+- Mais caro de ser executado (natureza combinatória)
+
+#+beamer: \pause
+
+*Fatorial fracionário*
+- Uma alternativa mais simples (sempre com um /trade-off/)
+
+** Definir um projeto experimental
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+attr_latex: :width .99\linewidth
+[[./img/experimental.pdf]]
+
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+Usando a linguagem ~R~
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src R :results code :session :exports both :eval no-export
+library(DoE.base);
+exp0 <- fac.design (
+   nfactors=4,
+   replications=10,
+   randomize=TRUE,
+   factor.names=list(
+      process = c(1,2,4,8,16,32,64,128,256),
+      node = c(1,2,4,8),
+      freq = c(1.2,1.8,2.1),
+      net = c("1GB","10GB","40GB")))
+#+end_src
+
+** Projeto experimental definido
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+O projeto é registrado em um arquivo CSV
+- Cada linha representa uma determinada configuração
+- Valores das células representam os níveis dos fatores
+- Ordem _aleatória_ absorve o impacto das anomalias
+
+#+name: pexp
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src R :results output :session :exports both :eval no-export
+head(exp0, n=9)
+#+end_src
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+#+RESULTS: pexp
+#+begin_example
+  process no freq  net Blocks
+1      64  4  1.2 10GB     .1
+2       4  4  2.1 10GB     .1
+3     128  4  1.2  1GB     .1
+4       2  1  1.2  1GB     .1
+5     256  1  1.2  1GB     .1
+6     128  4  1.2 40GB     .1
+7      16  8  2.1 10GB     .1
+8       1  1  2.1  1GB     .1
+9       4  4  1.2  1GB     .1
+#+end_example
+
+** Execução do projeto experimental
+
+#+attr_latex: :width .6\linewidth
+[[./img/execucao.pdf]]
+
+Programa de computador (/script/ em /bash/ por exemplo)
+1. Ler o projeto experimental (no arquivo CSV)
+2. Para cada linha do projeto, *executa a aplicação*
+   1. Parâmetros tem origem nos fatores
+   2. Coleta e registra as variáveis de resposta
+3. Organiza os resultados em um diretório específico
+
+** 2. Controle da complexidade
+
+# Permite _diminuir a variabilidade_ dos fenômenos sendo estudados
+Diminuir a variabilidade \to quais configurações fixar? Depende.
+
+Listagem não exaustiva
+
+- [ ] Vinculação fixa de fluxos de execução (/binding/)
+  - Evita migração automática por algoritmos do SO
+  - Difícil rastrear o comportamento da migração
+  - Detectar e considerar a configuração NUMA @@latex:\pause@@
+- [ ] Controle da frequência dos núcleos de processamento
+  - Fixar na frequência máxima (/governor userspace/)
+  - Desabilitar /turboboost/ (Intel), /turbo core/ (AMD)
+    - Não há como saber quando é ativado ou desativado @@latex:\pause@@
+- [ ] Desativar SMT, /hyperthreading/ (Intel)
+  - Evitar uso de /cores/ com recursos mais limitados
+  - Especialmente importante em aplicações limitadas pela CPU @@latex:\pause@@
+- [ ] Configurar uma política TCP/Ethernet adequada para a rede
+  - Parâmetros /default/ no Linux são para redes 100MBit
+
+** 3. Registro automático de informações
+
+Deve-se _automatizar_ o registro de informações do sistema
+- Coletadas toda vez que um experimento for realizado
+- Armazenadas juntamente com os resultados do experimento
+
+#+latex: \vfill\pause
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+*HW (Plataforma)*
+- [ ] =lstopo=, da ferramenta =hwloc= (topologia do sistema)
+- [ ] =cpufreq-info= (frequência atual, mínima, máxima, governor)
+- [ ] =ip= (ou ifconfig, obter configurações da interface de rede)
+- [ ] =lspci= (todos os dispositivos PCI)
+
+#+beamer: \pause
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+*SW (Aplicação paralela)*
+- [ ] =ompi-info= (OpenMPI, fornece todas as configurações do MPI)
+- [ ] =ldd= (bibliotecas compartilhadas da aplicação)
+- [ ] =env= (variáveis de ambiente)
+- [ ] =nm= (símbolos de um binário)
+
+#+beamer: \pause\vfill
+***                                                       :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+#+BEGIN_CENTER
+Outras informações que dependem do tipo do experimento.
+#+END_CENTER
+
+** 4. Controle de Software (dependências da aplicação)
+
+Aplicações paralelas *dependem de inúmeras bibliotecas*
+- Solvers de álgebra linear (BLAS)
+- Bibliotecas de comunicação (MPI, OpenMP)
+
+Além disso, pode-se querer testar *múltiplas versões* das dependências
+
+#+beamer: \pause\vfill
+
+#+BEGIN_CENTER
+*Spack* -- https://github.com/spack/spack
+#+END_CENTER
+
+- Gerenciador de pacotes _em nível de usuário_
+- Muitas configurações do mesmo pacote _podem coexistir_
+- _Sintaxe específica_ para especificar versões e opções de configurações
+
+#+beamer: \pause
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.8
+:END:
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src sh :results output
+git clone https://github.com/spack/spack.git
+cd spack/bin
+./spack install zlib@1.2.8+pic~shared+optimize
+#+end_src
+
+** Um exemplo com libboost, MPI e gcc
+
+=spack= =spec= mostra o que será instalado com a especificação fornecida
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src sh :exports code :eval no
+./spack spec boost@1.69.0+mpi^openmpi@2.0 %gcc@8.2
+#+end_src
+
+#+ATTR_LATEX: :options inputencoding=utf8, frame=lines, basicstyle=\ttfamily\tiny, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src sh :results output
+Input spec
+--------------------------------
+boost@1.69.0+mpi
+    ^openmpi@2.0%gcc@8.2
+
+Concretized
+--------------------------------
+boost@1.69.0%gcc@8.2+atomic+chrono~clanglibcpp~context~coroutine cxxstd=98 +date_time~debug+exception~fiber+filesystem+graph~icu+iostreams+locale+log+math+mpi+multithreaded~numpy patches=2ab6c72d03dec6a4ae20220a9dfd5c8c572c5294252155b85c6874d97c323199,3a83d907043708218325c35ffc318fd6d6cfd78ba89a78f2c70013c72603e5b8,607b0772dec1287c9084ae3b36ee32bff945a2fe5e608823ed47a1ea765c84cd ~pic+program_options~python+random+regex+serialization+shared+signals~singlethreaded+system~taggedlayout+test+thread+timer~versionedlayout+wave arch=linux-debiantesting-x86_64 
+    ^bzip2@1.0.6%gcc@8.2+shared arch=linux-debiantesting-x86_64 
+        ^diffutils@3.7%gcc@8.2 arch=linux-debiantesting-x86_64 
+    ^openmpi@2.0%gcc@8.2~cuda+cxx_exceptions fabrics=auto ~java~legacylaunchers~memchecker patches=d26978ea058131ced4e51668a524f556d3d90d178d54634e6f2077f4c8ba7762 ~pmi schedulers=auto ~sqlite3~thread_multiple+vt arch=linux-debiantesting-x86_64 
+        ^hwloc@1.11.11%gcc@8.2~cairo~cuda~gl+libxml2~nvml+pci+shared arch=linux-debiantesting-x86_64 
+            ^libpciaccess@0.13.5%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^libtool@2.4.6%gcc@8.2 arch=linux-debiantesting-x86_64 
+                    ^m4@1.4.18%gcc@8.2 patches=3877ab548f88597ab2327a2230ee048d2d07ace1062efe81fc92e91b7f39cd00,c0a408fbffb7255fcc75e26bd8edab116fc81d216bfd18b473668b7739a4158e,fc9b61654a3ba1a8d6cd78ce087e7c96366c290bc8d2c299f09828d793b853c8 +sigsegv arch=linux-debiantesting-x86_64 
+                        ^libsigsegv@2.11%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^pkgconf@1.6.0%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^util-macros@1.19.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+            ^libxml2@2.9.8%gcc@8.2~python arch=linux-debiantesting-x86_64 
+                ^libiconv@1.15%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^xz@5.2.4%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^zlib@1.2.11%gcc@8.2+optimize+pic+shared arch=linux-debiantesting-x86_64 
+            ^numactl@2.0.12%gcc@8.2 arch=linux-debiantesting-x86_64 
+                ^autoconf@2.69%gcc@8.2 arch=linux-debiantesting-x86_64 
+                    ^perl@5.26.2%gcc@8.2+cpanm patches=0eac10ed90aeb0459ad8851f88081d439a4e41978e586ec743069e8b059370ac +shared+threads arch=linux-debiantesting-x86_64 
+                        ^gdbm@1.18.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+                            ^readline@7.0%gcc@8.2 arch=linux-debiantesting-x86_64 
+                                ^ncurses@6.1%gcc@8.2~symlinks~termlib arch=linux-debiantesting-x86_64 
+                ^automake@1.16.1%gcc@8.2 arch=linux-debiantesting-x86_64 
+#+end_src
+
+** 5. Controle em nível de Sistema Operacional (SO)
+
+Spack é tri, mas não permite controlar toda a pilha de software
+- O SO tem uma influência por vezes determinando na variabilidade
+
+#+beamer: \pause
+
+*Método Nativo* \to Kadeploy3
+
+http://kadeploy3.gforge.inria.fr/
+- Gerencia e utiliza perfis PXE com servidor TFTP
+- Dispara comandos de reboot com IPMI ou através de PDU gerenciável
+- O usuário instala seu SO nativamente em uma partição do disco
+
+#+beamer: \pause
+
+*Método Virtualizado* \to CharlieCloud
+
+https://github.com/hpc/charliecloud
+- Baseado com Linux Containers
+- Não exige hardware específico (apenas o suporte à virtualização)
+
+* Análise de Dados
+** Análise de dados
+
+Resultado dos experimentos: conjunto de arquivos (/checkpoint/)
+
+#+attr_latex: :width 0.9\linewidth
+[[./img/loop.pdf]]
+
+Análise é conduzida /offline/, após a execução do experimento
+- No computador pessoal do investigador
+- Plataforma diferente daquela usada nos experimentos
+
+#+BEGIN_CENTER
+Processo iterativo de análise de dados
+#+END_CENTER
+
+** Adotar uma estratégia sistematizada de análise
+
+Permitir
+- Reexecutar algumas etapas do processo de análise
+- Revisar o fluxo de transformações de dados @@latex: \pause@@
+- ``Lembrar'' como uma figura foi concebida (transformação e dados)
+- Saber _precisamente_ como se chegou a valores relatados no artigo
+
+
+#+latex: \vfill\pause
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+BEGIN_CENTER
+Empregar ferramentas modernas de
+
+*Ciência de Dados* para uma *Análise Reprodutível*
+#+END_CENTER
+
+#+latex: \vfill
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+#+attr_latex: :width .95\linewidth
+[[./img/stickers.png]]
+
+
+#+beamer: \pause
+
+***                                                       :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+#+BEGIN_CENTER
+Programação Literária + Ferramentas Modernas + Compartilhar
+#+END_CENTER
+
+** Programação Literária
+
+Proposta por Donald Knuth
+
+Permite converter um documento fonte em duas representações distintas
+- Um formato legível para humanos
+- Outro apto para execução em computadores
+
+#+beamer: \pause
+
+Na prática: é um arquivo com código e texto interpostos
+
+#+latex: \vfill\hrule
+
+Análise de resultados experimentais
+- Permite manter em um mesmo documento
+  - Anotações preliminares
+  - Expectativas, suposições e reflexões
+  - Comandos de análise
+  - Visualização de resultados
+
+** Programação literária com OrgMode
+
+OrgMode, uma extensão do editor de texto Emacs
+
+#+attr_latex: :width .15\linewidth
+[[file:img/org-mode-unicorn-logo.png]]
+
+Arquivos =.org=
+- Blocos de código (em diversas línguas) com o pacote =Babel=
+- Possível de exportar para =tex=, =pdf=, ~html~, =odt=, ...
+
+#+BEGIN_CENTER
+*Caderno de Anotações*
+
+LabBook.org
+#+END_CENTER
+
+** Uma pequena demonstração com Org falando =shell=
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.65
+:END:
+#+name: ex1Shell
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\normalsize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src bash :results value :exports both :cache yes :eval no-export
+export RANDOM=0
+for n in `seq 5`; 
+do 
+    printf "%d $RANDOM \n" $n ; 
+done
+#+end_src
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.3
+:END:
+#+RESULTS[1f73d7ca9ec270201b7a9578fc3d33bf65611573]: ex1Shell
+| 1 | 24315 |
+| 2 | 12703 |
+| 3 | 22240 |
+| 4 | 10073 |
+| 5 | 18561 |
+
+** Uma pequena demonstração com Org falando =R=
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+name: exampleLiter
+#+header: :var dados=ex1Shell
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\normalsize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src R :results output graphics :file ./img/example-literate.pdf :exports both :width 4 :height 3 :session :eval no-export
+library(tidyverse)
+dados %>%
+    ggplot(aes(V1, V2)) +
+    geom_point() + geom_line()
+#+end_src
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+attr_latex: :width .99\linewidth
+#+RESULTS: exampleLiter
+[[file:./img/example-literate.pdf]]
+
+** Checklist para gráficos de qualidade
+
+#+BEGIN_CENTER
+Ler documento auxiliar (texto do minicurso), mas vejamos um trecho...
+#+END_CENTER
+
+#+beamer: {\tiny
+| <l>              | <l> | <l>                                                                                                                          |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Dados*            | \check   | O tipo do gráfico é adequado para a natureza do dado (curva, barras, setores, histograma, nuvem de pontos, etc)        |
+|                  | \check   | As aproximações/interpolações fazem sentido                                                                                  |
+|                  | \check   | As curvas são definidas com um número suficiente de pontos                                                                   |
+|                  | \check   | O método de construção da curva é claro: interpolação (linear, polinomial, regressão, etc)                                   |
+|                  | \check   | Os intervalos de confiança são visualizados (ou informados separadamente)                                                    |
+|                  | \check   | Os passos do histograma são adequados                                                                                        |
+|                  | \check   | Histogramas visualizam probabilidades (de 0 a 1)                                                                             |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Objetos Gráficos* | \check   | Os objetos gráficos são legíveis na tela, na versão impressa (P&B), em vídeo, etc                                            |
+|                  | \check   | O intervalo do gráfico é padrão, sem cores muito similares, sem verde (vídeo)                                                |
+|                  | \check   | Os eixos do gráfico estão claramente identificados e rotulados                                                               |
+|                  | \check   | Escalas e unidades estão explícitas                                                                                          |
+|                  | \check   | As curvas se cruzam sem ambiguidade                                                                                          |
+|                  | \check   | As grades ajudam o leitor                                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações*        | \check   | Eixos são rotulados por quantidades                                                                                          |
+|                  | \check   | Rótulos dos eixos são claros e autocontidos                                                                                  |
+|                  | \check   | Unidades estão indicadas nos eixos                                                                                           |
+|                  | \check   | Eixos são orientados da esquerda para a direita e de baixo para cima                                                         |
+|                  | \check   | Origem é (0,0), caso contrário deve estar claramente justificada                                                             |
+|                  | \check   | Sem buracos nos eixos                                                                                                        |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Anotações (2)*    | \check   | Para gráficos de barras/histogramas a ordem das barras segue a ordenação clássica (alfabética, temporal, do melhor pro pior) |
+|                  | \check   | Cada curva tem uma legenda                                                                                                   |
+|                  | \check   | Cada barra tem uma legenda                                                                                                   |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Informação*       | \check   | Curvas estão na mesma escala                                                                                                 |
+|                  | \check   | O número de curvas em um mesmo gráfico é pequeno (menor que 6)                                                               |
+|                  | \check   | Compare as curvas no mesmo gráfico                                                                                           |
+|                  | \check   | Uma curva não pode ser removida sem redução de informação                                                                    |
+|                  | \check   | O gráfico fornece informações relevantes ao leitor                                                                           |
+|                  | \check   | Se o eixo vertical mostra médias, as barras de erro devem estar presentes                                                    |
+|                  | \check   | Não é possível remover qualquer objeto sem modificar a legibilidade do gráfico                                               |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+| *Contexto*         | \check   | Todos os símbolos são definidos e referenciados no texto                                                                     |
+|                  | \check   | O gráfico produz mais informação que qualquer outra representação (escolha da variável)                                      |
+|                  | \check   | O gráfico tem um título                                                                                                      |
+|                  | \check   | O título é suficientemente autocontido para a compreensão parcial do gráfico                                                 |
+|                  | \check   | O gráfico é referenciado no texto                                                                                            |
+|                  | \check   | O texto comenta a figura                                                                                                     |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+|                  | \check   | *A representação gráfica deve ser elegante*                                                                                    |
+|------------------+-----+------------------------------------------------------------------------------------------------------------------------------|
+#+beamer: }
+
+** Como fica um gráfico melhorado
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.45
+:END:
+#+name: exampleLiteImproved
+#+header: :var dados=ex1Shell
+#+ATTR_LATEX: :options inputencoding=utf8, frame=single, basicstyle=\ttfamily\footnotesize, keywordstyle=\bfseries, breaklines=true, showstringspaces=false, extendedchars=true, literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ç}{{\c{c}}}1
+#+begin_src R :results output graphics :file ./img/example-literate2.pdf :exports both :width 5 :height 3 :session :eval no-export
+library(tidyverse)
+dados %>%
+    ggplot(aes(V1, V2)) +
+    theme_bw() +
+    geom_point(size=2) + 
+    geom_line() +
+    ylab("Valor Aleatório") + 
+    xlab("Observação") +
+    ggtitle("Geração de Números Aleatórios em shell script") + 
+    lims(y = c(0, NA), 
+         x = c(1, NA))
+#+end_src
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.6
+:END:
+#+attr_latex: :width .99\linewidth
+#+RESULTS: exampleLiteImproved
+[[file:./img/example-literate2.pdf]]
+
+** Reprodutibilidade da análise de desempenho
+
+Ir além do texto científico (artigo, relatório) \to _Companion_
+
+O companion deve ter:
+| Caderno de anotações | Dados brutos      |
+| Código fonte         | Dados processados |
+
+#+beamer: \pause
+
+1. Formato
+   - Dados: aberto e de estrutura simples \to arquivos CSV
+   - Texto: usando programação literária (OrgMode, RMD, IPython/Jupyter)
+
+2. Disponibilização
+   - Dificuldade de encontrar locais apropriados
+     - Dados muito volumosos
+   - Alternativas
+     - GitHub, Bitbucket, GitLab (restrições de volume)
+     - FigShare, *Zenodo* (Ex. com DOI: [[https://dx.doi.org/10.5281/zenodo.2605464][https://dx.doi.org/10.5281/zenodo.2605464]])
+
+* Demonstração                                                     
+** Tutorial (com acompanhamento do ministrante)
+
+#+BEGIN_CENTER
+https://gitlab.com/exp-hpc/boas-praticas
+#+END_CENTER
+
+#+latex: \vfill
+
+1. Instalação de Ferramentas com Spack
+2. Realização de Experimentos Computacionais
+3. Análise de Dados
+4. Criação de Gráficos
+
+* Conclusão
+** Conclusão
+
+Terminologia da Association for Computing Machinery (ACM)
+- Repetibilidade (mesmo time, mesma configuração experimental)
+- Replicabilidade (time diferente, mesma configuração experimental)
+- Reprodutibilidade (time diferente, configuração experimental diferente)
+
+#+BEGIN_CENTER
+_Reflexão_
+
+Como validar/refutar resultados com um HW diferente?
+#+END_CENTER
+
+#+beamer: \pause
+#+BEGIN_CENTER
+_melhorar nossas práticas experimentais_
+#+END_CENTER
+
+#+attr_latex: :width .6\linewidth
+[[./img/loop.pdf]]
+
+** Coisas adicionais por adicionar                                :noexport:
+- [ ] Como ir mais longe
+** Agradecimentos
+
+ Este trabalho foi realizado com o apoio da Coordenação de
+ Aperfeiçoamento de Pessoal de Nível Superior (CAPES) - Finance Code
+ 001, do Conselho Nacional de Desenvolvimento Científico e Tecnológico
+ (CNPq), e dos projetos: FAPERGS ReDaS (19/711-6), MultiGPU (16/354-8)
+ e GreenCloud (16/488-9), do projeto CNPq 447311/2014-0, do projeto
+ CAPES/Brafitec 182/15 e CAPES/Cofecub 899/18, e com apoio do projeto
+ Petrobras (2018/00263-5).
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.25
+:END:
+[[file:img/capes.png]]
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.25
+:END:
+[[file:img/cnpq.png]]
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.25
+:END:
+[[file:img/fapergs.png]]
+
+***                                                                 :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.25
+:END:
+[[file:img/petrobras.png]]
+
+** Obrigado por participar e pela atenção! Perguntas?
+
+#+Latex: \vfill
+#+BEGIN_CENTER
+Contato
+
+|             <c>             |
+| vinicius.pinto@inf.ufrgs.br |
+|   lucas.nesi@inf.ufrgs.br   |
+|    schnorr@inf.ufrgs.br     |
+|                             |
+
+
+   [[file:img/logoTitle.png]]    
+
+
+#+END_CENTER
+#+latex: \vfill
+
+** Free Cultural Works
+
+#+attr_latex: :width 3cm
+[[./img/CC-BY-SA_icon.png]]
+
+#+latex: {\scriptsize
+#+latex: \noindent
+Este documento está licenciado sob a Licença
+/Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0)/ da
+/Creative Commons/ (CC). Em resumo, você deve creditar a obra da forma
+especificada pelo autor ou licenciante (mas não de maneira que sugira
+que estes concedem qualquer aval a você ou ao seu uso da obra). Você
+pode usar esta obra para fins comerciais. Se você alterar, transformar
+ou criar com base nesta obra, você poderá distribuir a obra resultante
+apenas sob a mesma licença, ou sob uma licença similar à
+presente. Para ver uma cópia desta licença, visite
+https://creativecommons.org/licenses/by-sa/4.0/.
+#+latex: }
+
+#+latex: \bigskip
+
+#+latex: {\scriptsize
+#+latex: \noindent
+Este documento foi produzido usando exclusivamente software livre:
+Sistema Operacional GNU/Linux, compilador de texto
+@@latex:\LaTeX@@, editor gráfico Inkscape, /workflow/ reprodutível em
+OrgMode com Emacs, as linguagens de programação R, com os pacotes do
+universo /tidyverse/, e /shell script/, o processador PS/PDF GhostScript,
+entre outros.
+#+latex: }
+
+* Configuração do EMACS                                            :noexport:
+** Manual
+
+#+begin_src emacs-lisp :results output :session :exports both
+(add-to-list 'load-path ".")
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+(setq ispell-local-dictionary "brasileiro")
+(flyspell-mode t)
+
+#+end_src
+
+#+RESULTS:
+
+** Local
+# Local Variables:
+# eval: (add-to-list 'load-path ".")
+# eval: (require 'ox-extra)
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (setq org-latex-listings t)
+# eval: (setq org-latex-packages-alist '(("" "listings")))
+# eval: (add-to-list 'org-latex-packages-alist '("" "listingsutf8") t)
+# eval: (add-to-list 'org-latex-packages-alist '("alf" "abntex2cite") t)
+# eval: (add-to-list 'org-latex-packages-alist '("" "xcolor") t)
+# eval: (add-to-list 'org-latex-packages-alist '("" "etoolbox") t)
+# End:
+
+
+

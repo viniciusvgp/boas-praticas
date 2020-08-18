@@ -66,11 +66,11 @@ git clone https://gitlab.inria.fr/solverstack/spack-repo.git
 Para construí-lo (/docker build/), basta utilizar um Dockerfile com o
 conteúdo abaixo, também disponível no arquivo [[./Dockerfile]]. A imagem
 foi previamente construída com o seguinte comando (atribuindo a tag
-=erad20= para a imagem):
+=erad20sp= para a imagem):
 
 #+begin_src shell :results output
-docker build -t erad20 .
-docker run -it erad20
+docker build -t erad20sp .
+docker run -it erad20sp
 #+end_src
 
 #+begin_src fundamental :tangle Dockerfile
@@ -90,7 +90,7 @@ RUN mkdir /home/user/R
 RUN echo "install.packages(c('devtools', 'DoE.base'), repos = 'https://cloud.r-project.org', lib = '/home/user/R/')" | R --vanilla
 
 # Clone spack repository 
-RUN git clone https://github.com/spack/spack.git
+RUN git clone -b v0.14.2 --depth 1 https://github.com/spack/spack.git
 
 # Clone and add extra spack repository 
 RUN git clone https://gitlab.inria.fr/solverstack/spack-repo.git && ./spack/bin/spack repo add spack-repo

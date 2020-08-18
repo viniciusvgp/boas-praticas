@@ -14,6 +14,9 @@
 
 Este material acompanha os minicursos/tutoriais:
 
+
+- *Introdução à Reprodutibilidade de Experimentos Computacionais de Alto Desempenho* \\
+  ERAD/SP|ERAMIA/SP 2020  (São Paulo)
 - *Boas Práticas para Experimentos Computacionais de Alto Desempenho* \\
   ERAD/RS 2020 (Santa Maria - RS)
 - *Boas Práticas para Experimentos Computacionais em Clusters* \\
@@ -35,8 +38,9 @@ O material foi preparado na forma de um tutorial auto-guiado para
 exercitar, em cenários estimulados, algumas partes das boas práticas
 apresentadas no minicurso e tutorial. O material acompanhada:
 
-- [[./slides/2020_ERAD_RS_Controle_slides.pdf][Slides]] 
-- [[https://sol.sbc.org.br/livros2/livros/index.php/sbc/catalog/view/44/188/375-1][Texto do Minicurso]] 
+- [[./slides/2020_ERAD_SP_Controle_slides.pdf][Slides]] 
+- [[./minicurso/2020_ERAD_SP_Controle.pdf][Texto do Minicurso]] 
+- [[https://sol.sbc.org.br/livros2/livros/index.php/sbc/catalog/view/44/188/375-1][Capítulo publicado no Livro de Minicursos da ERAD/RS 2020]] 
 
 Ele é dividido em quatro partes, sugeridas nesta ordem:
 

@@ -40,7 +40,7 @@ apresentadas no minicurso e tutorial. O material acompanhada:
 
 - [[./slides/2020_ERAD_SP_Controle_slides.pdf][Slides]] 
 - [[./minicurso/2020_ERAD_SP_Controle.pdf][Texto do Minicurso]] 
-- [[https://sol.sbc.org.br/livros2/livros/index.php/sbc/catalog/view/44/188/375-1][Capítulo publicado no Livro de Minicursos da ERAD/RS 2020]] 
+- [[https://sol.sbc.org.br/livros/index.php/sbc/catalog/view/44/188/402-1][Capítulo publicado no Livro de Minicursos da ERAD/RS 2020]] 
 
 Ele é dividido em quatro partes, sugeridas nesta ordem:
 

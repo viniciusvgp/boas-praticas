@@ -25,7 +25,7 @@ oficial conforme instruções abaixo. Note que o comando =source= permite
 colocar o caminho para =spack= no PATH do terminal.
 
 #+begin_src shell :results output :exports code :session S1 :eval no-export
-git clone https://github.com/spack/spack.git
+git clone -b v0.14.2 https://github.com/spack/spack.git
 source spack/share/spack/setup-env.sh
 #+end_src
 

@@ -25,8 +25,8 @@ previamente instaladas.  Para usá-lo, assumindo que tenhas =docker=
 instalado na máquina =host=, basta:
 
 #+begin_src shell :results output
-docker pull viniciusvgp/boas-praticas/erad20sp
-docker run -it viniciusvgp/boas-praticas/erad20sp
+docker pull viniciusvgp/boas-praticas:erad20sp
+docker run -it viniciusvgp/boas-praticas:erad20sp
 #+end_src
 
 ** Comece aqui com seu ambiente Debian Linux (usuários avançados)

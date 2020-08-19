@@ -24,7 +24,7 @@ Vamos agora criar o gráfico:
 - o ponto é baseado no média
 - as barras de erro em função do erro (assumindo distrib. gaussiana)
 
-#+begin_src R :results output graphics :file img/grafico1.png :exports both :width 600 :height 400 :session
+#+begin_src R :results output graphics file :file img/grafico1.png :exports both :width 600 :height 400 :session
 df.0 %>%
     ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
     theme_bw(base_size = 25) +
@@ -40,7 +40,7 @@ df.0 %>%
 Uma segunda versão com facetas:
 - veja o =facet_wrap=, baseado em uma coluna
 
-#+begin_src R :results output graphics :file img/grafico2.png :exports both :width 700 :height 400 :session
+#+begin_src R :results output graphics file :file img/grafico2.png :exports both :width 700 :height 400 :session
 df.0 %>%
     ggplot(aes(x = Escalonador, y = Média, color=as.factor(Tamanho))) +
     theme_bw(base_size = 25) +
